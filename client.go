@@ -2,7 +2,6 @@ package web3go
 
 import (
 	"context"
-	"time"
 
 	"github.com/Conflux-Chain/go-conflux-sdk/rpc"
 	client "github.com/openweb3/web3go/client"
@@ -12,49 +11,33 @@ import (
 // Client defines typed wrappers for the Ethereum RPC API.
 type Client struct {
 	c   interfaces.RpcProvider
-	eth *client.RpcEthClient
+	Eth *client.RpcEthClient
 }
 
-// clientOption for set keystore path and flags for retry
-//
-// The simplest way to set logger is to use the types.DefaultCallRpcLog and types.DefaultBatchCallRPCLog
-type clientOption struct {
-	KeystorePath string
-	// retry
-	RetryCount    int
-	RetryInterval time.Duration
-	// timeout of request
-	RequestTimeout time.Duration
+// type Option func(c *ClientOption)
+
+func NewClient(rawurl string) (*Client, error) {
+	return NewClientWithOption(rawurl, ClientOption{})
 }
 
-type Option func(c *clientOption)
-
-func NewClient(rawurl string, options ...Option) (*Client, error) {
+func NewClientWithOption(rawurl string, option ClientOption) (*Client, error) {
 	c, err := rpc.DialContext(context.Background(), rawurl)
 	if err != nil {
 		return nil, err
 	}
 
 	// Override defaults with any provided options
-	o := clientOption{}
-	for _, opt := range options {
-		opt(&o)
-	}
+	// o := ClientOption{}
+	// for _, opt := range options {
+	// 	opt(&o)
+	// }
 
-	ec := &Client{c, nil}
+	eth := client.NewRpcEthClient(c)
+	ec := &Client{c, eth}
 
 	return ec, nil
 }
 
-func WithRetry(retryCount int, retryInterval time.Duration) Option {
-	return func(c *clientOption) {
-		c.RetryCount = retryCount
-		c.RetryInterval = retryInterval
-	}
-}
-
-func WithTimout(requestTimeout time.Duration) Option {
-	return func(c *clientOption) {
-		c.RequestTimeout = requestTimeout
-	}
-}
+// func (c *Client) Eth() *client.RpcEthClient {
+// 	return c.eth
+// }
