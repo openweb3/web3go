@@ -3,15 +3,13 @@ package web3go
 import "time"
 
 // ClientOption for set keystore path and flags for retry
-//
-// The simplest way to set logger is to use the types.DefaultCallRpcLog and types.DefaultBatchCallRPCLog
 type ClientOption struct {
 	// KeystorePath string
 	// retry
-	RetryCount    int           `default:"1"`
-	RetryInterval time.Duration `default:"1000"`
+	RetryCount    int           `default:"3"`
+	RetryInterval time.Duration `default:"3s"`
 	// timeout of request
-	RequestTimeout time.Duration `default:"1000"`
+	RequestTimeout time.Duration `default:"30s"`
 }
 
 func (o *ClientOption) WithRetry(retryCount int, retryInterval time.Duration) *ClientOption {

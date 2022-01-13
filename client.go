@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Conflux-Chain/go-conflux-sdk/rpc"
+	"github.com/mcuadros/go-defaults"
 	client "github.com/openweb3/web3go/client"
 	"github.com/openweb3/web3go/interfaces"
 )
@@ -14,30 +15,29 @@ type Client struct {
 	Eth *client.RpcEthClient
 }
 
-// type Option func(c *ClientOption)
-
 func NewClient(rawurl string) (*Client, error) {
-	return NewClientWithOption(rawurl, ClientOption{})
-}
-
-func NewClientWithOption(rawurl string, option ClientOption) (*Client, error) {
 	c, err := rpc.DialContext(context.Background(), rawurl)
 	if err != nil {
 		return nil, err
 	}
-
-	// Override defaults with any provided options
-	// o := ClientOption{}
-	// for _, opt := range options {
-	// 	opt(&o)
-	// }
-
 	eth := client.NewRpcEthClient(c)
 	ec := &Client{c, eth}
 
 	return ec, nil
 }
 
-// func (c *Client) Eth() *client.RpcEthClient {
-// 	return c.eth
-// }
+func NewClientWithOption(rawurl string, option *ClientOption) (*Client, error) {
+	c, err := rpc.DialContext(context.Background(), rawurl)
+	if err != nil {
+		return nil, err
+	}
+
+	if option == nil {
+		defaults.SetDefaults(&option)
+	}
+
+	eth := client.NewRpcEthClient(c)
+	ec := &Client{c, eth}
+
+	return ec, nil
+}
