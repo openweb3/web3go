@@ -7,9 +7,9 @@ type ClientOption struct {
 	// KeystorePath string
 	// retry
 	RetryCount    int           `default:"3"`
-	RetryInterval time.Duration `default:"3s"`
+	RetryInterval time.Duration `default:"1s"`
 	// timeout of request
-	RequestTimeout time.Duration `default:"30s"`
+	RequestTimeout time.Duration `default:"3s"`
 }
 
 func (o *ClientOption) WithRetry(retryCount int, retryInterval time.Duration) *ClientOption {
