@@ -11,6 +11,12 @@ type RpcEthClient struct {
 	core interfaces.RpcProvider
 }
 
+func NewRpcEthClient(provider interfaces.RpcProvider) *RpcEthClient {
+	return &RpcEthClient{
+		core: provider,
+	}
+}
+
 func (c *RpcEthClient) ClientVersion() (val string, err error) {
 	err = c.core.Call(&val, "web3_clientVersion")
 	return
