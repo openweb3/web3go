@@ -164,13 +164,13 @@ func (c *RpcEthClient) SubmitTransaction(rawTx hexutil.Bytes) (val common.Hash, 
 }
 
 /// Call contract, returning the output data.
-func (c *RpcEthClient) Call(request types.TransactionArgs, blockNumber *types.BlockNumber) (val hexutil.Bytes, err error) {
+func (c *RpcEthClient) Call(request types.CallRequest, blockNumber *types.BlockNumber) (val hexutil.Bytes, err error) {
 	err = c.core.Call(&val, "eth_call", request, blockNumber)
 	return
 }
 
 /// Estimate gas needed for execution of given contract.
-func (c *RpcEthClient) EstimateGas(request types.TransactionArgs, blockNumber *types.BlockNumber) (val *hexutil.Big, err error) {
+func (c *RpcEthClient) EstimateGas(request types.CallRequest, blockNumber *types.BlockNumber) (val *hexutil.Big, err error) {
 	err = c.core.Call(&val, "eth_estimateGas", request, blockNumber)
 	return
 }
@@ -212,7 +212,7 @@ func (c *RpcEthClient) UncleByBlockNumberAndIndex(blockNumber types.BlockNumber,
 }
 
 /// Returns logs matching given filter object.
-func (c *RpcEthClient) Logs(filter types.EthRpcLogFilter) (val []types.Log, err error) {
+func (c *RpcEthClient) Logs(filter types.FilterQuery) (val []types.Log, err error) {
 	err = c.core.Call(&val, "eth_getLogs", filter)
 	return
 }
