@@ -101,17 +101,20 @@ func (c *RpcEthClient) StorageAt(addr common.Address, location *hexutil.Big, blo
 	return
 }
 
-// TODO: return summary if isFull is false
 /// Returns block with given hash.
 func (c *RpcEthClient) BlockByHash(blockHash common.Hash, isFull bool) (val *types.Block, err error) {
-	err = c.core.Call(&val, "eth_getBlockByHash", blockHash, isFull)
-	return
+	block := &types.Block{}
+	block.Transactions = *types.NewTxOrHashList(isFull)
+	err = c.core.Call(&block, "eth_getBlockByHash", blockHash, isFull)
+	return block, err
 }
 
 /// Returns block with given number.
 func (c *RpcEthClient) BlockByNumber(blockNumber types.BlockNumber, isFull bool) (val *types.Block, err error) {
-	err = c.core.Call(&val, "eth_getBlockByNumber", blockNumber, isFull)
-	return
+	block := &types.Block{}
+	block.Transactions = *types.NewTxOrHashList(isFull)
+	err = c.core.Call(&block, "eth_getBlockByNumber", blockNumber, isFull)
+	return block, err
 }
 
 /// Returns the number of transactions sent from given address at given time

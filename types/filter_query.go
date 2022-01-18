@@ -10,10 +10,10 @@ import (
 
 // FilterQuery contains options for contract log filtering.
 type FilterQuery struct {
-	BlockHash *common.Hash     // used by eth_getLogs, return logs only from block with this hash
-	FromBlock *BlockNumber     // beginning of the queried range, nil means latest block
-	ToBlock   *BlockNumber     // end of the range, nil means latest block
-	Addresses []common.Address // restricts matches to events created by specific contracts
+	BlockHash *common.Hash     `json:"blockHash"` // used by eth_getLogs, return logs only from block with this hash
+	FromBlock *BlockNumber     `json:"fromBlock"` // beginning of the queried range, nil means latest block
+	ToBlock   *BlockNumber     `json:"toBlock"`   // end of the range, nil means latest block
+	Addresses []common.Address `json:"address"`   // restricts matches to events created by specific contracts
 
 	// The Topic list restricts matches to particular event topics. Each event has a list
 	// of topics. Topics matches a prefix of that list. An empty element slice matches any
@@ -26,7 +26,8 @@ type FilterQuery struct {
 	// {{}, {B}}          matches any topic in first position AND B in second position
 	// {{A}, {B}}         matches topic A in first position AND B in second position
 	// {{A, B}, {C, D}}   matches topic (A OR B) in first position AND (C OR D) in second position
-	Topics [][]common.Hash
+	Topics [][]common.Hash `json:"topics"`
+	Limit  *uint           `json:"limit"`
 }
 
 func (args *FilterQuery) UnmarshalJSON(data []byte) error {

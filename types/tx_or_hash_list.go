@@ -6,39 +6,98 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-type TransactionOrHashList struct {
-	vtype        string
-	Transactions []Transaction
-	Hashes       []common.Hash
+type txListType string
+
+const (
+	TXLIST_TRANSACTION txListType = "transaction"
+	TXLIST_HASH        txListType = "hash"
+)
+
+type TxOrHashList struct {
+	vtype        txListType
+	transactions []Transaction
+	hashes       []common.Hash
 }
 
-func (l *TransactionOrHashList) UnmarshalJSON(data []byte) error {
+func NewTxOrHashList(isFull bool) *TxOrHashList {
+	l := TxOrHashList{}
+	l.vtype = TxListType(isFull)
+	return &l
+}
+
+func NewTxOrHashListByTxs(txs []Transaction) *TxOrHashList {
+	return &TxOrHashList{
+		vtype:        TXLIST_TRANSACTION,
+		transactions: txs,
+	}
+}
+
+func NewTxOrHashListByHashes(hashes []common.Hash) *TxOrHashList {
+	return &TxOrHashList{
+		vtype:  TXLIST_HASH,
+		hashes: hashes,
+	}
+}
+
+func TxListType(isFull bool) txListType {
+	if isFull {
+		return TXLIST_TRANSACTION
+	}
+	return TXLIST_HASH
+}
+
+func (l *TxOrHashList) Transactions() []Transaction {
+	return l.transactions
+}
+
+func (l *TxOrHashList) Hashes() []common.Hash {
+	return l.hashes
+}
+
+func (l *TxOrHashList) UnmarshalJSON(data []byte) error {
+
+	if l.vtype == TXLIST_TRANSACTION {
+		var txs []Transaction
+		e := json.Unmarshal(data, &txs)
+		l.transactions = txs
+		return e
+	}
+
+	if l.vtype == TXLIST_HASH {
+		var hashes []common.Hash
+		e := json.Unmarshal(data, &hashes)
+		l.hashes = hashes
+		return e
+	}
+
 	var txs []Transaction
-	if e := json.Unmarshal(data, &txs); e == nil {
-		l.Transactions = txs
-		l.vtype = "Transactions"
+	var e error
+	if e = json.Unmarshal(data, &txs); e == nil {
+		l.vtype = TXLIST_TRANSACTION
+		l.transactions = txs
 		return nil
 	}
+
 	var hashes []common.Hash
-	if e := json.Unmarshal(data, &hashes); e == nil {
-		l.Hashes = hashes
-		l.vtype = "Hashes"
+	if e = json.Unmarshal(data, &hashes); e == nil {
+		l.vtype = TXLIST_HASH
+		l.hashes = hashes
 		return nil
 	}
-	l.vtype = "None"
-	return nil
+
+	return e
 }
 
-func (l TransactionOrHashList) MarshalJSON() ([]byte, error) {
+func (l TxOrHashList) MarshalJSON() ([]byte, error) {
 	switch l.Type() {
-	case "Transactions":
-		return json.Marshal(l.Transactions)
-	case "Hashes":
-		return json.Marshal(l.Hashes)
+	case TXLIST_TRANSACTION:
+		return json.Marshal(l.transactions)
+	case TXLIST_HASH:
+		return json.Marshal(l.hashes)
 	}
 	return json.Marshal(nil)
 }
 
-func (l *TransactionOrHashList) Type() string {
+func (l *TxOrHashList) Type() txListType {
 	return l.vtype
 }

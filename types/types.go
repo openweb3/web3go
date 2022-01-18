@@ -27,10 +27,10 @@ type Block struct {
 	TotalDifficulty *hexutil.Big      `json:"totalDifficulty"` //un-include in GetUncleByBlockHashAndIndex and GetUncleByBlockNumberAndIndex
 
 	// Transactions type is []common.Hash when fullTx is false, otherwise []Transaction
-	Transactions     TransactionOrHashList `json:"transactions"`
-	TransactionsRoot common.Hash           `json:"transactionsRoot"`
-	Uncles           []common.Hash         `json:"uncles"`
-	Sha3Uncles       common.Hash           `json:"sha3Uncles"`
+	Transactions     TxOrHashList `json:"transactions"`
+	TransactionsRoot common.Hash     `json:"transactionsRoot"`
+	Uncles           []common.Hash   `json:"uncles"`
+	Sha3Uncles       common.Hash     `json:"sha3Uncles"`
 	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
 }
 
@@ -64,7 +64,7 @@ type Receipt struct {
 	EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           hexutil.Uint64  `json:"gasUsed"`
-	Logs              []*types.Log    `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
+	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
 	LogsBloom         types.Bloom     `json:"logsBloom"`
 	Root              *hexutil.Bytes  `json:"root"`   // when len(receipt.PostState) > 0
 	Status            *hexutil.Uint   `json:"status"` // when len(receipt.PostState) = 0
