@@ -1,6 +1,8 @@
 package web3go
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestClient(t *testing.T) {
 	client, err := NewClient("http://localhost:8545")
