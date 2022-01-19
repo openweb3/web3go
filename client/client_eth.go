@@ -1,6 +1,8 @@
 package client
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/openweb3/web3go/interfaces"
@@ -84,20 +86,23 @@ func (c *RpcEthClient) Accounts() (val []common.Address, err error) {
 }
 
 /// Returns highest block number.
-func (c *RpcEthClient) BlockNumber() (val *hexutil.Big, err error) {
-	err = c.core.Call(&val, "eth_blockNumber")
-	return
+func (c *RpcEthClient) BlockNumber() (val *big.Int, err error) {
+	var _val *hexutil.Big
+	err = c.core.Call(&_val, "eth_blockNumber")
+	return (*big.Int)(_val), err
 }
 
 /// Returns balance of the given account.
-func (c *RpcEthClient) Balance(addr common.Address, block *types.BlockNumber) (val *hexutil.Big, err error) {
-	err = c.core.Call(&val, "eth_getBalance", addr, block)
-	return
+func (c *RpcEthClient) Balance(addr common.Address, block *types.BlockNumber) (val *big.Int, err error) {
+	var _val *hexutil.Big
+	err = c.core.Call(&_val, "eth_getBalance", addr, block)
+	return (*big.Int)(_val), err
 }
 
 /// Returns content of the storage at given address.
-func (c *RpcEthClient) StorageAt(addr common.Address, location *hexutil.Big, block *types.BlockNumber) (val common.Hash, err error) {
-	err = c.core.Call(&val, "eth_getStorageAt", addr, location, block)
+func (c *RpcEthClient) StorageAt(addr common.Address, location *big.Int, block *types.BlockNumber) (val common.Hash, err error) {
+	_location := (*hexutil.Big)(location)
+	err = c.core.Call(&val, "eth_getStorageAt", addr, _location, block)
 	return
 }
 
