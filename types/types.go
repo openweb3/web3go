@@ -1,6 +1,10 @@
 package types
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -27,10 +31,10 @@ type Block struct {
 	TotalDifficulty *hexutil.Big      `json:"totalDifficulty"` //un-include in GetUncleByBlockHashAndIndex and GetUncleByBlockNumberAndIndex
 
 	// Transactions type is []common.Hash when fullTx is false, otherwise []Transaction
-	Transactions     TxOrHashList `json:"transactions"`
-	TransactionsRoot common.Hash     `json:"transactionsRoot"`
-	Uncles           []common.Hash   `json:"uncles"`
-	Sha3Uncles       common.Hash     `json:"sha3Uncles"`
+	Transactions     TxOrHashList  `json:"transactions"`
+	TransactionsRoot common.Hash   `json:"transactionsRoot"`
+	Uncles           []common.Hash `json:"uncles"`
+	Sha3Uncles       common.Hash   `json:"sha3Uncles"`
 	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
 }
 
@@ -90,11 +94,24 @@ type CallRequest struct {
 	// "input" is the newer name and should be preferred by clients.
 	// Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
 	Data  *hexutil.Bytes `json:"data"`
-	Input *hexutil.Bytes `json:"input"` //+ *v if data!=input throw, else set empty field value by filled field
+	Input *hexutil.Bytes `json:"input,omitempty"` //+ *v if data!=input throw, else set empty field value by filled field
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`
 	ChainID    *hexutil.Big      `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
+}
+
+func (c CallRequest) MarshalJSON() ([]byte, error) {
+	if c.Input != nil && c.Data != nil && !bytes.Equal(*c.Input, *c.Data) {
+		return nil, fmt.Errorf("both 'input' and 'data' provided but not same")
+	}
+	if c.Input != nil {
+		c.Data = c.Input
+		c.Input = nil
+	}
+
+	type tmpCallRequest CallRequest
+	return json.Marshal(tmpCallRequest(c))
 }
 
 type Log struct {
