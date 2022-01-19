@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -42,4 +43,25 @@ func TestUnmarshalHexbytesInStruct(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
+}
+
+func TestMarshalSlice(t *testing.T) {
+	var a []string
+	a[0] = "a"
+	fmt.Printf("%v\n", reflect.TypeOf(a).Kind())
+	j, e := json.Marshal(a)
+	if e != nil {
+		t.Fatal(e)
+	}
+	fmt.Print(string(j))
+
+	type sWithSlice struct {
+		S []string `json:"s"`
+	}
+
+	j, e = json.Marshal(sWithSlice{})
+	if e != nil {
+		t.Fatal(e)
+	}
+	fmt.Print(string(j))
 }
