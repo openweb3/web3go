@@ -6,20 +6,56 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"gotest.tools/assert"
 )
 
 func TestUnMarshalCallRequest(t *testing.T) {
-	cr := CallRequest{
-		Data: nil,
-	}
-	b, e := json.Marshal(cr)
-	if e != nil {
-		t.Fatal(e)
+	goods := []CallRequest{
+		{
+			Data: nil,
+		},
+		{
+			Input: nil,
+		},
+		{
+			Data:  &hexutil.Bytes{0x1, 0x2, 0x3},
+			Input: nil,
+		},
+		{
+			Data:  nil,
+			Input: &hexutil.Bytes{0x1, 0x2, 0x3},
+		},
 	}
 
-	e = json.Unmarshal(b, &cr)
-	if e != nil {
-		t.Fatal(e)
+	for _, item := range goods {
+		b, e := json.Marshal(item)
+		if e != nil {
+			t.Fatal(e)
+		}
+		fmt.Printf("marshaled %s\n", b)
+
+		item = CallRequest{}
+		e = json.Unmarshal(b, &item)
+		if e != nil {
+			t.Fatal(e)
+		}
+		fmt.Printf("unmarshaled %+v\n", item)
+
+		assert.Equal(t, item.Input, (*hexutil.Bytes)(nil))
+	}
+
+	bads := []CallRequest{
+		{
+			Data:  &hexutil.Bytes{0x1, 0x2},
+			Input: &hexutil.Bytes{0x1, 0x2, 0x3},
+		},
+	}
+
+	for _, item := range bads {
+		_, e := json.Marshal(item)
+		if e == nil {
+			t.Fatalf("expected error, got nil")
+		}
 	}
 
 }
