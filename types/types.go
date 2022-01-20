@@ -61,6 +61,7 @@ type blockMarshaling struct {
 	TransactionsRoot common.Hash   `json:"transactionsRoot"`
 	Uncles           []common.Hash `json:"uncles"`
 	Sha3Uncles       common.Hash   `json:"sha3Uncles"`
+	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
 }
 
 //go:generate gencodec -type Transaction -field-override transactionMarshaling -out gen_transaction_json.go
@@ -144,8 +145,6 @@ type receiptMarshaling struct {
 	Type              hexutil.Uint    `json:"type"`
 }
 
-//go:generate gencodec -type CallRequest -field-override callRequestMarshaling -out gen_callrequest_json.go
-
 // CallRequest represents the arguments to construct a new transaction
 // or a message call.
 type CallRequest struct {
@@ -183,15 +182,27 @@ type callRequestMarshaling struct {
 	// "input" is the newer name and should be preferred by clients.
 	// Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
 	Data  *hexutil.Bytes `json:"data"`
-	Input *hexutil.Bytes `json:"input"` //+ *v if data!=input throw, else set empty field value by filled field
+	Input *hexutil.Bytes `json:"input,omitempty"` //+ *v if data!=input throw, else set empty field value by filled field
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`
 	ChainID    *hexutil.Big      `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
 }
 
-//go:generate gencodec -type Log -field-override logMarshaling -out gen_log_json.go
+// func (c CallRequest) MarshalJSON() ([]byte, error) {
+// 	if c.Input != nil && c.Data != nil && !bytes.Equal(*c.Input, *c.Data) {
+// 		return nil, fmt.Errorf("both 'input' and 'data' provided but not same")
+// 	}
+// 	if c.Input != nil {
+// 		c.Data = c.Input
+// 		c.Input = nil
+// 	}
 
+// 	type tmpCallRequest CallRequest
+// 	return json.Marshal(tmpCallRequest(c))
+// }
+
+//go:generate gencodec -type Log -field-override logMarshaling -out gen_log_json.go
 type Log struct {
 	Address             common.Address `json:"address"`
 	BlockHash           common.Hash    `json:"blockHash"`
