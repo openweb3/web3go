@@ -47,7 +47,6 @@ func TestUnmarshalHexbytesInStruct(t *testing.T) {
 
 func TestMarshalSlice(t *testing.T) {
 	var a []string
-	a[0] = "a"
 	fmt.Printf("%v\n", reflect.TypeOf(a).Kind())
 	j, e := json.Marshal(a)
 	if e != nil {
@@ -57,6 +56,7 @@ func TestMarshalSlice(t *testing.T) {
 
 	type sWithSlice struct {
 		S []string `json:"s"`
+		B []byte   `json:"b"`
 	}
 
 	j, e = json.Marshal(sWithSlice{})
