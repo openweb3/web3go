@@ -182,8 +182,8 @@ type callRequestMarshaling struct {
 	// We accept "data" and "input" for backwards-compatibility reasons.
 	// "input" is the newer name and should be preferred by clients.
 	// Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
-	Data  hexutil.Bytes `json:"data"`
-	Input hexutil.Bytes `json:"input"` //+ *v if data!=input throw, else set empty field value by filled field
+	Data  *hexutil.Bytes `json:"data"`
+	Input *hexutil.Bytes `json:"input"` //+ *v if data!=input throw, else set empty field value by filled field
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`
