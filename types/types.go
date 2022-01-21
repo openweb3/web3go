@@ -66,25 +66,29 @@ type blockMarshaling struct {
 
 //go:generate gencodec -type Transaction -field-override transactionMarshaling -out gen_transaction_json.go
 type Transaction struct {
-	Accesses             types.AccessList `json:"accessList,omitempty"`
-	BlockHash            *common.Hash     `json:"blockHash"`
-	BlockNumber          *big.Int         `json:"blockNumber"`
-	ChainID              *big.Int         `json:"chainId,omitempty"`
-	From                 common.Address   `json:"from"`
-	Gas                  uint64           `json:"gas"                            gencodec:"required"`
-	GasPrice             *big.Int         `json:"gasPrice"`
-	Hash                 common.Hash      `json:"hash"`
-	Input                hexutil.Bytes    `json:"input"                          gencodec:"required"`
-	MaxFeePerGas         *big.Int         `json:"maxFeePerGas,omitempty"`
-	MaxPriorityFeePerGas *big.Int         `json:"maxPriorityFeePerGas,omitempty"`
-	Nonce                uint64           `json:"nonce"                          gencodec:"required"`
-	R                    *big.Int         `json:"r"                              gencodec:"required"`
-	S                    *big.Int         `json:"s"                              gencodec:"required"`
-	To                   *common.Address  `json:"to" rlp:"nil"`
-	TransactionIndex     *uint64          `json:"transactionIndex"`
-	Type                 uint64           `json:"type"`
-	V                    *big.Int         `json:"v"                              gencodec:"required"`
-	Value                *big.Int         `json:"value"                          gencodec:"required"`
+	Accesses    types.AccessList `json:"accessList,omitempty"`
+	BlockHash   *common.Hash     `json:"blockHash"`
+	BlockNumber *big.Int         `json:"blockNumber"`
+	ChainID     *big.Int         `json:"chainId,omitempty"`
+	// Creates not guarantee to be valid, it's valid for parity node but not geth node
+	Creates              *common.Address `json:"creates,omitempty"`
+	From                 common.Address  `json:"from"`
+	Gas                  uint64          `json:"gas"                            gencodec:"required"`
+	GasPrice             *big.Int        `json:"gasPrice"`
+	Hash                 common.Hash     `json:"hash"`
+	Input                hexutil.Bytes   `json:"input"                          gencodec:"required"`
+	MaxFeePerGas         *big.Int        `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *big.Int        `json:"maxPriorityFeePerGas,omitempty"`
+	Nonce                uint64          `json:"nonce"                          gencodec:"required"`
+	R                    *big.Int        `json:"r"                              gencodec:"required"`
+	S                    *big.Int        `json:"s"                              gencodec:"required"`
+	// Status not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
+	Status           *uint64         `json:"status,omitempty"`
+	To               *common.Address `json:"to" rlp:"nil"`
+	TransactionIndex *uint64         `json:"transactionIndex"`
+	Type             uint64          `json:"type"`
+	V                *big.Int        `json:"v"                              gencodec:"required"`
+	Value            *big.Int        `json:"value"                          gencodec:"required"`
 }
 
 type transactionMarshaling struct {
@@ -189,19 +193,6 @@ type callRequestMarshaling struct {
 	ChainID    *hexutil.Big      `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
 }
 
-// func (c CallRequest) MarshalJSON() ([]byte, error) {
-// 	if c.Input != nil && c.Data != nil && !bytes.Equal(*c.Input, *c.Data) {
-// 		return nil, fmt.Errorf("both 'input' and 'data' provided but not same")
-// 	}
-// 	if c.Input != nil {
-// 		c.Data = c.Input
-// 		c.Input = nil
-// 	}
-
-// 	type tmpCallRequest CallRequest
-// 	return json.Marshal(tmpCallRequest(c))
-// }
-
 //go:generate gencodec -type Log -field-override logMarshaling -out gen_log_json.go
 type Log struct {
 	Address             common.Address `json:"address"`
@@ -214,7 +205,7 @@ type Log struct {
 	Topics              []common.Hash  `json:"topics"`
 	TxHash              common.Hash    `json:"transactionHash"`
 	TxIndex             uint           `json:"transactionIndex"`
-	TransactionLogIndex *big.Int       `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
+	TransactionLogIndex *uint          `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
 }
 
 type logMarshaling struct {
@@ -228,7 +219,7 @@ type logMarshaling struct {
 	Topics              []common.Hash  `json:"topics"`
 	TxHash              common.Hash    `json:"transactionHash"`
 	TxIndex             hexutil.Uint   `json:"transactionIndex"`
-	TransactionLogIndex *hexutil.Big   `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
+	TransactionLogIndex *hexutil.Uint  `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
 }
 
 // type Log = types.Log

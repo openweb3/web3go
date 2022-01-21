@@ -4,7 +4,6 @@ package types
 
 import (
 	"encoding/json"
-	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -25,7 +24,7 @@ func (l Log) MarshalJSON() ([]byte, error) {
 		Topics              []common.Hash  `json:"topics"`
 		TxHash              common.Hash    `json:"transactionHash"`
 		TxIndex             hexutil.Uint   `json:"transactionIndex"`
-		TransactionLogIndex *hexutil.Big   `json:"transactionLogIndex,omitempty"`
+		TransactionLogIndex *hexutil.Uint  `json:"transactionLogIndex,omitempty"`
 	}
 	var enc Log
 	enc.Address = l.Address
@@ -38,7 +37,7 @@ func (l Log) MarshalJSON() ([]byte, error) {
 	enc.Topics = l.Topics
 	enc.TxHash = l.TxHash
 	enc.TxIndex = hexutil.Uint(l.TxIndex)
-	enc.TransactionLogIndex = (*hexutil.Big)(l.TransactionLogIndex)
+	enc.TransactionLogIndex = (*hexutil.Uint)(l.TransactionLogIndex)
 	return json.Marshal(&enc)
 }
 
@@ -55,7 +54,7 @@ func (l *Log) UnmarshalJSON(input []byte) error {
 		Topics              []common.Hash   `json:"topics"`
 		TxHash              *common.Hash    `json:"transactionHash"`
 		TxIndex             *hexutil.Uint   `json:"transactionIndex"`
-		TransactionLogIndex *hexutil.Big    `json:"transactionLogIndex,omitempty"`
+		TransactionLogIndex *hexutil.Uint   `json:"transactionLogIndex,omitempty"`
 	}
 	var dec Log
 	if err := json.Unmarshal(input, &dec); err != nil {
@@ -92,7 +91,7 @@ func (l *Log) UnmarshalJSON(input []byte) error {
 		l.TxIndex = uint(*dec.TxIndex)
 	}
 	if dec.TransactionLogIndex != nil {
-		l.TransactionLogIndex = (*big.Int)(dec.TransactionLogIndex)
+		l.TransactionLogIndex = (*uint)(dec.TransactionLogIndex)
 	}
 	return nil
 }

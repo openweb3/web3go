@@ -21,6 +21,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 		BlockHash            *common.Hash     `json:"blockHash"`
 		BlockNumber          *hexutil.Big     `json:"blockNumber"`
 		ChainID              *hexutil.Big     `json:"chainId,omitempty"`
+		Creates              *common.Address  `json:"creates,omitempty"`
 		From                 common.Address   `json:"from"`
 		Gas                  hexutil.Uint64   `json:"gas"                            gencodec:"required"`
 		GasPrice             *hexutil.Big     `json:"gasPrice"`
@@ -31,6 +32,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 		Nonce                hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
 		R                    *hexutil.Big     `json:"r"                              gencodec:"required"`
 		S                    *hexutil.Big     `json:"s"                              gencodec:"required"`
+		Status               *uint64          `json:"status,omitempty"`
 		To                   *common.Address  `json:"to" rlp:"nil"`
 		TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
 		Type                 hexutil.Uint64   `json:"type"`
@@ -42,6 +44,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 	enc.BlockHash = t.BlockHash
 	enc.BlockNumber = (*hexutil.Big)(t.BlockNumber)
 	enc.ChainID = (*hexutil.Big)(t.ChainID)
+	enc.Creates = t.Creates
 	enc.From = t.From
 	enc.Gas = hexutil.Uint64(t.Gas)
 	enc.GasPrice = (*hexutil.Big)(t.GasPrice)
@@ -52,6 +55,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 	enc.Nonce = hexutil.Uint64(t.Nonce)
 	enc.R = (*hexutil.Big)(t.R)
 	enc.S = (*hexutil.Big)(t.S)
+	enc.Status = t.Status
 	enc.To = t.To
 	enc.TransactionIndex = (*hexutil.Uint64)(t.TransactionIndex)
 	enc.Type = hexutil.Uint64(t.Type)
@@ -67,6 +71,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		BlockHash            *common.Hash      `json:"blockHash"`
 		BlockNumber          *hexutil.Big      `json:"blockNumber"`
 		ChainID              *hexutil.Big      `json:"chainId,omitempty"`
+		Creates              *common.Address   `json:"creates,omitempty"`
 		From                 *common.Address   `json:"from"`
 		Gas                  *hexutil.Uint64   `json:"gas"                            gencodec:"required"`
 		GasPrice             *hexutil.Big      `json:"gasPrice"`
@@ -77,6 +82,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		Nonce                *hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
 		R                    *hexutil.Big      `json:"r"                              gencodec:"required"`
 		S                    *hexutil.Big      `json:"s"                              gencodec:"required"`
+		Status               *uint64           `json:"status,omitempty"`
 		To                   *common.Address   `json:"to" rlp:"nil"`
 		TransactionIndex     *hexutil.Uint64   `json:"transactionIndex"`
 		Type                 *hexutil.Uint64   `json:"type"`
@@ -98,6 +104,9 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 	}
 	if dec.ChainID != nil {
 		t.ChainID = (*big.Int)(dec.ChainID)
+	}
+	if dec.Creates != nil {
+		t.Creates = dec.Creates
 	}
 	if dec.From != nil {
 		t.From = *dec.From
@@ -134,6 +143,9 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		return errors.New("missing required field 's' for Transaction")
 	}
 	t.S = (*big.Int)(dec.S)
+	if dec.Status != nil {
+		t.Status = dec.Status
+	}
 	if dec.To != nil {
 		t.To = dec.To
 	}
