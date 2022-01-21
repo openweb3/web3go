@@ -29,6 +29,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		To                *common.Address `json:"to"`
 		TransactionHash   common.Hash     `json:"transactionHash"`
 		TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`
+		TxExecErrorMsg    *string         `json:"txExecErrorMsg"`
 		Type              hexutil.Uint    `json:"type"`
 	}
 	var enc Receipt
@@ -46,6 +47,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 	enc.To = r.To
 	enc.TransactionHash = r.TransactionHash
 	enc.TransactionIndex = hexutil.Uint64(r.TransactionIndex)
+	enc.TxExecErrorMsg = r.TxExecErrorMsg
 	enc.Type = hexutil.Uint(r.Type)
 	return json.Marshal(&enc)
 }
@@ -67,6 +69,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		To                *common.Address `json:"to"`
 		TransactionHash   *common.Hash    `json:"transactionHash"`
 		TransactionIndex  *hexutil.Uint64 `json:"transactionIndex"`
+		TxExecErrorMsg    *string         `json:"txExecErrorMsg"`
 		Type              *hexutil.Uint   `json:"type"`
 	}
 	var dec Receipt
@@ -114,6 +117,9 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 	}
 	if dec.TransactionIndex != nil {
 		r.TransactionIndex = uint64(*dec.TransactionIndex)
+	}
+	if dec.TxExecErrorMsg != nil {
+		r.TxExecErrorMsg = dec.TxExecErrorMsg
 	}
 	if dec.Type != nil {
 		r.Type = uint(*dec.Type)
