@@ -1,12 +1,13 @@
 package types
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"gotest.tools/assert"
 )
 
 func TestUnMarshalCallRequest(t *testing.T) {
@@ -18,12 +19,12 @@ func TestUnMarshalCallRequest(t *testing.T) {
 			Input: nil,
 		},
 		{
-			Data:  &hexutil.Bytes{0x1, 0x2, 0x3},
+			Data:  []byte{0x1, 0x2, 0x3},
 			Input: nil,
 		},
 		{
 			Data:  nil,
-			Input: &hexutil.Bytes{0x1, 0x2, 0x3},
+			Input: []byte{0x1, 0x2, 0x3},
 		},
 	}
 
@@ -41,13 +42,16 @@ func TestUnMarshalCallRequest(t *testing.T) {
 		}
 		fmt.Printf("unmarshaled %+v\n", item)
 
-		assert.Equal(t, item.Input, (*hexutil.Bytes)(nil))
+		// assert.Equal(t, item.Input, ([]byte)(nil))
+		if !bytes.Equal(item.Input, ([]byte)(nil)) {
+			t.Fatal("item.Input not nil")
+		}
 	}
 
 	bads := []CallRequest{
 		{
-			Data:  &hexutil.Bytes{0x1, 0x2},
-			Input: &hexutil.Bytes{0x1, 0x2, 0x3},
+			Data:  []byte{0x1, 0x2},
+			Input: []byte{0x1, 0x2, 0x3},
 		},
 	}
 
@@ -78,4 +82,25 @@ func TestUnmarshalHexbytesInStruct(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
+}
+
+func TestMarshalSlice(t *testing.T) {
+	var a []string
+	fmt.Printf("%v\n", reflect.TypeOf(a).Kind())
+	j, e := json.Marshal(a)
+	if e != nil {
+		t.Fatal(e)
+	}
+	fmt.Print(string(j))
+
+	type sWithSlice struct {
+		S []string `json:"s"`
+		B []byte   `json:"b"`
+	}
+
+	j, e = json.Marshal(sWithSlice{})
+	if e != nil {
+		t.Fatal(e)
+	}
+	fmt.Print(string(j))
 }
