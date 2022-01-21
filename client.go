@@ -11,7 +11,7 @@ import (
 
 // Client defines typed wrappers for the Ethereum RPC API.
 type Client struct {
-	c   interfaces.RpcProvider
+	c   interfaces.Provider
 	Eth *client.RpcEthClient
 }
 
