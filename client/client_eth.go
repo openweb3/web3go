@@ -10,14 +10,15 @@ import (
 )
 
 type RpcEthClient struct {
-	core interfaces.RpcProvider
+	core interfaces.Provider
 }
 
-func NewRpcEthClient(provider interfaces.RpcProvider) *RpcEthClient {
+func NewRpcEthClient(provider interfaces.Provider) *RpcEthClient {
 	return &RpcEthClient{
 		core: provider,
 	}
 }
+
 func (c *RpcEthClient) ClientVersion() (val string, err error) {
 	err = c.core.Call(&val, "web3_clientVersion")
 	return

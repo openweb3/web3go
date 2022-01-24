@@ -6,7 +6,7 @@ import (
 	"github.com/Conflux-Chain/go-conflux-sdk/rpc"
 )
 
-type RpcProvider interface {
+type Provider interface {
 	Call(resultPtr interface{}, method string, args ...interface{}) error
 	CallContext(ctx context.Context, result interface{}, method string, args ...interface{}) error
 	BatchCall(b []rpc.BatchElem) error
