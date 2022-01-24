@@ -35,10 +35,7 @@ func NewClientWithOption(rawurl string, option *ClientOption) (*Client, error) {
 		return nil, err
 	}
 
-	if option == nil {
-		defaults.SetDefaults(&option)
-	}
-
+	defaults.SetDefaults(option)
 	p := wrapProvider(c, option)
 
 	eth := client.NewRpcEthClient(p)
