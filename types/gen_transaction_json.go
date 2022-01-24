@@ -32,7 +32,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 		Nonce                hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
 		R                    *hexutil.Big     `json:"r"                              gencodec:"required"`
 		S                    *hexutil.Big     `json:"s"                              gencodec:"required"`
-		Status               *uint            `json:"status,omitempty"`
+		Status               *hexutil.Uint64  `json:"status,omitempty"`
 		To                   *common.Address  `json:"to" rlp:"nil"`
 		TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
 		Type                 hexutil.Uint64   `json:"type"`
@@ -55,7 +55,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 	enc.Nonce = hexutil.Uint64(t.Nonce)
 	enc.R = (*hexutil.Big)(t.R)
 	enc.S = (*hexutil.Big)(t.S)
-	enc.Status = t.Status
+	enc.Status = (*hexutil.Uint64)(t.Status)
 	enc.To = t.To
 	enc.TransactionIndex = (*hexutil.Uint64)(t.TransactionIndex)
 	enc.Type = hexutil.Uint64(t.Type)
@@ -82,7 +82,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		Nonce                *hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
 		R                    *hexutil.Big      `json:"r"                              gencodec:"required"`
 		S                    *hexutil.Big      `json:"s"                              gencodec:"required"`
-		Status               *uint             `json:"status,omitempty"`
+		Status               *hexutil.Uint64   `json:"status,omitempty"`
 		To                   *common.Address   `json:"to" rlp:"nil"`
 		TransactionIndex     *hexutil.Uint64   `json:"transactionIndex"`
 		Type                 *hexutil.Uint64   `json:"type"`
@@ -144,7 +144,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 	}
 	t.S = (*big.Int)(dec.S)
 	if dec.Status != nil {
-		t.Status = dec.Status
+		t.Status = (*uint64)(dec.Status)
 	}
 	if dec.To != nil {
 		t.To = dec.To
