@@ -83,7 +83,7 @@ type Transaction struct {
 	R                    *big.Int        `json:"r"                              gencodec:"required"`
 	S                    *big.Int        `json:"s"                              gencodec:"required"`
 	// Status not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
-	Status           *uint64         `json:"status,omitempty"`
+	Status           *uint           `json:"status,omitempty"`
 	To               *common.Address `json:"to" rlp:"nil"`
 	TransactionIndex *uint64         `json:"transactionIndex"`
 	Type             uint64          `json:"type"`

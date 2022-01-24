@@ -32,7 +32,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 		Nonce                hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
 		R                    *hexutil.Big     `json:"r"                              gencodec:"required"`
 		S                    *hexutil.Big     `json:"s"                              gencodec:"required"`
-		Status               *uint64          `json:"status,omitempty"`
+		Status               *uint            `json:"status,omitempty"`
 		To                   *common.Address  `json:"to" rlp:"nil"`
 		TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
 		Type                 hexutil.Uint64   `json:"type"`
@@ -82,7 +82,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		Nonce                *hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
 		R                    *hexutil.Big      `json:"r"                              gencodec:"required"`
 		S                    *hexutil.Big      `json:"s"                              gencodec:"required"`
-		Status               *uint64           `json:"status,omitempty"`
+		Status               *uint             `json:"status,omitempty"`
 		To                   *common.Address   `json:"to" rlp:"nil"`
 		TransactionIndex     *hexutil.Uint64   `json:"transactionIndex"`
 		Type                 *hexutil.Uint64   `json:"type"`
