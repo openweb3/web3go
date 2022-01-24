@@ -83,7 +83,7 @@ type Transaction struct {
 	R                    *big.Int        `json:"r"                              gencodec:"required"`
 	S                    *big.Int        `json:"s"                              gencodec:"required"`
 	// Status not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
-	Status           *uint           `json:"status,omitempty"`
+	Status           *uint64         `json:"status,omitempty"`
 	To               *common.Address `json:"to" rlp:"nil"`
 	TransactionIndex *uint64         `json:"transactionIndex"`
 	Type             uint64          `json:"type"`
@@ -96,6 +96,7 @@ type transactionMarshaling struct {
 	BlockHash            *common.Hash     `json:"blockHash"`
 	BlockNumber          *hexutil.Big     `json:"blockNumber"`
 	ChainID              *hexutil.Big     `json:"chainId,omitempty"`
+	Creates              *common.Address  `json:"creates,omitempty"`
 	From                 common.Address   `json:"from"`
 	Gas                  hexutil.Uint64   `json:"gas"`
 	GasPrice             *hexutil.Big     `json:"gasPrice"`
@@ -106,6 +107,7 @@ type transactionMarshaling struct {
 	Nonce                hexutil.Uint64   `json:"nonce"`
 	R                    *hexutil.Big     `json:"r"`
 	S                    *hexutil.Big     `json:"s"`
+	Status               *hexutil.Uint64  `json:"status,omitempty"`
 	To                   *common.Address  `json:"to"`
 	TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
 	Type                 hexutil.Uint64   `json:"type"`
@@ -125,7 +127,7 @@ type Receipt struct {
 	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
 	LogsBloom         types.Bloom     `json:"logsBloom"`
 	Root              []byte          `json:"root"`   // when len(receipt.PostState) > 0
-	Status            uint            `json:"status"` // when len(receipt.PostState) = 0
+	Status            uint64          `json:"status"` // when len(receipt.PostState) = 0
 	To                *common.Address `json:"to"`
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  uint64          `json:"transactionIndex"`
@@ -144,10 +146,11 @@ type receiptMarshaling struct {
 	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
 	LogsBloom         types.Bloom     `json:"logsBloom"`
 	Root              hexutil.Bytes   `json:"root"`   // when len(receipt.PostState) > 0
-	Status            hexutil.Uint    `json:"status"` // when len(receipt.PostState) = 0
+	Status            hexutil.Uint64  `json:"status"` // when len(receipt.PostState) = 0
 	To                *common.Address `json:"to"`
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`
+	TxExecErrorMsg    *string         `json:"txExecErrorMsg"`
 	Type              hexutil.Uint    `json:"type"`
 }
 
