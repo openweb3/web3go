@@ -1,6 +1,8 @@
 package web3go
 
-import "time"
+import (
+	"time"
+)
 
 // ClientOption for set keystore path and flags for retry
 type ClientOption struct {
@@ -22,3 +24,7 @@ func (o *ClientOption) WithTimout(requestTimeout time.Duration) *ClientOption {
 	o.RequestTimeout = requestTimeout
 	return o
 }
+
+// func (o *ClientOption) WrapProvider(provider interfaces.Provider) *providers.MiddlewarableProvider {
+// 	retryProvider := providers.NewRetriableProvider(provider, o.RetryCount, o.RetryInterval)
+// }

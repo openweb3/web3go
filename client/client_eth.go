@@ -18,6 +18,7 @@ func NewRpcEthClient(provider interfaces.Provider) *RpcEthClient {
 		core: provider,
 	}
 }
+
 func (c *RpcEthClient) ClientVersion() (val string, err error) {
 	err = c.core.Call(&val, "web3_clientVersion")
 	return
