@@ -17,7 +17,7 @@ create client with retry and timeout options, it will retry when call/batchcall 
 ```
 create client with provider
 ```golang
-    p, e := providers.NewBaseProvider(context.Background(), "http://localhost:8545")
+	p, e := providers.NewBaseProvider(context.Background(), "http://localhost:8545")
 	if e != nil {
 		return e
 	}
