@@ -3,7 +3,6 @@ package web3go
 import (
 	"context"
 
-	"github.com/Conflux-Chain/go-conflux-sdk/rpc"
 	"github.com/mcuadros/go-defaults"
 	client "github.com/openweb3/web3go/client"
 	"github.com/openweb3/web3go/interfaces"
@@ -19,29 +18,47 @@ type Client struct {
 }
 
 func NewClient(rawurl string) (*Client, error) {
-	c, err := rpc.DialContext(context.Background(), rawurl)
+	p, err := providers.NewBaseProvider(context.Background(), rawurl)
 	if err != nil {
 		return nil, err
 	}
-	eth := client.NewRpcEthClient(c)
-	ec := &Client{c, nil, eth}
 
+	ec := NewClientWithProvider(p)
 	return ec, nil
 }
 
 func NewClientWithOption(rawurl string, option *ClientOption) (*Client, error) {
-	c, err := rpc.DialContext(context.Background(), rawurl)
+	p, err := providers.NewBaseProvider(context.Background(), rawurl)
 	if err != nil {
 		return nil, err
 	}
 
-	defaults.SetDefaults(option)
-	p := wrapProvider(c, option)
+	if option == nil {
+		option = &ClientOption{}
+	}
 
-	eth := client.NewRpcEthClient(p)
-	ec := &Client{c, nil, eth}
+	defaults.SetDefaults(option)
+	p = wrapProvider(p, option)
+
+	ec := NewClientWithProvider(p)
+	ec.option = option
 
 	return ec, nil
+}
+
+func NewClientWithProvider(p interfaces.Provider) *Client {
+	c := &Client{}
+	c.SetProvider(p)
+	return c
+}
+
+func (c *Client) SetProvider(p interfaces.Provider) {
+	c.provider = p
+	c.Eth = client.NewRpcEthClient(p)
+}
+
+func (c *Client) Provider() interfaces.Provider {
+	return c.provider
 }
 
 // wrapProvider wrap provider accroding to option
