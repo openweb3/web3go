@@ -39,13 +39,13 @@ func (c *RpcTraceClient) Transactions(transactionHash common.Hash) (val *[]types
 }
 
 /// Returns all traces produced at given block.
-func (c *RpcTraceClient) Blocks(blockNumber types.BlockNumber) (val *[]types.LocalizedTrace, err error) {
+func (c *RpcTraceClient) Blocks(blockNumber types.BlockNumberOrHash) (val *[]types.LocalizedTrace, err error) {
 	err = c.core.Call(&val, "trace_block", blockNumber)
 	return
 }
 
 /// Executes the given call and returns a number of possible traces for it.
-func (c *RpcTraceClient) Call(request types.CallRequest, options types.TraceOptions, blockNumber *types.BlockNumber) (val types.TraceResults, err error) {
+func (c *RpcTraceClient) Call(request types.CallRequest, options types.TraceOptions, blockNumber *types.BlockNumberOrHash) (val types.TraceResults, err error) {
 	err = c.core.Call(&val, "trace_call", request, options, blockNumber)
 	return
 }
@@ -60,7 +60,7 @@ func (c *RpcTraceClient) Call(request types.CallRequest, options types.TraceOpti
 // }
 
 /// Executes the given raw transaction and returns a number of possible traces for it.
-func (c *RpcTraceClient) RawTransaction(rawTransaction []byte, options types.TraceOptions, blockNumber *types.BlockNumber) (val types.TraceResults, err error) {
+func (c *RpcTraceClient) RawTransaction(rawTransaction []byte, options types.TraceOptions, blockNumber *types.BlockNumberOrHash) (val types.TraceResults, err error) {
 	_rawTransaction := (hexutil.Bytes)(rawTransaction)
 	err = c.core.Call(&val, "trace_rawTransaction", _rawTransaction, options, blockNumber)
 	return
@@ -73,7 +73,7 @@ func (c *RpcTraceClient) ReplayTransaction(transactionHash common.Hash, options 
 }
 
 /// Executes all the transactions at the given block and returns a number of possible traces for each transaction.
-func (c *RpcTraceClient) ReplayBlockTransactions(blockNumber types.BlockNumber, options types.TraceOptions) (val []types.TraceResultsWithTransactionHash, err error) {
+func (c *RpcTraceClient) ReplayBlockTransactions(blockNumber types.BlockNumberOrHash, options types.TraceOptions) (val []types.TraceResultsWithTransactionHash, err error) {
 	err = c.core.Call(&val, "trace_replayBlockTransactions", blockNumber, options)
 	return
 }

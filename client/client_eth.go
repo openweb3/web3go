@@ -102,7 +102,7 @@ func (c *RpcEthClient) BlockNumber() (val *big.Int, err error) {
 }
 
 /// Returns balance of the given account.
-func (c *RpcEthClient) Balance(addr common.Address, block *types.BlockNumber) (val *big.Int, err error) {
+func (c *RpcEthClient) Balance(addr common.Address, block *types.BlockNumberOrHash) (val *big.Int, err error) {
 	var _val *hexutil.Big
 	err = c.core.Call(&_val, "eth_getBalance", addr, block)
 	val = (*big.Int)(_val)
@@ -110,7 +110,7 @@ func (c *RpcEthClient) Balance(addr common.Address, block *types.BlockNumber) (v
 }
 
 /// Returns content of the storage at given address.
-func (c *RpcEthClient) StorageAt(addr common.Address, location *big.Int, block *types.BlockNumber) (val common.Hash, err error) {
+func (c *RpcEthClient) StorageAt(addr common.Address, location *big.Int, block *types.BlockNumberOrHash) (val common.Hash, err error) {
 	_location := (*hexutil.Big)(location)
 	err = c.core.Call(&val, "eth_getStorageAt", addr, _location, block)
 	return
@@ -134,7 +134,7 @@ func (c *RpcEthClient) BlockByNumber(blockNumber types.BlockNumber, isFull bool)
 
 /// Returns the number of transactions sent from given address at given time
 /// (block number).
-func (c *RpcEthClient) TransactionCount(addr common.Address, blockNum *types.BlockNumber) (val *big.Int, err error) {
+func (c *RpcEthClient) TransactionCount(addr common.Address, blockNum *types.BlockNumberOrHash) (val *big.Int, err error) {
 	var _val *hexutil.Big
 	err = c.core.Call(&_val, "eth_getTransactionCount", addr, blockNum)
 	val = (*big.Int)(_val)
@@ -174,7 +174,7 @@ func (c *RpcEthClient) BlockUnclesCountByNumber(blockNum types.BlockNumber) (val
 }
 
 /// Returns the code at given address at given time (block number).
-func (c *RpcEthClient) CodeAt(addr common.Address, blockNum *types.BlockNumber) (val []byte, err error) {
+func (c *RpcEthClient) CodeAt(addr common.Address, blockNum *types.BlockNumberOrHash) (val []byte, err error) {
 	var _val hexutil.Bytes
 	err = c.core.Call(&_val, "eth_getCode", addr, blockNum)
 	val = ([]byte)(_val)
@@ -196,7 +196,7 @@ func (c *RpcEthClient) SubmitTransaction(rawTx []byte) (val common.Hash, err err
 }
 
 /// Call contract, returning the output data.
-func (c *RpcEthClient) Call(callRequest types.CallRequest, blockNum *types.BlockNumber) (val []byte, err error) {
+func (c *RpcEthClient) Call(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash) (val []byte, err error) {
 	var _val hexutil.Bytes
 	err = c.core.Call(&_val, "eth_call", callRequest, blockNum)
 	val = ([]byte)(_val)
@@ -204,7 +204,7 @@ func (c *RpcEthClient) Call(callRequest types.CallRequest, blockNum *types.Block
 }
 
 /// Estimate gas needed for execution of given contract.
-func (c *RpcEthClient) EstimateGas(callRequest types.CallRequest, blockNum *types.BlockNumber) (val *big.Int, err error) {
+func (c *RpcEthClient) EstimateGas(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash) (val *big.Int, err error) {
 	var _val *hexutil.Big
 	err = c.core.Call(&_val, "eth_estimateGas", callRequest, blockNum)
 	val = (*big.Int)(_val)

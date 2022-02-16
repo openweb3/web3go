@@ -227,5 +227,5 @@ type logMarshaling struct {
 	TransactionLogIndex *hexutil.Uint  `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
 }
 
-// type Log = types.Log
 type BlockNumber = ethrpctypes.BlockNumber
+type BlockNumberOrHash = ethrpctypes.BlockNumberOrHash
