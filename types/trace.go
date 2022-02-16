@@ -24,17 +24,17 @@ const (
 type Trace struct {
 	Type         TraceType   `json:"type"`
 	Action       interface{} `json:"action"`
-	Result       interface{} `json:"result"`
-	Error        string      `json:"error"`
+	Result       interface{} `json:"result,omitempty"`
+	Error        *string     `json:"error,omitempty"`
 	TraceAddress []uint      `json:"traceAddress"`
 	Subtraces    uint        `json:"subtraces"`
 }
 
 type LocalizedTrace struct {
-	Type                string       `json:"type"`
+	Type                TraceType    `json:"type"`
 	Action              interface{}  `json:"action"`
-	Result              interface{}  `json:"result"`
-	Error               string       `json:"error"`
+	Result              interface{}  `json:"result,omitempty"`
+	Error               *string      `json:"error,omitempty"`
 	TraceAddress        []uint       `json:"traceAddress"`
 	Subtraces           uint         `json:"subtraces"`
 	TransactionPosition *uint        `json:"transactionPosition"`
