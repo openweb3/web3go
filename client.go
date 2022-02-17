@@ -16,6 +16,7 @@ type Client struct {
 	option   *ClientOption
 	Eth      *client.RpcEthClient
 	Trace    *client.RpcTraceClient
+	Parity   *client.RpcParityClient
 }
 
 func NewClient(rawurl string) (*Client, error) {
@@ -57,6 +58,7 @@ func (c *Client) SetProvider(p interfaces.Provider) {
 	c.provider = p
 	c.Eth = client.NewRpcEthClient(p)
 	c.Trace = client.NewRpcTraceClient(p)
+	c.Parity = client.NewRpcParityClient(p)
 }
 
 func (c *Client) Provider() interfaces.Provider {
