@@ -29,7 +29,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		To                *common.Address `json:"to"`
 		TransactionHash   common.Hash     `json:"transactionHash"`
 		TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`
-		TxExecErrorMsg    *string         `json:"txExecErrorMsg"`
+		TxExecErrorMsg    *string         `json:"txExecErrorMsg,omitempty"`
 		Type              hexutil.Uint    `json:"type"`
 	}
 	var enc Receipt
@@ -69,7 +69,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		To                *common.Address `json:"to"`
 		TransactionHash   *common.Hash    `json:"transactionHash"`
 		TransactionIndex  *hexutil.Uint64 `json:"transactionIndex"`
-		TxExecErrorMsg    *string         `json:"txExecErrorMsg"`
+		TxExecErrorMsg    *string         `json:"txExecErrorMsg,omitempty"`
 		Type              *hexutil.Uint   `json:"type"`
 	}
 	var dec Receipt
