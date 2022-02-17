@@ -139,14 +139,14 @@ func (c *RpcParityClient) RegistryAddress() (val *common.Address, err error) {
 }
 
 /// Returns all addresses if Fat DB is enabled (`--fat-db`), or null if not.
-func (c *RpcParityClient) ListAccounts(count uint64, after *common.Address, blockNumber *types.BlockNumber) (val *[]common.Address, err error) {
+func (c *RpcParityClient) ListAccounts(count uint64, after *common.Address, blockNumber *types.BlockNumberOrHash) (val *[]common.Address, err error) {
 	err = c.core.Call(&val, "parity_listAccounts", count, after, blockNumber)
 	return
 }
 
 /// Returns all storage keys of the given address (first parameter) if Fat DB is enabled (`--fat-db`),
 /// or null if not.
-func (c *RpcParityClient) ListStorageKeys(address common.Address, count uint64, after *common.Hash, blockNumber *types.BlockNumber) (val *[]common.Hash, err error) {
+func (c *RpcParityClient) ListStorageKeys(address common.Address, count uint64, after *common.Hash, blockNumber *types.BlockNumberOrHash) (val *[]common.Hash, err error) {
 	err = c.core.Call(&val, "parity_listStorageKeys", address, count, after, blockNumber)
 	return
 }
@@ -246,7 +246,7 @@ func (c *RpcParityClient) NodeKind() (val types.NodeKind, err error) {
 
 /// Get block header.
 /// Same as `eth_getBlockByNumber` but without uncles and transactions.
-func (c *RpcParityClient) BlockHeader(number *types.BlockNumber) (val types.RichHeader, err error) {
+func (c *RpcParityClient) BlockHeader(number *types.BlockNumberOrHash) (val types.RichHeader, err error) {
 	err = c.core.Call(&val, "parity_getBlockHeaderByNumber", number)
 	return
 }
@@ -254,13 +254,13 @@ func (c *RpcParityClient) BlockHeader(number *types.BlockNumber) (val types.Rich
 /// Get block receipts.
 /// Allows you to fetch receipts from the entire block at once.
 /// If no parameter is provided defaults to `latest`.
-func (c *RpcParityClient) BlockReceipts(number *types.BlockNumber) (val []types.Receipt, err error) {
+func (c *RpcParityClient) BlockReceipts(number *types.BlockNumberOrHash) (val []types.Receipt, err error) {
 	err = c.core.Call(&val, "parity_getBlockReceipts", number)
 	return
 }
 
 /// Call contract, returning the output data.
-func (c *RpcParityClient) Call(requests []types.CallRequest, num *types.BlockNumber) (val [][]byte, err error) {
+func (c *RpcParityClient) Call(requests []types.CallRequest, num *types.BlockNumberOrHash) (val [][]byte, err error) {
 	var _val []hexutil.Bytes
 	err = c.core.Call(&_val, "parity_call", requests, num)
 
