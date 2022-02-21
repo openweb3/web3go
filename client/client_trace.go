@@ -21,7 +21,7 @@ func NewRpcTraceClient(provider interfaces.Provider) *RpcTraceClient {
 // type Metadata
 
 /// Returns traces matching given filter.
-func (c *RpcTraceClient) Filter(traceFilter types.TraceFilter) (val *[]types.LocalizedTrace, err error) {
+func (c *RpcTraceClient) Filter(traceFilter types.TraceFilter) (val []types.LocalizedTrace, err error) {
 	err = c.core.Call(&val, "trace_filter", traceFilter)
 	return
 }
@@ -33,13 +33,13 @@ func (c *RpcTraceClient) Trace(transactionHash common.Hash, indexes []uint) (val
 }
 
 /// Returns all traces of given transaction.
-func (c *RpcTraceClient) Transactions(transactionHash common.Hash) (val *[]types.LocalizedTrace, err error) {
+func (c *RpcTraceClient) Transactions(transactionHash common.Hash) (val []types.LocalizedTrace, err error) {
 	err = c.core.Call(&val, "trace_transaction", transactionHash)
 	return
 }
 
 /// Returns all traces produced at given block.
-func (c *RpcTraceClient) Blocks(blockNumber types.BlockNumberOrHash) (val *[]types.LocalizedTrace, err error) {
+func (c *RpcTraceClient) Blocks(blockNumber types.BlockNumberOrHash) (val []types.LocalizedTrace, err error) {
 	err = c.core.Call(&val, "trace_block", blockNumber)
 	return
 }
