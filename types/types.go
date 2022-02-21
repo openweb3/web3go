@@ -11,7 +11,7 @@ import (
 
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
 type Block struct {
-	BaseFeePerGas   *big.Int          `json:"baseFeePerGas"`
+	BaseFeePerGas   *big.Int          `json:"baseFeePerGas,omitempty"`
 	Difficulty      *big.Int          `json:"difficulty"     gencodec:"required"`
 	ExtraData       []byte            `json:"extraData"`
 	GasLimit        uint64            `json:"gasLimit"`
@@ -82,11 +82,12 @@ type Transaction struct {
 	Nonce                uint64          `json:"nonce"                          gencodec:"required"`
 	R                    *big.Int        `json:"r"                              gencodec:"required"`
 	S                    *big.Int        `json:"s"                              gencodec:"required"`
+	StandardV            *big.Int        `json:"standardV,omitempty"`
 	// Status not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
 	Status           *uint64         `json:"status,omitempty"`
 	To               *common.Address `json:"to" rlp:"nil"`
 	TransactionIndex *uint64         `json:"transactionIndex"`
-	Type             uint64          `json:"type"`
+	Type             *uint64         `json:"type,omitempty"`
 	V                *big.Int        `json:"v"                              gencodec:"required"`
 	Value            *big.Int        `json:"value"                          gencodec:"required"`
 }
@@ -107,10 +108,11 @@ type transactionMarshaling struct {
 	Nonce                hexutil.Uint64   `json:"nonce"`
 	R                    *hexutil.Big     `json:"r"`
 	S                    *hexutil.Big     `json:"s"`
+	StandardV            *hexutil.Big     `json:"standardV,omitempty"`
 	Status               *hexutil.Uint64  `json:"status,omitempty"`
 	To                   *common.Address  `json:"to"`
 	TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
-	Type                 hexutil.Uint64   `json:"type"`
+	Type                 *hexutil.Uint64  `json:"type"`
 	V                    *hexutil.Big     `json:"v"`
 	Value                *hexutil.Big     `json:"value"`
 }
@@ -133,7 +135,7 @@ type Receipt struct {
 	TransactionIndex  uint64          `json:"transactionIndex"`
 	// Not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
 	TxExecErrorMsg *string `json:"txExecErrorMsg,omitempty"`
-	Type           uint    `json:"type"`
+	Type           *uint   `json:"type,omitempty"`
 }
 type receiptMarshaling struct {
 	BlockHash         common.Hash     `json:"blockHash"`
@@ -151,7 +153,7 @@ type receiptMarshaling struct {
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`
 	TxExecErrorMsg    *string         `json:"txExecErrorMsg"`
-	Type              hexutil.Uint    `json:"type"`
+	Type              *hexutil.Uint   `json:"type,omitempty"`
 }
 
 // CallRequest represents the arguments to construct a new transaction
@@ -160,9 +162,9 @@ type CallRequest struct {
 	From                 *common.Address `json:"from"`
 	To                   *common.Address `json:"to"`
 	Gas                  *uint64         `json:"gas"`
-	GasPrice             *big.Int        `json:"gasPrice"`
-	MaxFeePerGas         *big.Int        `json:"maxFeePerGas"`
-	MaxPriorityFeePerGas *big.Int        `json:"maxPriorityFeePerGas"`
+	GasPrice             *big.Int        `json:"gasPrice,omitempty"`
+	MaxFeePerGas         *big.Int        `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *big.Int        `json:"maxPriorityFeePerGas,omitempty"`
 	Value                *big.Int        `json:"value"`
 	Nonce                *uint64         `json:"nonce"`
 
