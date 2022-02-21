@@ -139,14 +139,14 @@ func (c *RpcParityClient) RegistryAddress() (val *common.Address, err error) {
 }
 
 /// Returns all addresses if Fat DB is enabled (`--fat-db`), or null if not.
-func (c *RpcParityClient) ListAccounts(count uint64, after *common.Address, blockNumber *types.BlockNumberOrHash) (val *[]common.Address, err error) {
+func (c *RpcParityClient) ListAccounts(count uint64, after *common.Address, blockNumber *types.BlockNumberOrHash) (val []common.Address, err error) {
 	err = c.core.Call(&val, "parity_listAccounts", count, after, blockNumber)
 	return
 }
 
 /// Returns all storage keys of the given address (first parameter) if Fat DB is enabled (`--fat-db`),
 /// or null if not.
-func (c *RpcParityClient) ListStorageKeys(address common.Address, count uint64, after *common.Hash, blockNumber *types.BlockNumberOrHash) (val *[]common.Hash, err error) {
+func (c *RpcParityClient) ListStorageKeys(address common.Address, count uint64, after *common.Hash, blockNumber *types.BlockNumberOrHash) (val []common.Hash, err error) {
 	err = c.core.Call(&val, "parity_listStorageKeys", address, count, after, blockNumber)
 	return
 }
