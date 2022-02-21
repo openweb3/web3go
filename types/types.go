@@ -87,7 +87,7 @@ type Transaction struct {
 	Status           *uint64         `json:"status,omitempty"`
 	To               *common.Address `json:"to" rlp:"nil"`
 	TransactionIndex *uint64         `json:"transactionIndex"`
-	Type             uint64          `json:"type,omitempty"`
+	Type             *uint64         `json:"type,omitempty"`
 	V                *big.Int        `json:"v"                              gencodec:"required"`
 	Value            *big.Int        `json:"value"                          gencodec:"required"`
 }
@@ -112,7 +112,7 @@ type transactionMarshaling struct {
 	Status               *hexutil.Uint64  `json:"status,omitempty"`
 	To                   *common.Address  `json:"to"`
 	TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
-	Type                 hexutil.Uint64   `json:"type"`
+	Type                 *hexutil.Uint64  `json:"type"`
 	V                    *hexutil.Big     `json:"v"`
 	Value                *hexutil.Big     `json:"value"`
 }

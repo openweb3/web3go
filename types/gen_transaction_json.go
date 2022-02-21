@@ -36,7 +36,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 		Status               *hexutil.Uint64  `json:"status,omitempty"`
 		To                   *common.Address  `json:"to" rlp:"nil"`
 		TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
-		Type                 hexutil.Uint64   `json:"type,omitempty"`
+		Type                 *hexutil.Uint64  `json:"type,omitempty"`
 		V                    *hexutil.Big     `json:"v"                              gencodec:"required"`
 		Value                *hexutil.Big     `json:"value"                          gencodec:"required"`
 	}
@@ -60,7 +60,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 	enc.Status = (*hexutil.Uint64)(t.Status)
 	enc.To = t.To
 	enc.TransactionIndex = (*hexutil.Uint64)(t.TransactionIndex)
-	enc.Type = hexutil.Uint64(t.Type)
+	enc.Type = (*hexutil.Uint64)(t.Type)
 	enc.V = (*hexutil.Big)(t.V)
 	enc.Value = (*hexutil.Big)(t.Value)
 	return json.Marshal(&enc)
@@ -159,7 +159,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		t.TransactionIndex = (*uint64)(dec.TransactionIndex)
 	}
 	if dec.Type != nil {
-		t.Type = uint64(*dec.Type)
+		t.Type = (*uint64)(dec.Type)
 	}
 	if dec.V == nil {
 		return errors.New("missing required field 'v' for Transaction")
