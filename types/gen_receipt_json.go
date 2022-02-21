@@ -22,15 +22,15 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
 		From              common.Address  `json:"from"`
 		GasUsed           hexutil.Uint64  `json:"gasUsed"`
-		Logs              []*Log          `json:"logs"`
+		Logs              []*Log          `json:"logs,omitempty"`
 		LogsBloom         types.Bloom     `json:"logsBloom"`
-		Root              hexutil.Bytes   `json:"root"`
-		Status            hexutil.Uint64  `json:"status"`
+		Root              hexutil.Bytes   `json:"root,omitempty"`
+		Status            hexutil.Uint64  `json:"status,omitempty"`
 		To                *common.Address `json:"to"`
 		TransactionHash   common.Hash     `json:"transactionHash"`
 		TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`
 		TxExecErrorMsg    *string         `json:"txExecErrorMsg,omitempty"`
-		Type              hexutil.Uint    `json:"type"`
+		Type              *hexutil.Uint   `json:"type,omitempty"`
 	}
 	var enc Receipt
 	enc.BlockHash = r.BlockHash
@@ -48,7 +48,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 	enc.TransactionHash = r.TransactionHash
 	enc.TransactionIndex = hexutil.Uint64(r.TransactionIndex)
 	enc.TxExecErrorMsg = r.TxExecErrorMsg
-	enc.Type = hexutil.Uint(r.Type)
+	enc.Type = (*hexutil.Uint)(r.Type)
 	return json.Marshal(&enc)
 }
 
@@ -62,15 +62,15 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		EffectiveGasPrice *hexutil.Uint64 `json:"effectiveGasPrice"`
 		From              *common.Address `json:"from"`
 		GasUsed           *hexutil.Uint64 `json:"gasUsed"`
-		Logs              []*Log          `json:"logs"`
+		Logs              []*Log          `json:"logs,omitempty"`
 		LogsBloom         *types.Bloom    `json:"logsBloom"`
-		Root              *hexutil.Bytes  `json:"root"`
-		Status            *hexutil.Uint64 `json:"status"`
+		Root              *hexutil.Bytes  `json:"root,omitempty"`
+		Status            *hexutil.Uint64 `json:"status,omitempty"`
 		To                *common.Address `json:"to"`
 		TransactionHash   *common.Hash    `json:"transactionHash"`
 		TransactionIndex  *hexutil.Uint64 `json:"transactionIndex"`
 		TxExecErrorMsg    *string         `json:"txExecErrorMsg,omitempty"`
-		Type              *hexutil.Uint   `json:"type"`
+		Type              *hexutil.Uint   `json:"type,omitempty"`
 	}
 	var dec Receipt
 	if err := json.Unmarshal(input, &dec); err != nil {
@@ -122,7 +122,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		r.TxExecErrorMsg = dec.TxExecErrorMsg
 	}
 	if dec.Type != nil {
-		r.Type = uint(*dec.Type)
+		r.Type = (*uint)(dec.Type)
 	}
 	return nil
 }

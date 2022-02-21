@@ -17,7 +17,7 @@ var _ = (*blockMarshaling)(nil)
 // MarshalJSON marshals as JSON.
 func (b Block) MarshalJSON() ([]byte, error) {
 	type Block struct {
-		BaseFeePerGas    *hexutil.Big      `json:"baseFeePerGas"`
+		BaseFeePerGas    *hexutil.Big      `json:"baseFeePerGas,omitempty"`
 		Difficulty       *hexutil.Big      `json:"difficulty"     gencodec:"required"`
 		ExtraData        hexutil.Bytes     `json:"extraData"`
 		GasLimit         hexutil.Uint64    `json:"gasLimit"`
@@ -33,7 +33,7 @@ func (b Block) MarshalJSON() ([]byte, error) {
 		Size             hexutil.Uint64    `json:"size"`
 		StateRoot        common.Hash       `json:"stateRoot"`
 		Timestamp        hexutil.Uint64    `json:"timestamp"`
-		TotalDifficulty  *hexutil.Big      `json:"totalDifficulty"`
+		TotalDifficulty  *hexutil.Big      `json:"totalDifficulty,omitempty"`
 		Transactions     TxOrHashList      `json:"transactions"`
 		TransactionsRoot common.Hash       `json:"transactionsRoot"`
 		Uncles           []common.Hash     `json:"uncles"`
@@ -67,7 +67,7 @@ func (b Block) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON unmarshals from JSON.
 func (b *Block) UnmarshalJSON(input []byte) error {
 	type Block struct {
-		BaseFeePerGas    *hexutil.Big      `json:"baseFeePerGas"`
+		BaseFeePerGas    *hexutil.Big      `json:"baseFeePerGas,omitempty"`
 		Difficulty       *hexutil.Big      `json:"difficulty"     gencodec:"required"`
 		ExtraData        *hexutil.Bytes    `json:"extraData"`
 		GasLimit         *hexutil.Uint64   `json:"gasLimit"`
@@ -83,7 +83,7 @@ func (b *Block) UnmarshalJSON(input []byte) error {
 		Size             *hexutil.Uint64   `json:"size"`
 		StateRoot        *common.Hash      `json:"stateRoot"`
 		Timestamp        *hexutil.Uint64   `json:"timestamp"`
-		TotalDifficulty  *hexutil.Big      `json:"totalDifficulty"`
+		TotalDifficulty  *hexutil.Big      `json:"totalDifficulty,omitempty"`
 		Transactions     *TxOrHashList     `json:"transactions"`
 		TransactionsRoot *common.Hash      `json:"transactionsRoot"`
 		Uncles           []common.Hash     `json:"uncles"`
