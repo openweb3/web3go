@@ -22,7 +22,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
 		From              common.Address  `json:"from"`
 		GasUsed           hexutil.Uint64  `json:"gasUsed"`
-		Logs              []*Log          `json:"logs,omitempty"`
+		Logs              []*Log          `json:"logs"`
 		LogsBloom         types.Bloom     `json:"logsBloom"`
 		Root              hexutil.Bytes   `json:"root,omitempty"`
 		Status            hexutil.Uint64  `json:"status,omitempty"`
@@ -62,7 +62,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		EffectiveGasPrice *hexutil.Uint64 `json:"effectiveGasPrice"`
 		From              *common.Address `json:"from"`
 		GasUsed           *hexutil.Uint64 `json:"gasUsed"`
-		Logs              []*Log          `json:"logs,omitempty"`
+		Logs              []*Log          `json:"logs"`
 		LogsBloom         *types.Bloom    `json:"logsBloom"`
 		Root              *hexutil.Bytes  `json:"root,omitempty"`
 		Status            *hexutil.Uint64 `json:"status,omitempty"`

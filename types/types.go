@@ -126,7 +126,7 @@ type Receipt struct {
 	EffectiveGasPrice uint64          `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           uint64          `json:"gasUsed"`
-	Logs              []*Log          `json:"logs,omitempty"` //"logs"  [][]*types.Log // when receipt.Logs == nil
+	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
 	LogsBloom         types.Bloom     `json:"logsBloom"`
 	Root              []byte          `json:"root,omitempty"`   // when len(receipt.PostState) > 0
 	Status            uint64          `json:"status,omitempty"` // when len(receipt.PostState) = 0
@@ -145,7 +145,7 @@ type receiptMarshaling struct {
 	EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           hexutil.Uint64  `json:"gasUsed"`
-	Logs              []*Log          `json:"logs,omitempty"` //"logs"  [][]*types.Log // when receipt.Logs == nil
+	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
 	LogsBloom         types.Bloom     `json:"logsBloom"`
 	Root              hexutil.Bytes   `json:"root,omitempty"`   // when len(receipt.PostState) > 0
 	Status            hexutil.Uint64  `json:"status,omitempty"` // when len(receipt.PostState) = 0
