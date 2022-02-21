@@ -46,12 +46,12 @@ type LocalizedTrace struct {
 type StateDiff map[common.Hash]AccountDiff
 
 type TraceFilter struct {
-	FromBlock   *BlockNumber      `json:"fromBlock"`
-	ToBlock     *BlockNumber      `json:"toBlock"`
-	FromAddress *[]common.Address `json:"fromAddress"`
-	ToAddress   *[]common.Address `json:"toAddress"`
-	After       *uint             `json:"after"`
-	Count       *uint             `json:"count"`
+	FromBlock   *BlockNumber     `json:"fromBlock"`
+	ToBlock     *BlockNumber     `json:"toBlock"`
+	FromAddress []common.Address `json:"fromAddress"`
+	ToAddress   []common.Address `json:"toAddress"`
+	After       *uint            `json:"after"`
+	Count       *uint            `json:"count"`
 }
 
 //go:generate gencodec -type TraceResults -field-override traceResultsMarshaling -out gen_trace_results_json.go
