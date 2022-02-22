@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/json"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -230,4 +231,35 @@ type logMarshaling struct {
 }
 
 type BlockNumber = ethrpctypes.BlockNumber
-type BlockNumberOrHash = ethrpctypes.BlockNumberOrHash
+type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
+
+func (bnh *BlockNumberOrHash) UnmarshalJSON(data []byte) error {
+	return (*ethrpctypes.BlockNumberOrHash)(bnh).UnmarshalJSON(data)
+}
+
+func (bnh BlockNumberOrHash) MarshalJSON() ([]byte, error) {
+	if bnh.BlockNumber != nil {
+		return json.Marshal(bnh.BlockNumber)
+	}
+	return json.Marshal(ethrpctypes.BlockNumberOrHash(bnh))
+}
+
+func (bnh *BlockNumberOrHash) Number() (BlockNumber, bool) {
+	return (*ethrpctypes.BlockNumberOrHash)(bnh).Number()
+}
+
+func (bnh *BlockNumberOrHash) String() string {
+	return (*ethrpctypes.BlockNumberOrHash)(bnh).String()
+}
+
+func (bnh *BlockNumberOrHash) Hash() (common.Hash, bool) {
+	return (*ethrpctypes.BlockNumberOrHash)(bnh).Hash()
+}
+
+func BlockNumberOrHashWithNumber(blockNr BlockNumber) BlockNumberOrHash {
+	return (BlockNumberOrHash)(ethrpctypes.BlockNumberOrHashWithNumber(blockNr))
+}
+
+func BlockNumberOrHashWithHash(hash common.Hash, canonical bool) BlockNumberOrHash {
+	return (BlockNumberOrHash)(ethrpctypes.BlockNumberOrHashWithHash(hash, canonical))
+}
