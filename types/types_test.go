@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/common"
+	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
+	"gotest.tools/assert"
 )
 
 func TestUnMarshalCallRequest(t *testing.T) {
@@ -64,43 +65,39 @@ func TestUnMarshalCallRequest(t *testing.T) {
 
 }
 
-func TestUnmarshalHexbytesInStruct(t *testing.T) {
-	type sWithHexbytes struct {
-		H1 hexutil.Bytes  `json:"h1"`
-		H2 *hexutil.Bytes `json:"h2"`
+func TestBlockNumberOrHashMarshal(t *testing.T) {
+	latest := ethrpctypes.LatestBlockNumber
+
+	table := []struct {
+		in  BlockNumberOrHash
+		out string
+		err bool
+	}{
+		{
+			in:  BlockNumberOrHash{BlockNumber: &latest},
+			out: `"latest"`,
+		},
+		{
+			in:  BlockNumberOrHash(ethrpctypes.BlockNumberOrHashWithNumber(10)),
+			out: `"0xa"`,
+		},
+		{
+			in:  BlockNumberOrHash(ethrpctypes.BlockNumberOrHashWithHash(common.HexToHash("0xae7fbe443ce1e7b7ad867e246f79f4ea316fbcc545f1e6238bbfa697d623b6b9"), true)),
+			out: `{"blockHash":"0xae7fbe443ce1e7b7ad867e246f79f4ea316fbcc545f1e6238bbfa697d623b6b9","requireCanonical":true}`,
+		},
 	}
 
-	s := sWithHexbytes{}
-	b, e := json.Marshal(s)
-	if e != nil {
-		t.Fatal(e)
+	for _, v := range table {
+		j, e := json.Marshal(v.in)
+		if v.err {
+			if e == nil {
+				t.Fatal("expect error, got nil")
+			}
+			continue
+		}
+		if e != nil {
+			t.Fatal(e)
+		}
+		assert.DeepEqual(t, string(j), v.out)
 	}
-
-	fmt.Printf("marshaled %s\n", b)
-
-	e = json.Unmarshal(b, &s)
-	if e != nil {
-		t.Fatal(e)
-	}
-}
-
-func TestMarshalSlice(t *testing.T) {
-	var a []string
-	fmt.Printf("%v\n", reflect.TypeOf(a).Kind())
-	j, e := json.Marshal(a)
-	if e != nil {
-		t.Fatal(e)
-	}
-	fmt.Print(string(j))
-
-	type sWithSlice struct {
-		S []string `json:"s"`
-		B []byte   `json:"b"`
-	}
-
-	j, e = json.Marshal(sWithSlice{})
-	if e != nil {
-		t.Fatal(e)
-	}
-	fmt.Print(string(j))
 }
