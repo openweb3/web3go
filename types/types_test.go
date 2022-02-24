@@ -101,3 +101,13 @@ func TestBlockNumberOrHashMarshal(t *testing.T) {
 		assert.DeepEqual(t, string(j), v.out)
 	}
 }
+
+func TestReceiptMarshal(t *testing.T) {
+	fail := uint64(0)
+	r := Receipt{
+		Status: &fail,
+	}
+
+	j, _ := json.Marshal(r)
+	fmt.Printf("%s\n", j)
+}

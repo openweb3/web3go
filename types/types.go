@@ -130,7 +130,7 @@ type Receipt struct {
 	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
 	LogsBloom         types.Bloom     `json:"logsBloom"`
 	Root              []byte          `json:"root,omitempty"`   // when len(receipt.PostState) > 0
-	Status            uint64          `json:"status,omitempty"` // when len(receipt.PostState) = 0
+	Status            *uint64         `json:"status,omitempty"` // when len(receipt.PostState) = 0
 	To                *common.Address `json:"to"`
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  uint64          `json:"transactionIndex"`
@@ -149,7 +149,7 @@ type receiptMarshaling struct {
 	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
 	LogsBloom         types.Bloom     `json:"logsBloom"`
 	Root              hexutil.Bytes   `json:"root,omitempty"`   // when len(receipt.PostState) > 0
-	Status            hexutil.Uint64  `json:"status,omitempty"` // when len(receipt.PostState) = 0
+	Status            *hexutil.Uint64 `json:"status,omitempty"` // when len(receipt.PostState) = 0
 	To                *common.Address `json:"to"`
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`

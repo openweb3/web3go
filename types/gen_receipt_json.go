@@ -25,7 +25,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		Logs              []*Log          `json:"logs"`
 		LogsBloom         types.Bloom     `json:"logsBloom"`
 		Root              hexutil.Bytes   `json:"root,omitempty"`
-		Status            hexutil.Uint64  `json:"status,omitempty"`
+		Status            *hexutil.Uint64 `json:"status,omitempty"`
 		To                *common.Address `json:"to"`
 		TransactionHash   common.Hash     `json:"transactionHash"`
 		TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`
@@ -43,7 +43,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 	enc.Logs = r.Logs
 	enc.LogsBloom = r.LogsBloom
 	enc.Root = r.Root
-	enc.Status = hexutil.Uint64(r.Status)
+	enc.Status = (*hexutil.Uint64)(r.Status)
 	enc.To = r.To
 	enc.TransactionHash = r.TransactionHash
 	enc.TransactionIndex = hexutil.Uint64(r.TransactionIndex)
@@ -107,7 +107,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		r.Root = *dec.Root
 	}
 	if dec.Status != nil {
-		r.Status = uint64(*dec.Status)
+		r.Status = (*uint64)(dec.Status)
 	}
 	if dec.To != nil {
 		r.To = dec.To
