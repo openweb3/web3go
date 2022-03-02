@@ -9,7 +9,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
 	providers "github.com/openweb3/web3go/provider_wrapper"
 	"github.com/openweb3/web3go/types"
 )
@@ -23,7 +22,7 @@ func TestParity(t *testing.T) {
 	}
 	client := NewRpcParityClient(p)
 
-	blockNum := ethrpctypes.BlockNumberOrHashWithNumber(1)
+	blockNum := types.BlockNumberOrHashWithNumber(1)
 	phrase := "stylus outing overhand dime radial seducing harmless uselessly evasive tastiness eradicate imperfect"
 	account := common.HexToAddress("0x00a329c0648769a73afac7f9381e08fb43dbea72")
 
