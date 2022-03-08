@@ -15,26 +15,29 @@ var _ = (*createMarshaling)(nil)
 // MarshalJSON marshals as JSON.
 func (c Create) MarshalJSON() ([]byte, error) {
 	type Create struct {
-		From  common.Address `json:"from"`
-		Value *hexutil.Big   `json:"value"`
-		Gas   *hexutil.Big   `json:"gas"`
-		Init  hexutil.Bytes  `json:"init"`
+		From       common.Address `json:"from"`
+		Value      *hexutil.Big   `json:"value"`
+		Gas        *hexutil.Big   `json:"gas"`
+		Init       hexutil.Bytes  `json:"init"`
+		CreateType *CreateType    `json:"createType,omitempty"`
 	}
 	var enc Create
 	enc.From = c.From
 	enc.Value = (*hexutil.Big)(c.Value)
 	enc.Gas = (*hexutil.Big)(c.Gas)
 	enc.Init = c.Init
+	enc.CreateType = c.CreateType
 	return json.Marshal(&enc)
 }
 
 // UnmarshalJSON unmarshals from JSON.
 func (c *Create) UnmarshalJSON(input []byte) error {
 	type Create struct {
-		From  *common.Address `json:"from"`
-		Value *hexutil.Big    `json:"value"`
-		Gas   *hexutil.Big    `json:"gas"`
-		Init  *hexutil.Bytes  `json:"init"`
+		From       *common.Address `json:"from"`
+		Value      *hexutil.Big    `json:"value"`
+		Gas        *hexutil.Big    `json:"gas"`
+		Init       *hexutil.Bytes  `json:"init"`
+		CreateType *CreateType     `json:"createType,omitempty"`
 	}
 	var dec Create
 	if err := json.Unmarshal(input, &dec); err != nil {
@@ -51,6 +54,9 @@ func (c *Create) UnmarshalJSON(input []byte) error {
 	}
 	if dec.Init != nil {
 		c.Init = *dec.Init
+	}
+	if dec.CreateType != nil {
+		c.CreateType = dec.CreateType
 	}
 	return nil
 }
