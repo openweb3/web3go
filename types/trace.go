@@ -41,6 +41,7 @@ type LocalizedTrace struct {
 	TransactionHash     *common.Hash `json:"transactionHash"`
 	BlockNumber         uint64       `json:"blockNumber"`
 	BlockHash           common.Hash  `json:"blockHash"`
+	Valid               *bool        `json:"valid,omitempty"` // exist in conflux-espace, not in openethereum
 }
 
 type StateDiff map[common.Hash]AccountDiff

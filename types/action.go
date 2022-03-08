@@ -9,6 +9,7 @@ import (
 
 type CallType string
 type RewardType string
+type CreateType string
 
 const (
 	CALL_NONE         CallType = "none"
@@ -16,6 +17,12 @@ const (
 	CALL_CALLCODE     CallType = "callCode"
 	CALL_DELEGATECALL CallType = "delegateCall"
 	CALL_STATICCALL   CallType = "staticCall"
+)
+
+const (
+	CREATE_NONE    CreateType = "none"
+	CREATE_CREATE  CreateType = "create"
+	CREATE_CREATE2 CreateType = "create2"
 )
 
 const (
@@ -37,10 +44,11 @@ type Call struct {
 
 //go:generate gencodec -type Create -field-override createMarshaling -out gen_create_json.go
 type Create struct {
-	From  common.Address `json:"from"`
-	Value *big.Int       `json:"value"`
-	Gas   *big.Int       `json:"gas"`
-	Init  []byte         `json:"init"`
+	From       common.Address `json:"from"`
+	Value      *big.Int       `json:"value"`
+	Gas        *big.Int       `json:"gas"`
+	Init       []byte         `json:"init"`
+	CreateType *CreateType    `json:"createType,omitempty"` // omit for openethereum, valid for conflux-espace
 }
 
 //go:generate gencodec -type Suicide -field-override suicideMarshaling -out gen_suicide_json.go
