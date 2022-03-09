@@ -3,7 +3,7 @@ package interfaces
 import (
 	"context"
 
-	"github.com/Conflux-Chain/go-conflux-sdk/rpc"
+	rpc "github.com/openweb3/go-rpc-provider"
 )
 
 type Provider interface {

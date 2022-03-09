@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Conflux-Chain/go-conflux-sdk/rpc"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	rpc "github.com/openweb3/go-rpc-provider"
 	"gotest.tools/assert"
 )
 
