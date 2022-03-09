@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/Conflux-Chain/go-conflux-sdk/rpc"
+	rpc "github.com/openweb3/go-rpc-provider"
 	"github.com/openweb3/web3go/interfaces"
 )
 
