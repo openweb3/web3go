@@ -17,6 +17,7 @@ var _ = (*blockMarshaling)(nil)
 // MarshalJSON marshals as JSON.
 func (b Block) MarshalJSON() ([]byte, error) {
 	type Block struct {
+		Author           *common.Address   `json:"author,omitempty"`
 		BaseFeePerGas    *hexutil.Big      `json:"baseFeePerGas,omitempty"`
 		Difficulty       *hexutil.Big      `json:"difficulty"     gencodec:"required"`
 		ExtraData        hexutil.Bytes     `json:"extraData"`
@@ -40,6 +41,7 @@ func (b Block) MarshalJSON() ([]byte, error) {
 		Sha3Uncles       common.Hash       `json:"sha3Uncles"`
 	}
 	var enc Block
+	enc.Author = b.Author
 	enc.BaseFeePerGas = (*hexutil.Big)(b.BaseFeePerGas)
 	enc.Difficulty = (*hexutil.Big)(b.Difficulty)
 	enc.ExtraData = b.ExtraData
@@ -67,6 +69,7 @@ func (b Block) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON unmarshals from JSON.
 func (b *Block) UnmarshalJSON(input []byte) error {
 	type Block struct {
+		Author           *common.Address   `json:"author,omitempty"`
 		BaseFeePerGas    *hexutil.Big      `json:"baseFeePerGas,omitempty"`
 		Difficulty       *hexutil.Big      `json:"difficulty"     gencodec:"required"`
 		ExtraData        *hexutil.Bytes    `json:"extraData"`
@@ -92,6 +95,9 @@ func (b *Block) UnmarshalJSON(input []byte) error {
 	var dec Block
 	if err := json.Unmarshal(input, &dec); err != nil {
 		return err
+	}
+	if dec.Author != nil {
+		b.Author = dec.Author
 	}
 	if dec.BaseFeePerGas != nil {
 		b.BaseFeePerGas = (*big.Int)(dec.BaseFeePerGas)
