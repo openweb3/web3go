@@ -12,6 +12,7 @@ import (
 
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
 type Block struct {
+	Author          *common.Address   `json:"author,omitempty"`
 	BaseFeePerGas   *big.Int          `json:"baseFeePerGas,omitempty"`
 	Difficulty      *big.Int          `json:"difficulty"     gencodec:"required"`
 	ExtraData       []byte            `json:"extraData"`
@@ -39,7 +40,8 @@ type Block struct {
 }
 
 type blockMarshaling struct {
-	BaseFeePerGas   *hexutil.Big      `json:"baseFeePerGas"`
+	Author          *common.Address   `json:"author,omitempty"`
+	BaseFeePerGas   *hexutil.Big      `json:"baseFeePerGas,omitempty"`
 	Difficulty      *hexutil.Big      `json:"difficulty"`
 	ExtraData       hexutil.Bytes     `json:"extraData"`
 	GasLimit        hexutil.Uint64    `json:"gasLimit"`
