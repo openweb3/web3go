@@ -74,7 +74,7 @@ type Transaction struct {
 	BlockNumber *big.Int         `json:"blockNumber"`
 	ChainID     *big.Int         `json:"chainId,omitempty"`
 	// Creates not guarantee to be valid, it's valid for parity node but not geth node
-	Creates              *common.Address `json:"creates,omitempty"`
+	Creates              *common.Address `json:"creates,omitempty"                                   testomit:"false"`
 	From                 common.Address  `json:"from"`
 	Gas                  uint64          `json:"gas"                            gencodec:"required"`
 	GasPrice             *big.Int        `json:"gasPrice"`
@@ -83,9 +83,13 @@ type Transaction struct {
 	MaxFeePerGas         *big.Int        `json:"maxFeePerGas,omitempty"`
 	MaxPriorityFeePerGas *big.Int        `json:"maxPriorityFeePerGas,omitempty"`
 	Nonce                uint64          `json:"nonce"                          gencodec:"required"`
-	R                    *big.Int        `json:"r"                              gencodec:"required"`
-	S                    *big.Int        `json:"s"                              gencodec:"required"`
-	StandardV            *big.Int        `json:"standardV,omitempty"`
+	// Creates not guarantee to be valid, it's valid for parity node but not geth node
+	PublicKey *hexutil.Bytes `json:"publicKey,omitempty"                                 testomit:"false"` //+ x
+	R         *big.Int       `json:"r"                              gencodec:"required"`
+	// Creates not guarantee to be valid, it's valid for parity node but not geth node
+	Raw       *hexutil.Bytes `json:"raw,omitempty"                                       testomit:"false"` //+ x
+	S         *big.Int       `json:"s"                              gencodec:"required"`
+	StandardV *big.Int       `json:"standardV,omitempty"`
 	// Status not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
 	Status           *uint64         `json:"status,omitempty"`
 	To               *common.Address `json:"to" rlp:"nil"`
@@ -109,7 +113,9 @@ type transactionMarshaling struct {
 	MaxFeePerGas         *hexutil.Big     `json:"maxFeePerGas,omitempty"`
 	MaxPriorityFeePerGas *hexutil.Big     `json:"maxPriorityFeePerGas,omitempty"`
 	Nonce                hexutil.Uint64   `json:"nonce"`
+	PublicKey            *hexutil.Bytes   `json:"publicKey,omitempty"`
 	R                    *hexutil.Big     `json:"r"`
+	Raw                  *hexutil.Bytes   `json:"raw,omitempty"`
 	S                    *hexutil.Big     `json:"s"`
 	StandardV            *hexutil.Big     `json:"standardV,omitempty"`
 	Status               *hexutil.Uint64  `json:"status,omitempty"`

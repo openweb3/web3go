@@ -21,7 +21,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 		BlockHash            *common.Hash     `json:"blockHash"`
 		BlockNumber          *hexutil.Big     `json:"blockNumber"`
 		ChainID              *hexutil.Big     `json:"chainId,omitempty"`
-		Creates              *common.Address  `json:"creates,omitempty"`
+		Creates              *common.Address  `json:"creates,omitempty"                                   testomit:"false"`
 		From                 common.Address   `json:"from"`
 		Gas                  hexutil.Uint64   `json:"gas"                            gencodec:"required"`
 		GasPrice             *hexutil.Big     `json:"gasPrice"`
@@ -30,7 +30,9 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 		MaxFeePerGas         *hexutil.Big     `json:"maxFeePerGas,omitempty"`
 		MaxPriorityFeePerGas *hexutil.Big     `json:"maxPriorityFeePerGas,omitempty"`
 		Nonce                hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
+		PublicKey            *hexutil.Bytes   `json:"publicKey,omitempty"                                 testomit:"false"`
 		R                    *hexutil.Big     `json:"r"                              gencodec:"required"`
+		Raw                  *hexutil.Bytes   `json:"raw,omitempty"                                       testomit:"false"`
 		S                    *hexutil.Big     `json:"s"                              gencodec:"required"`
 		StandardV            *hexutil.Big     `json:"standardV,omitempty"`
 		Status               *hexutil.Uint64  `json:"status,omitempty"`
@@ -54,7 +56,9 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 	enc.MaxFeePerGas = (*hexutil.Big)(t.MaxFeePerGas)
 	enc.MaxPriorityFeePerGas = (*hexutil.Big)(t.MaxPriorityFeePerGas)
 	enc.Nonce = hexutil.Uint64(t.Nonce)
+	enc.PublicKey = t.PublicKey
 	enc.R = (*hexutil.Big)(t.R)
+	enc.Raw = t.Raw
 	enc.S = (*hexutil.Big)(t.S)
 	enc.StandardV = (*hexutil.Big)(t.StandardV)
 	enc.Status = (*hexutil.Uint64)(t.Status)
@@ -73,7 +77,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		BlockHash            *common.Hash      `json:"blockHash"`
 		BlockNumber          *hexutil.Big      `json:"blockNumber"`
 		ChainID              *hexutil.Big      `json:"chainId,omitempty"`
-		Creates              *common.Address   `json:"creates,omitempty"`
+		Creates              *common.Address   `json:"creates,omitempty"                                   testomit:"false"`
 		From                 *common.Address   `json:"from"`
 		Gas                  *hexutil.Uint64   `json:"gas"                            gencodec:"required"`
 		GasPrice             *hexutil.Big      `json:"gasPrice"`
@@ -82,7 +86,9 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		MaxFeePerGas         *hexutil.Big      `json:"maxFeePerGas,omitempty"`
 		MaxPriorityFeePerGas *hexutil.Big      `json:"maxPriorityFeePerGas,omitempty"`
 		Nonce                *hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
+		PublicKey            *hexutil.Bytes    `json:"publicKey,omitempty"                                 testomit:"false"`
 		R                    *hexutil.Big      `json:"r"                              gencodec:"required"`
+		Raw                  *hexutil.Bytes    `json:"raw,omitempty"                                       testomit:"false"`
 		S                    *hexutil.Big      `json:"s"                              gencodec:"required"`
 		StandardV            *hexutil.Big      `json:"standardV,omitempty"`
 		Status               *hexutil.Uint64   `json:"status,omitempty"`
@@ -138,10 +144,16 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		return errors.New("missing required field 'nonce' for Transaction")
 	}
 	t.Nonce = uint64(*dec.Nonce)
+	if dec.PublicKey != nil {
+		t.PublicKey = dec.PublicKey
+	}
 	if dec.R == nil {
 		return errors.New("missing required field 'r' for Transaction")
 	}
 	t.R = (*big.Int)(dec.R)
+	if dec.Raw != nil {
+		t.Raw = dec.Raw
+	}
 	if dec.S == nil {
 		return errors.New("missing required field 's' for Transaction")
 	}
