@@ -2,16 +2,14 @@ package integrationtest
 
 import (
 	"context"
-	"fmt"
 	"math/big"
-	"reflect"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
 	"github.com/openweb3/go-sdk-common/rpctest"
 	"github.com/openweb3/web3go/client"
 	providers "github.com/openweb3/web3go/provider_wrapper"
-	"github.com/openweb3/web3go/types"
 )
 
 func int2Hexbig(result interface{}) (handlerdResult interface{}) {
@@ -65,7 +63,45 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 		"eth_submitHashrate":                      "SubmitHashrate",
 	}
 
-	rpc2FuncSelector := map[string]func(params []interface{}) (string, []interface{}){}
+	rpc2FuncSelector := map[string]func(params []interface{}) (realFuncName string, realParams []interface{}){
+		"eth_getBalance": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			if len(params) == 1 {
+				return "Balance", append(params, ethrpctypes.LatestBlockNumber)
+			}
+			return "Balance", params
+		},
+		"eth_getStorageAt": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			if len(params) == 2 {
+				return "StorageAt", append(params, ethrpctypes.LatestBlockNumber)
+			}
+			return "StorageAt", params
+		},
+		"eth_getTransactionCount": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			if len(params) == 1 {
+				return "TransactionCount", append(params, ethrpctypes.LatestBlockNumber)
+			}
+			return "TransactionCount", params
+		},
+		"eth_getCode": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			if len(params) == 1 {
+				return "CodeAt", append(params, ethrpctypes.LatestBlockNumber)
+			}
+			return "CodeAt", params
+		},
+		"eth_call": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			if len(params) == 1 {
+				return "Call", append(params, ethrpctypes.LatestBlockNumber)
+			}
+			return "Call", params
+		},
+		"eth_estimateGas": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			if len(params) == 1 {
+				return "EstimateGas", append(params, ethrpctypes.LatestBlockNumber)
+			}
+			return "EstimateGas", params
+		},
+	}
+
 	rpc2FuncResultHandler := map[string]func(result interface{}) (handlerdResult interface{}){
 		"eth_hashrate":                         int2Hexbig,
 		"eth_chainId":                          u64ToHexU64,
@@ -85,7 +121,9 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 
 	var ignoreRpc map[string]bool = map[string]bool{}
 	var onlyTestRpc map[string]bool = map[string]bool{
-		// "eth_getTransactionByHash": true,
+		// "eth_getBlockByNumber": true,
+		// "eth_getTransactionCount-1649315495325": true,
+		// "eth_getTransactionReceipt-1649315494676": true,
 	}
 
 	provider, _ := providers.NewBaseProvider(context.Background(), "http://47.93.101.243/eth/")
@@ -106,11 +144,4 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 func TestClienEth(t *testing.T) {
 	config := getEthTestConfig()
 	rpctest.DoClientTest(t, config)
-}
-
-func TestClienEthA(t *testing.T) {
-	v := types.Transaction{}
-	fmt.Printf("%v\n", reflect.ValueOf(v).Kind())
-
-	fmt.Printf("%v\n", reflect.ValueOf(v).Elem().Kind())
 }
