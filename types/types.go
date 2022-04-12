@@ -68,6 +68,7 @@ type blockMarshaling struct {
 }
 
 //go:generate gencodec -type Transaction -field-override transactionMarshaling -out gen_transaction_json.go
+// "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
 type Transaction struct {
 	Accesses    types.AccessList `json:"accessList,omitempty"`
 	BlockHash   *common.Hash     `json:"blockHash"`
@@ -127,6 +128,7 @@ type transactionMarshaling struct {
 }
 
 //go:generate gencodec -type Receipt -field-override receiptMarshaling -out gen_receipt_json.go
+// "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
 type Receipt struct {
 	BlockHash         common.Hash     `json:"blockHash"`
 	BlockNumber       uint64          `json:"blockNumber"`
