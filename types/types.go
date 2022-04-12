@@ -143,7 +143,7 @@ type Receipt struct {
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  uint64          `json:"transactionIndex"`
 	// Not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
-	TxExecErrorMsg *string `json:"txExecErrorMsg,omitempty"`
+	TxExecErrorMsg *string `json:"txExecErrorMsg,omitempty"        testomit:"false"`
 	Type           *uint   `json:"type,omitempty"`
 }
 type receiptMarshaling struct {
