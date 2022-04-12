@@ -2,6 +2,8 @@ package integrationtest
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"math/big"
 	"testing"
 
@@ -12,16 +14,20 @@ import (
 	providers "github.com/openweb3/web3go/provider_wrapper"
 )
 
-func int2Hexbig(result interface{}) (handlerdResult interface{}) {
-	return (*hexutil.Big)(result.(*big.Int))
+func int2Hexbig(val interface{}) (converted interface{}) {
+	return (*hexutil.Big)(val.(*big.Int))
 }
 
-func u64ToHexU64(result interface{}) (handlerdResult interface{}) {
-	return (*hexutil.Uint64)(result.(*uint64))
+func hexBig2Int(val interface{}) (converted interface{}) {
+	return (*big.Int)(val.(*hexutil.Big))
 }
 
-func bytes2HexBytes(result interface{}) (handlerdResult interface{}) {
-	return (hexutil.Bytes)(result.([]byte))
+func u64ToHexU64(val interface{}) (converted interface{}) {
+	return (*hexutil.Uint64)(val.(*uint64))
+}
+
+func bytes2HexBytes(val interface{}) (converted interface{}) {
+	return (hexutil.Bytes)(val.([]byte))
 }
 
 func getEthTestConfig() rpctest.RpcTestConfig {
@@ -71,6 +77,7 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 			return "Balance", params
 		},
 		"eth_getStorageAt": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			params[1] = hexutil.MustDecodeBig(params[1].(string))
 			if len(params) == 2 {
 				return "StorageAt", append(params, ethrpctypes.LatestBlockNumber)
 			}
@@ -119,14 +126,20 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 		"eth_estimateGas":                      int2Hexbig,
 	}
 
-	var ignoreRpc map[string]bool = map[string]bool{}
-	var onlyTestRpc map[string]bool = map[string]bool{
-		// "eth_getBlockByNumber": true,
-		// "eth_getTransactionCount-1649315495325": true,
-		// "eth_getTransactionReceipt-1649315494676": true,
+	ignoreRpc := map[string]bool{}
+	onlyTestRpc := map[string]bool{}
+	ignoreExamples := map[string]bool{
+		"eth_getCode-0x1e6309dc46a2a4936abda54b69c91d7a3c75a39e":            true,
+		"eth_getStorageAt-0x1e6309dc46a2a4936abda54b69c91d7a3c75a39e,0x100": true,
+		"eth_getLogs-1649755528773":                                         true,
 	}
+	onlyExamples := map[string]bool{}
 
 	provider, _ := providers.NewBaseProvider(context.Background(), "http://47.93.101.243/eth/")
+	middled := providers.NewMiddlewarableProvider(provider)
+	middled.HookCall(callFuncLogMiddle)
+	provider = middled
+
 	return rpctest.RpcTestConfig{
 		ExamplesUrl: "https://raw.githubusercontent.com/Conflux-Chain/jsonrpc-spec/main/src/eth/examples.json",
 		Client:      client.NewRpcEthClient(provider),
@@ -135,9 +148,23 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 		Rpc2FuncSelector:      rpc2FuncSelector,
 		Rpc2FuncResultHandler: rpc2FuncResultHandler,
 		IgnoreRpcs:            ignoreRpc,
+		IgnoreExamples:        ignoreExamples,
 		OnlyTestRpcs:          onlyTestRpc,
+		OnlyExamples:          onlyExamples,
 	}
 
+}
+
+func callFuncLogMiddle(f providers.CallFunc) providers.CallFunc {
+	return func(resultPtr interface{}, method string, args ...interface{}) error {
+		jArgs, _ := json.Marshal(args)
+		fmt.Printf("----rpc call %v %s-----\n", method, jArgs)
+		err := f(resultPtr, method, args...)
+		j, _ := json.Marshal(resultPtr)
+		fmt.Printf("rpc response %s\n", j)
+		fmt.Printf("rpc error %v\n", err)
+		return err
+	}
 }
 
 // TODO: Open after rpc mock server ready
