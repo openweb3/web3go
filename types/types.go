@@ -168,20 +168,20 @@ type receiptMarshaling struct {
 // CallRequest represents the arguments to construct a new transaction
 // or a message call.
 type CallRequest struct {
-	From                 *common.Address `json:"from"`
-	To                   *common.Address `json:"to"`
-	Gas                  *uint64         `json:"gas"`
+	From                 *common.Address `json:"from,omitempty"`
+	To                   *common.Address `json:"to,omitempty"`
+	Gas                  *uint64         `json:"gas,omitempty"`
 	GasPrice             *big.Int        `json:"gasPrice,omitempty"`
 	MaxFeePerGas         *big.Int        `json:"maxFeePerGas,omitempty"`
 	MaxPriorityFeePerGas *big.Int        `json:"maxPriorityFeePerGas,omitempty"`
-	Value                *big.Int        `json:"value"`
-	Nonce                *uint64         `json:"nonce"`
+	Value                *big.Int        `json:"value,omitempty"`
+	Nonce                *uint64         `json:"nonce,omitempty"`
 
 	// We accept "data" and "input" for backwards-compatibility reasons.
 	// "input" is the newer name and should be preferred by clients.
 	// Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
-	Data  []byte `json:"data"`
-	Input []byte `json:"input"` //+ *v if data!=input throw, else set empty field value by filled field
+	Data  []byte `json:"data,omitempty"`
+	Input []byte `json:"input,omitempty"` //+ *v if data!=input throw, else set empty field value by filled field
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`
