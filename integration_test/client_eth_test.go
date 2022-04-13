@@ -167,7 +167,6 @@ func callFuncLogMiddle(f providers.CallFunc) providers.CallFunc {
 	}
 }
 
-// TODO: Open after rpc mock server ready
 func TestClienEth(t *testing.T) {
 	config := getEthTestConfig()
 	rpctest.DoClientTest(t, config)
