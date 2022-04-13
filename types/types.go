@@ -68,13 +68,14 @@ type blockMarshaling struct {
 }
 
 //go:generate gencodec -type Transaction -field-override transactionMarshaling -out gen_transaction_json.go
+// "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
 type Transaction struct {
 	Accesses    types.AccessList `json:"accessList,omitempty"`
 	BlockHash   *common.Hash     `json:"blockHash"`
 	BlockNumber *big.Int         `json:"blockNumber"`
 	ChainID     *big.Int         `json:"chainId,omitempty"`
 	// Creates not guarantee to be valid, it's valid for parity node but not geth node
-	Creates              *common.Address `json:"creates,omitempty"`
+	Creates              *common.Address `json:"creates,omitempty"                                   testomit:"false"`
 	From                 common.Address  `json:"from"`
 	Gas                  uint64          `json:"gas"                            gencodec:"required"`
 	GasPrice             *big.Int        `json:"gasPrice"`
@@ -83,9 +84,13 @@ type Transaction struct {
 	MaxFeePerGas         *big.Int        `json:"maxFeePerGas,omitempty"`
 	MaxPriorityFeePerGas *big.Int        `json:"maxPriorityFeePerGas,omitempty"`
 	Nonce                uint64          `json:"nonce"                          gencodec:"required"`
-	R                    *big.Int        `json:"r"                              gencodec:"required"`
-	S                    *big.Int        `json:"s"                              gencodec:"required"`
-	StandardV            *big.Int        `json:"standardV,omitempty"`
+	// Creates not guarantee to be valid, it's valid for parity node but not geth node
+	PublicKey *hexutil.Bytes `json:"publicKey,omitempty"                                 testomit:"false"` //+ x
+	R         *big.Int       `json:"r"                              gencodec:"required"`
+	// Creates not guarantee to be valid, it's valid for parity node but not geth node
+	Raw       *hexutil.Bytes `json:"raw,omitempty"                                       testomit:"false"` //+ x
+	S         *big.Int       `json:"s"                              gencodec:"required"`
+	StandardV *big.Int       `json:"standardV,omitempty"`
 	// Status not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
 	Status           *uint64         `json:"status,omitempty"`
 	To               *common.Address `json:"to" rlp:"nil"`
@@ -109,7 +114,9 @@ type transactionMarshaling struct {
 	MaxFeePerGas         *hexutil.Big     `json:"maxFeePerGas,omitempty"`
 	MaxPriorityFeePerGas *hexutil.Big     `json:"maxPriorityFeePerGas,omitempty"`
 	Nonce                hexutil.Uint64   `json:"nonce"`
+	PublicKey            *hexutil.Bytes   `json:"publicKey,omitempty"`
 	R                    *hexutil.Big     `json:"r"`
+	Raw                  *hexutil.Bytes   `json:"raw,omitempty"`
 	S                    *hexutil.Big     `json:"s"`
 	StandardV            *hexutil.Big     `json:"standardV,omitempty"`
 	Status               *hexutil.Uint64  `json:"status,omitempty"`
@@ -121,6 +128,7 @@ type transactionMarshaling struct {
 }
 
 //go:generate gencodec -type Receipt -field-override receiptMarshaling -out gen_receipt_json.go
+// "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
 type Receipt struct {
 	BlockHash         common.Hash     `json:"blockHash"`
 	BlockNumber       uint64          `json:"blockNumber"`
@@ -137,7 +145,7 @@ type Receipt struct {
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  uint64          `json:"transactionIndex"`
 	// Not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
-	TxExecErrorMsg *string `json:"txExecErrorMsg,omitempty"`
+	TxExecErrorMsg *string `json:"txExecErrorMsg,omitempty"        testomit:"false"`
 	Type           *uint   `json:"type,omitempty"`
 }
 type receiptMarshaling struct {
@@ -162,20 +170,20 @@ type receiptMarshaling struct {
 // CallRequest represents the arguments to construct a new transaction
 // or a message call.
 type CallRequest struct {
-	From                 *common.Address `json:"from"`
-	To                   *common.Address `json:"to"`
-	Gas                  *uint64         `json:"gas"`
+	From                 *common.Address `json:"from,omitempty"`
+	To                   *common.Address `json:"to,omitempty"`
+	Gas                  *uint64         `json:"gas,omitempty"`
 	GasPrice             *big.Int        `json:"gasPrice,omitempty"`
 	MaxFeePerGas         *big.Int        `json:"maxFeePerGas,omitempty"`
 	MaxPriorityFeePerGas *big.Int        `json:"maxPriorityFeePerGas,omitempty"`
-	Value                *big.Int        `json:"value"`
-	Nonce                *uint64         `json:"nonce"`
+	Value                *big.Int        `json:"value,omitempty"`
+	Nonce                *uint64         `json:"nonce,omitempty"`
 
 	// We accept "data" and "input" for backwards-compatibility reasons.
 	// "input" is the newer name and should be preferred by clients.
 	// Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
-	Data  []byte `json:"data"`
-	Input []byte `json:"input"` //+ *v if data!=input throw, else set empty field value by filled field
+	Data  []byte `json:"data,omitempty"`
+	Input []byte `json:"input,omitempty"` //+ *v if data!=input throw, else set empty field value by filled field
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`

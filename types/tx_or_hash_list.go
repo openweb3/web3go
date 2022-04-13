@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/openweb3/go-sdk-common/rpctest"
 )
 
 type txListType string
@@ -94,6 +95,16 @@ func (l TxOrHashList) MarshalJSON() ([]byte, error) {
 		return json.Marshal(l.transactions)
 	case TXLIST_HASH:
 		return json.Marshal(l.hashes)
+	}
+	return json.Marshal(nil)
+}
+
+func (l TxOrHashList) MarshalJSONForRPCTest(indent ...bool) ([]byte, error) {
+	switch l.Type() {
+	case TXLIST_TRANSACTION:
+		return rpctest.JsonMarshalForRpcTest(l.transactions, indent...)
+	case TXLIST_HASH:
+		return rpctest.JsonMarshalForRpcTest(l.hashes, indent...)
 	}
 	return json.Marshal(nil)
 }
