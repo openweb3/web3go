@@ -314,12 +314,6 @@ github.com/opentracing/opentracing-go v1.0.3-0.20180606204148-bd9c31933947/go.mo
 github.com/opentracing/opentracing-go v1.1.0/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
 github.com/openweb3/go-rpc-provider v0.1.2 h1:SnWWsPIc2ecXnxVkMK3wD/1SpDNJynLIHAEnL79HfvU=
 github.com/openweb3/go-rpc-provider v0.1.2/go.mod h1:6rDg4znRmz1CygAxCMLRSBh/HQrf+2jo7DNk4hgvGN8=
-github.com/openweb3/go-sdk-common v0.0.0-20220406084528-2500ce861411 h1:pYcZoVr8eXyT3czqmgqAQJvQ0VYS4NC1/lZ79AJAq3I=
-github.com/openweb3/go-sdk-common v0.0.0-20220406084528-2500ce861411/go.mod h1:/M7gnCteccqnoBJMBmwTXkj7akVzQIMcD8y6DFX5GmE=
-github.com/openweb3/go-sdk-common v0.0.0-20220406101047-647f047607c7 h1:da5eDGfgJeFzZQv94zOwLvu2yC9q+P1zqd2Ganio5kI=
-github.com/openweb3/go-sdk-common v0.0.0-20220406101047-647f047607c7/go.mod h1:/M7gnCteccqnoBJMBmwTXkj7akVzQIMcD8y6DFX5GmE=
-github.com/openweb3/go-sdk-common v0.0.0-20220407083459-597b845413e8 h1:8OnulYIJyaZ63M4O+hFk9tEeKboVqrgNyY7HJyBWARU=
-github.com/openweb3/go-sdk-common v0.0.0-20220407083459-597b845413e8/go.mod h1:/M7gnCteccqnoBJMBmwTXkj7akVzQIMcD8y6DFX5GmE=
 github.com/openweb3/go-sdk-common v0.0.0-20220413032440-b5356d1d9613 h1:HpFWqRVb7ISQxLbfF2rz9y5Kv6VHX2f75fVAUJPxIXQ=
 github.com/openweb3/go-sdk-common v0.0.0-20220413032440-b5356d1d9613/go.mod h1:/M7gnCteccqnoBJMBmwTXkj7akVzQIMcD8y6DFX5GmE=
 github.com/paulbellamy/ratecounter v0.2.0/go.mod h1:Hfx1hDpSGoqxkVVpBi/IlYD7kChlfo5C6hzIHwPqfFE=
