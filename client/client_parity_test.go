@@ -13,7 +13,7 @@ import (
 	"github.com/openweb3/web3go/types"
 )
 
-func TestParity(t *testing.T) {
+func _TestParity(t *testing.T) {
 	url := "http://localhost:8545"
 	// url := "http://net8889eth.confluxrpc.com"
 	p, err := providers.NewBaseProvider(context.Background(), url)

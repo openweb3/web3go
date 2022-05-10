@@ -9,6 +9,7 @@ require (
 	github.com/openweb3/go-rpc-provider v0.1.2
 	github.com/openweb3/go-sdk-common v0.0.0-20220413032440-b5356d1d9613
 	github.com/pkg/errors v0.9.1
+	github.com/valyala/fasthttp v1.33.0
 	gotest.tools v2.2.0+incompatible
 )
 

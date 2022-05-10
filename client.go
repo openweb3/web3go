@@ -30,7 +30,12 @@ func NewClient(rawurl string) (*Client, error) {
 }
 
 func NewClientWithOption(rawurl string, option *ClientOption) (*Client, error) {
-	p, err := providers.NewBaseProvider(context.Background(), rawurl)
+	maxConn := 0
+	if option != nil {
+		maxConn = option.MaxConnectionNum
+	}
+
+	p, err := providers.NewBaseProvider(context.Background(), rawurl, maxConn)
 	if err != nil {
 		return nil, err
 	}
