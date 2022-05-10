@@ -9,7 +9,7 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	client, err := NewClientWithOption("http://localhost:8545", nil)
+	client, err := NewClientWithOption("https://evm.confluxrpc.com", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
