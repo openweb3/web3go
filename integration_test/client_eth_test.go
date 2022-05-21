@@ -9,9 +9,9 @@ import (
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
+	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 	"github.com/openweb3/go-sdk-common/rpctest"
 	"github.com/openweb3/web3go/client"
-	providers "github.com/openweb3/web3go/provider_wrapper"
 )
 
 func int2Hexbig(val interface{}) (converted interface{}) {

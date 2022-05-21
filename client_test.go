@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	providers "github.com/openweb3/web3go/provider_wrapper"
+	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 )
 
 func TestClient(t *testing.T) {
