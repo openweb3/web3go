@@ -1,11 +1,12 @@
 package client
 
 import (
+	"context"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/openweb3/web3go/interfaces"
+	"github.com/openweb3/go-rpc-provider/interfaces"
 	"github.com/openweb3/web3go/types"
 )
 
@@ -20,249 +21,249 @@ func NewRpcParityClient(provider interfaces.Provider) *RpcParityClient {
 }
 
 /// Returns current transactions limit.
-func (c *RpcParityClient) TransactionsLimit() (val uint, err error) {
-	err = c.core.Call(&val, "parity_transactionsLimit")
+func (c *RpcParityClient) TransactionsLimit(ctx context.Context) (val uint, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_transactionsLimit")
 	return
 }
 
 /// Returns mining extra data.
-func (c *RpcParityClient) ExtraData() (val []byte, err error) {
+func (c *RpcParityClient) ExtraData(ctx context.Context) (val []byte, err error) {
 	var _val hexutil.Bytes
-	err = c.core.Call(&_val, "parity_extraData")
+	err = c.core.CallContext(ctx, &_val, "parity_extraData")
 	val = ([]byte)(_val)
 	return
 }
 
 /// Returns mining gas floor target.
-func (c *RpcParityClient) GasFloorTarget() (val *big.Int, err error) {
+func (c *RpcParityClient) GasFloorTarget(ctx context.Context) (val *big.Int, err error) {
 	var _val *hexutil.Big
-	err = c.core.Call(&_val, "parity_gasFloorTarget")
+	err = c.core.CallContext(ctx, &_val, "parity_gasFloorTarget")
 	val = (*big.Int)(_val)
 	return
 }
 
 /// Returns mining gas floor cap.
-func (c *RpcParityClient) GasCeilTarget() (val *big.Int, err error) {
+func (c *RpcParityClient) GasCeilTarget(ctx context.Context) (val *big.Int, err error) {
 	var _val *hexutil.Big
-	err = c.core.Call(&_val, "parity_gasCeilTarget")
+	err = c.core.CallContext(ctx, &_val, "parity_gasCeilTarget")
 	val = (*big.Int)(_val)
 	return
 }
 
 /// Returns minimal gas price for transaction to be included in queue.
-func (c *RpcParityClient) MinGasPrice() (val *big.Int, err error) {
+func (c *RpcParityClient) MinGasPrice(ctx context.Context) (val *big.Int, err error) {
 	var _val *hexutil.Big
-	err = c.core.Call(&_val, "parity_minGasPrice")
+	err = c.core.CallContext(ctx, &_val, "parity_minGasPrice")
 	val = (*big.Int)(_val)
 	return
 }
 
 /// Returns latest logs
-func (c *RpcParityClient) DevLogs() (val []string, err error) {
-	err = c.core.Call(&val, "parity_devLogs")
+func (c *RpcParityClient) DevLogs(ctx context.Context) (val []string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_devLogs")
 	return
 }
 
 /// Returns logs levels
-func (c *RpcParityClient) DevLogsLevels() (val string, err error) {
-	err = c.core.Call(&val, "parity_devLogsLevels")
+func (c *RpcParityClient) DevLogsLevels(ctx context.Context) (val string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_devLogsLevels")
 	return
 }
 
 /// Returns chain name - DEPRECATED. Use `parity_chainName` instead.
-func (c *RpcParityClient) NetChain() (val string, err error) {
-	err = c.core.Call(&val, "parity_netChain")
+func (c *RpcParityClient) NetChain(ctx context.Context) (val string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_netChain")
 	return
 }
 
 /// Returns peers details
-func (c *RpcParityClient) NetPeers() (val types.Peers, err error) {
-	err = c.core.Call(&val, "parity_netPeers")
+func (c *RpcParityClient) NetPeers(ctx context.Context) (val types.Peers, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_netPeers")
 	return
 }
 
 /// Returns network port
-func (c *RpcParityClient) NetPort() (val uint16, err error) {
-	err = c.core.Call(&val, "parity_netPort")
+func (c *RpcParityClient) NetPort(ctx context.Context) (val uint16, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_netPort")
 	return
 }
 
 /// Returns rpc settings
-func (c *RpcParityClient) RpcSettings() (val types.RpcSettings, err error) {
-	err = c.core.Call(&val, "parity_rpcSettings")
+func (c *RpcParityClient) RpcSettings(ctx context.Context) (val types.RpcSettings, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_rpcSettings")
 	return
 }
 
 /// Returns node name
-func (c *RpcParityClient) NodeName() (val string, err error) {
-	err = c.core.Call(&val, "parity_nodeName")
+func (c *RpcParityClient) NodeName(ctx context.Context) (val string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_nodeName")
 	return
 }
 
 /// Returns default extra data
-func (c *RpcParityClient) DefaultExtraData() (val []byte, err error) {
+func (c *RpcParityClient) DefaultExtraData(ctx context.Context) (val []byte, err error) {
 	var _val hexutil.Bytes
-	err = c.core.Call(&_val, "parity_defaultExtraData")
+	err = c.core.CallContext(ctx, &_val, "parity_defaultExtraData")
 	val = ([]byte)(_val)
 	return
 }
 
 /// Returns distribution of gas price in latest blocks.
-func (c *RpcParityClient) GasPriceHistogram() (val types.Histogram, err error) {
-	err = c.core.Call(&val, "parity_gasPriceHistogram")
+func (c *RpcParityClient) GasPriceHistogram(ctx context.Context) (val types.Histogram, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_gasPriceHistogram")
 	return
 }
 
 /// Returns number of unsigned transactions waiting in the signer queue (if signer enabled)
 /// Returns error when signer is disabled
-func (c *RpcParityClient) UnsignedTransactionsCount() (val uint, err error) {
-	err = c.core.Call(&val, "parity_unsignedTransactionsCount")
+func (c *RpcParityClient) UnsignedTransactionsCount(ctx context.Context) (val uint, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_unsignedTransactionsCount")
 	return
 }
 
 /// Returns a cryptographically random phrase sufficient for securely seeding a secret key.
-func (c *RpcParityClient) GenerateSecretPhrase() (val string, err error) {
-	err = c.core.Call(&val, "parity_generateSecretPhrase")
+func (c *RpcParityClient) GenerateSecretPhrase(ctx context.Context) (val string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_generateSecretPhrase")
 	return
 }
 
 /// Returns whatever address would be derived from the given phrase if it were to seed a brainwallet.
-func (c *RpcParityClient) PhraseToAddress(phrase string) (val common.Address, err error) {
-	err = c.core.Call(&val, "parity_phraseToAddress", phrase)
+func (c *RpcParityClient) PhraseToAddress(ctx context.Context, phrase string) (val common.Address, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_phraseToAddress", phrase)
 	return
 }
 
 /// Returns the value of the registrar for this network.
-func (c *RpcParityClient) RegistryAddress() (val *common.Address, err error) {
-	err = c.core.Call(&val, "parity_registryAddress")
+func (c *RpcParityClient) RegistryAddress(ctx context.Context) (val *common.Address, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_registryAddress")
 	return
 }
 
 /// Returns all addresses if Fat DB is enabled (`--fat-db`), or null if not.
-func (c *RpcParityClient) ListAccounts(count uint64, after *common.Address, blockNumber *types.BlockNumberOrHash) (val []common.Address, err error) {
-	err = c.core.Call(&val, "parity_listAccounts", count, after, blockNumber)
+func (c *RpcParityClient) ListAccounts(ctx context.Context, count uint64, after *common.Address, blockNumber *types.BlockNumberOrHash) (val []common.Address, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_listAccounts", count, after, blockNumber)
 	return
 }
 
 /// Returns all storage keys of the given address (first parameter) if Fat DB is enabled (`--fat-db`),
 /// or null if not.
-func (c *RpcParityClient) ListStorageKeys(address common.Address, count uint64, after *common.Hash, blockNumber *types.BlockNumberOrHash) (val []common.Hash, err error) {
-	err = c.core.Call(&val, "parity_listStorageKeys", address, count, after, blockNumber)
+func (c *RpcParityClient) ListStorageKeys(ctx context.Context, address common.Address, count uint64, after *common.Hash, blockNumber *types.BlockNumberOrHash) (val []common.Hash, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_listStorageKeys", address, count, after, blockNumber)
 	return
 }
 
 /// Encrypt some data with a public key under ECIES.
 /// First parameter is the 512-byte destination public key, second is the message.
 /// FIXME: key shoule be H512 public key
-func (c *RpcParityClient) EncryptMessage(key string, phrase []byte) (val []byte, err error) {
+func (c *RpcParityClient) EncryptMessage(ctx context.Context, key string, phrase []byte) (val []byte, err error) {
 	_phrase := (hexutil.Bytes)(phrase)
 	var _val hexutil.Bytes
-	err = c.core.Call(&_val, "parity_encryptMessage", key, _phrase)
+	err = c.core.CallContext(ctx, &_val, "parity_encryptMessage", key, _phrase)
 	val = ([]byte)(_val)
 	return
 }
 
 /// Returns all pending transactions from transaction queue.
-func (c *RpcParityClient) PendingTransactions(limit *uint, filter *types.TransactionFilter) (val []types.Transaction, err error) {
-	err = c.core.Call(&val, "parity_pendingTransactions", limit, filter)
+func (c *RpcParityClient) PendingTransactions(ctx context.Context, limit *uint, filter *types.TransactionFilter) (val []types.Transaction, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_pendingTransactions", limit, filter)
 	return
 }
 
 /// Returns all transactions from transaction queue.
 ///
 /// Some of them might not be ready to be included in a block yet.
-func (c *RpcParityClient) AllTransactions() (val []types.Transaction, err error) {
-	err = c.core.Call(&val, "parity_allTransactions")
+func (c *RpcParityClient) AllTransactions(ctx context.Context) (val []types.Transaction, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_allTransactions")
 	return
 }
 
 /// Same as parity_allTransactions, but return only transactions hashes.
-func (c *RpcParityClient) AllTransactionHashes() (val []common.Hash, err error) {
-	err = c.core.Call(&val, "parity_allTransactionHashes")
+func (c *RpcParityClient) AllTransactionHashes(ctx context.Context) (val []common.Hash, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_allTransactionHashes")
 	return
 }
 
 /// Returns all future transactions from transaction queue (deprecated)
-func (c *RpcParityClient) FutureTransactions() (val []types.Transaction, err error) {
-	err = c.core.Call(&val, "parity_futureTransactions")
+func (c *RpcParityClient) FutureTransactions(ctx context.Context) (val []types.Transaction, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_futureTransactions")
 	return
 }
 
 /// Returns propagation statistics on transactions pending in the queue.
-func (c *RpcParityClient) PendingTransactionsStats() (val map[common.Hash](types.TransactionStats), err error) {
-	err = c.core.Call(&val, "parity_pendingTransactionsStats")
+func (c *RpcParityClient) PendingTransactionsStats(ctx context.Context) (val map[common.Hash](types.TransactionStats), err error) {
+	err = c.core.CallContext(ctx, &val, "parity_pendingTransactionsStats")
 	return
 }
 
 /// Returns a list of current and past local transactions with status details.
-func (c *RpcParityClient) LocalTransactions() (val map[common.Hash]types.LocalTransactionStatus, err error) {
-	err = c.core.Call(&val, "parity_localTransactions")
+func (c *RpcParityClient) LocalTransactions(ctx context.Context) (val map[common.Hash]types.LocalTransactionStatus, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_localTransactions")
 	return
 }
 
 /// Returns current WS Server interface and port or an error if ws server is disabled.
-func (c *RpcParityClient) WsUrl() (val string, err error) {
-	err = c.core.Call(&val, "parity_wsUrl")
+func (c *RpcParityClient) WsUrl(ctx context.Context) (val string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_wsUrl")
 	return
 }
 
 /// Returns next nonce for particular sender. Should include all transactions in the queue.
-func (c *RpcParityClient) NextNonce(address common.Address) (val *big.Int, err error) {
+func (c *RpcParityClient) NextNonce(ctx context.Context, address common.Address) (val *big.Int, err error) {
 	var _val *hexutil.Big
-	err = c.core.Call(&_val, "parity_nextNonce", address)
+	err = c.core.CallContext(ctx, &_val, "parity_nextNonce", address)
 	val = (*big.Int)(_val)
 	return
 }
 
 /// Get the mode. Returns one of: "active", "passive", "dark", "offline".
-func (c *RpcParityClient) Mode() (val string, err error) {
-	err = c.core.Call(&val, "parity_mode")
+func (c *RpcParityClient) Mode(ctx context.Context) (val string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_mode")
 	return
 }
 
 /// Get the chain name. Returns one of the pre-configured chain names or a filename.
-func (c *RpcParityClient) Chain() (val string, err error) {
-	err = c.core.Call(&val, "parity_chain")
+func (c *RpcParityClient) Chain(ctx context.Context) (val string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_chain")
 	return
 }
 
 /// Get the enode of this node.
-func (c *RpcParityClient) Enode() (val string, err error) {
-	err = c.core.Call(&val, "parity_enode")
+func (c *RpcParityClient) Enode(ctx context.Context) (val string, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_enode")
 	return
 }
 
 /// Get the current chain status.
-func (c *RpcParityClient) ChainStatus() (val types.ChainStatus, err error) {
-	err = c.core.Call(&val, "parity_chainStatus")
+func (c *RpcParityClient) ChainStatus(ctx context.Context) (val types.ChainStatus, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_chainStatus")
 	return
 }
 
 /// Get node kind info.
-func (c *RpcParityClient) NodeKind() (val types.NodeKind, err error) {
-	err = c.core.Call(&val, "parity_nodeKind")
+func (c *RpcParityClient) NodeKind(ctx context.Context) (val types.NodeKind, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_nodeKind")
 	return
 }
 
 /// Get block header.
 /// Same as `eth_getBlockByNumber` but without uncles and transactions.
-func (c *RpcParityClient) BlockHeader(number *types.BlockNumberOrHash) (val types.RichHeader, err error) {
-	err = c.core.Call(&val, "parity_getBlockHeaderByNumber", number)
+func (c *RpcParityClient) BlockHeader(ctx context.Context, number *types.BlockNumberOrHash) (val types.RichHeader, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_getBlockHeaderByNumber", number)
 	return
 }
 
 /// Get block receipts.
 /// Allows you to fetch receipts from the entire block at once.
 /// If no parameter is provided defaults to `latest`.
-func (c *RpcParityClient) BlockReceipts(number *types.BlockNumberOrHash) (val []types.Receipt, err error) {
-	err = c.core.Call(&val, "parity_getBlockReceipts", number)
+func (c *RpcParityClient) BlockReceipts(ctx context.Context, number *types.BlockNumberOrHash) (val []types.Receipt, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_getBlockReceipts", number)
 	return
 }
 
 /// Call contract, returning the output data.
-func (c *RpcParityClient) Call(requests []types.CallRequest, num *types.BlockNumberOrHash) (val [][]byte, err error) {
+func (c *RpcParityClient) Call(ctx context.Context, requests []types.CallRequest, num *types.BlockNumberOrHash) (val [][]byte, err error) {
 	var _val []hexutil.Bytes
-	err = c.core.Call(&_val, "parity_call", requests, num)
+	err = c.core.CallContext(ctx, &_val, "parity_call", requests, num)
 
 	for _, _valItem := range _val {
 		val = append(val, []byte(_valItem))
@@ -273,8 +274,8 @@ func (c *RpcParityClient) Call(requests []types.CallRequest, num *types.BlockNum
 /// Used for submitting a proof-of-work solution (similar to `eth_submitWork`,
 /// but returns block hash on success, and returns an explicit error message on failure).
 // FIXME: nonce shoule be H64 hash
-func (c *RpcParityClient) SubmitWorkDetail(nonce string, powHash common.Hash, mixHash common.Hash) (val common.Hash, err error) {
-	err = c.core.Call(&val, "parity_submitWorkDetail", nonce, powHash, mixHash)
+func (c *RpcParityClient) SubmitWorkDetail(ctx context.Context, nonce string, powHash common.Hash, mixHash common.Hash) (val common.Hash, err error) {
+	err = c.core.CallContext(ctx, &val, "parity_submitWorkDetail", nonce, powHash, mixHash)
 	return
 }
 
@@ -285,16 +286,16 @@ func (c *RpcParityClient) SubmitWorkDetail(nonce string, powHash common.Hash, mi
 /// - The node is not syncing.
 ///
 /// Otherwise the RPC returns error.
-func (c *RpcParityClient) Status() (err error) {
-	err = c.core.Call(&[]interface{}{}, "parity_nodeStatus")
+func (c *RpcParityClient) Status(ctx context.Context) (err error) {
+	err = c.core.CallContext(ctx, &[]interface{}{}, "parity_nodeStatus")
 	return
 }
 
 /// Extracts Address and public key from signature using the r, s and v params. Equivalent to Solidity erecover
 /// as well as checks the signature for chain replay protection
-func (c *RpcParityClient) VerifySignature(isPrefixed bool, message []byte, r common.Hash, s common.Hash, v uint64) (val types.RecoveredAccount, err error) {
+func (c *RpcParityClient) VerifySignature(ctx context.Context, isPrefixed bool, message []byte, r common.Hash, s common.Hash, v uint64) (val types.RecoveredAccount, err error) {
 	_message := (hexutil.Bytes)(message)
 	_v := (hexutil.Uint64)(v)
-	err = c.core.Call(&val, "parity_verifySignature", isPrefixed, _message, r, s, _v)
+	err = c.core.CallContext(ctx, &val, "parity_verifySignature", isPrefixed, _message, r, s, _v)
 	return
 }

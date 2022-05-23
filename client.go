@@ -1,9 +1,9 @@
 package web3go
 
 import (
+	"github.com/openweb3/go-rpc-provider/interfaces"
 	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 	client "github.com/openweb3/web3go/client"
-	"github.com/openweb3/web3go/interfaces"
 )
 
 // Client defines typed wrappers for the Ethereum RPC API.

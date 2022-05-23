@@ -1,6 +1,7 @@
 package web3go
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -16,19 +17,19 @@ func TestClient(t *testing.T) {
 
 	p := client.Provider()
 	mp := providers.NewMiddlewarableProvider(p)
-	mp.HookCall(callLogMiddleware)
+	mp.HookCallContext(callcontextLogMiddleware)
 	client.SetProvider(mp)
 
-	_, err = client.Eth.ClientVersion()
+	_, err = client.Eth.ClientVersion(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
-func callLogMiddleware(f providers.CallFunc) providers.CallFunc {
-	return func(resultPtr interface{}, method string, args ...interface{}) error {
+func callcontextLogMiddleware(f providers.CallContextFunc) providers.CallContextFunc {
+	return func(ctx context.Context, resultPtr interface{}, method string, args ...interface{}) error {
 		fmt.Printf("request %v %v\n", method, args)
-		err := f(resultPtr, method, args...)
+		err := f(ctx, resultPtr, method, args...)
 		j, _ := json.Marshal(resultPtr)
 		fmt.Printf("response %s\n", j)
 		return err
