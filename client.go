@@ -16,17 +16,17 @@ type Client struct {
 }
 
 func NewClient(rawurl string) (*Client, error) {
-	return NewClientWithOption(rawurl, nil)
+	return NewClientWithOption(rawurl, providers.Option{})
 }
 
-func NewClientWithOption(rawurl string, option *providers.Option) (*Client, error) {
+func NewClientWithOption(rawurl string, option providers.Option) (*Client, error) {
 	p, err := providers.NewProviderWithOption(rawurl, option)
 	if err != nil {
 		return nil, err
 	}
 
 	ec := NewClientWithProvider(p)
-	ec.option = option
+	ec.option = &option
 
 	return ec, nil
 }

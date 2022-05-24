@@ -10,7 +10,7 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	client, err := NewClientWithOption("https://evm.confluxrpc.com", nil)
+	client, err := NewClient("https://evm.confluxrpc.com")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -20,7 +20,7 @@ func TestClient(t *testing.T) {
 	mp.HookCallContext(callcontextLogMiddleware)
 	client.SetProvider(mp)
 
-	_, err = client.Eth.ClientVersion(context.Background())
+	_, err = client.Eth.ClientVersion()
 	if err != nil {
 		t.Fatal(err)
 	}
