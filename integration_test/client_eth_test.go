@@ -133,9 +133,7 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 		"eth_getStorageAt-0x1e6309dc46a2a4936abda54b69c91d7a3c75a39e,0x100": true,
 		"eth_getLogs-1649755528773":                                         true,
 	}
-	onlyExamples := map[string]bool{
-		"eth_getCode-0x7253cb7bb788f91b18e20b61e708cb0c98383fc8,earliest": true,
-	}
+	onlyExamples := map[string]bool{}
 
 	provider, _ := providers.NewBaseProvider(context.Background(), "http://47.93.101.243/eth/")
 	middled := providers.NewMiddlewarableProvider(provider)
