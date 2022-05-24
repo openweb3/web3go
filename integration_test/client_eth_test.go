@@ -9,9 +9,9 @@ import (
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
+	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 	"github.com/openweb3/go-sdk-common/rpctest"
 	"github.com/openweb3/web3go/client"
-	providers "github.com/openweb3/web3go/provider_wrapper"
 )
 
 func int2Hexbig(val interface{}) (converted interface{}) {
@@ -137,7 +137,7 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 
 	provider, _ := providers.NewBaseProvider(context.Background(), "http://47.93.101.243/eth/")
 	middled := providers.NewMiddlewarableProvider(provider)
-	middled.HookCall(callFuncLogMiddle)
+	middled.HookCallContext(callcontextFuncLogMiddle)
 	provider = middled
 
 	return rpctest.RpcTestConfig{
@@ -155,14 +155,14 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 
 }
 
-func callFuncLogMiddle(f providers.CallFunc) providers.CallFunc {
-	return func(resultPtr interface{}, method string, args ...interface{}) error {
+func callcontextFuncLogMiddle(f providers.CallContextFunc) providers.CallContextFunc {
+	return func(ctx context.Context, resultPtr interface{}, method string, args ...interface{}) error {
 		jArgs, _ := json.Marshal(args)
-		fmt.Printf("----rpc call %v %s-----\n", method, jArgs)
-		err := f(resultPtr, method, args...)
+		fmt.Printf("\n-- rpc call %v %s--\n", method, jArgs)
+		err := f(ctx, resultPtr, method, args...)
 		j, _ := json.Marshal(resultPtr)
-		fmt.Printf("rpc response %s\n", j)
-		fmt.Printf("rpc error %v\n", err)
+		fmt.Printf("\trpc response %s\n", j)
+		fmt.Printf("\trpc error %v\n", err)
 		return err
 	}
 }
