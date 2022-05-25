@@ -9,9 +9,9 @@ For developer convenience, the web3go use standard type instead of hex types in 
 ## Usage
 
 ### NewClient
-The `NewClient` creates client by [middlewarable providers](https://github.com/openweb3/go-rpc-provider) with default retry and timeout options.
 
-Middlewarable providers could hook CallContext/BatchCallContext/Subscribe, such as log RPC request and response or cache environment variable in the context.
+The `NewClient` creates client with default retry and timeout options.
+
 - the default timeout is 30 seconds 
 - the default retry interval is 1 second
 - the default retry time is 3
@@ -19,7 +19,6 @@ Middlewarable providers could hook CallContext/BatchCallContext/Subscribe, such 
 ```golang
     NewClient("http://localhost:8545")
 ```
-
 ### NewClientWithOption
 Use `NewClientWithOption` to specify retry and timeout options
 
@@ -27,7 +26,11 @@ Use `NewClientWithOption` to specify retry and timeout options
     NewClientWithOption("http://localhost:8545", providers.Option{...})
 ```
 
-for custom pre/post Call/Batchcall behaviors, you can use HookCallContext of Middlewarable, such as log requests and so on, see more from [go-rpc-provider](https://github.com/openweb3/go-rpc-provider)
+The provider of both client created by `NewClient` and `NewClientWithOption` are [middlewarable providers](https://github.com/openweb3/go-rpc-provider).
+
+Middlewarable providers could hook CallContext/BatchCallContext/Subscribe, such as log RPC request and response or cache environment variable in the context.
+
+For custom pre/post Call/Batchcall behaviors, you can use HookCallContext of Middlewarable, such as log requests and so on, see more from [go-rpc-provider](https://github.com/openweb3/go-rpc-provider)
 ```golang
 	p, e := providers.NewBaseProvider(context.Background(), "http://localhost:8545")
 	if e != nil {
