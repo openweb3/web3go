@@ -8,11 +8,11 @@ import (
 
 // Client defines typed wrappers for the Ethereum RPC API.
 type Client struct {
-	provider interfaces.Provider
-	option   *providers.Option
-	Eth      *client.RpcEthClient
-	Trace    *client.RpcTraceClient
-	Parity   *client.RpcParityClient
+	*providers.MiddlewarableProvider
+	option *providers.Option
+	Eth    *client.RpcEthClient
+	Trace  *client.RpcTraceClient
+	Parity *client.RpcParityClient
 }
 
 func NewClient(rawurl string) (*Client, error) {
@@ -38,12 +38,12 @@ func NewClientWithProvider(p interfaces.Provider) *Client {
 }
 
 func (c *Client) SetProvider(p interfaces.Provider) {
-	c.provider = p
+	c.MiddlewarableProvider = providers.NewMiddlewarableProvider(p)
 	c.Eth = client.NewRpcEthClient(p)
 	c.Trace = client.NewRpcTraceClient(p)
 	c.Parity = client.NewRpcParityClient(p)
 }
 
-func (c *Client) Provider() interfaces.Provider {
-	return c.provider
+func (c *Client) Provider() *providers.MiddlewarableProvider {
+	return c.MiddlewarableProvider
 }
