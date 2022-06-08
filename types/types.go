@@ -7,8 +7,13 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
 )
+
+type BlockNumber = ethrpctypes.BlockNumber
+type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
+type Transaction = ethtypes.Transaction
 
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
 type Block struct {
@@ -67,9 +72,9 @@ type blockMarshaling struct {
 	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
 }
 
-//go:generate gencodec -type Transaction -field-override transactionMarshaling -out gen_transaction_json.go
+//go:generate gencodec -type TransactionResponse -field-override transactionResponseMarshaling -out gen_transaction_response_json.go
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
-type Transaction struct {
+type TransactionResponse struct {
 	Accesses    types.AccessList `json:"accessList,omitempty"`
 	BlockHash   *common.Hash     `json:"blockHash"`
 	BlockNumber *big.Int         `json:"blockNumber"`
@@ -100,7 +105,7 @@ type Transaction struct {
 	Value            *big.Int        `json:"value"                          gencodec:"required"`
 }
 
-type transactionMarshaling struct {
+type transactionResponseMarshaling struct {
 	Accesses             types.AccessList `json:"accessList,omitempty"`
 	BlockHash            *common.Hash     `json:"blockHash"`
 	BlockNumber          *hexutil.Big     `json:"blockNumber"`
@@ -239,9 +244,6 @@ type logMarshaling struct {
 	TxIndex             hexutil.Uint   `json:"transactionIndex"`
 	TransactionLogIndex *hexutil.Uint  `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
 }
-
-type BlockNumber = ethrpctypes.BlockNumber
-type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
 
 func (bnh *BlockNumberOrHash) UnmarshalJSON(data []byte) error {
 	return (*ethrpctypes.BlockNumberOrHash)(bnh).UnmarshalJSON(data)

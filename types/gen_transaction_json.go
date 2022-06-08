@@ -12,10 +12,10 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-var _ = (*transactionMarshaling)(nil)
+var _ = (*transactionResponseMarshaling)(nil)
 
 // MarshalJSON marshals as JSON.
-func (t Transaction) MarshalJSON() ([]byte, error) {
+func (t TransactionResponse) MarshalJSON() ([]byte, error) {
 	type Transaction struct {
 		Accesses             types.AccessList `json:"accessList,omitempty"`
 		BlockHash            *common.Hash     `json:"blockHash"`
@@ -71,7 +71,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON unmarshals from JSON.
-func (t *Transaction) UnmarshalJSON(input []byte) error {
+func (t *TransactionResponse) UnmarshalJSON(input []byte) error {
 	type Transaction struct {
 		Accesses             *types.AccessList `json:"accessList,omitempty"`
 		BlockHash            *common.Hash      `json:"blockHash"`

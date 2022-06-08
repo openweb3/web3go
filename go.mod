@@ -5,9 +5,11 @@ go 1.16
 require (
 	github.com/ethereum/go-ethereum v1.10.15
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
+	github.com/miguelmota/go-ethereum-hdwallet v0.1.1
 	github.com/openweb3/go-rpc-provider v0.2.2
 	github.com/openweb3/go-sdk-common v0.0.0-20220524083215-d22d44765e44
 	github.com/pkg/errors v0.9.1
+	github.com/tyler-smith/go-bip39 v1.0.1-0.20181017060643-dbb3b84ba2ef
 	gotest.tools v2.2.0+incompatible
 
 )
