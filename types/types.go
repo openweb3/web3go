@@ -11,10 +11,6 @@ import (
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
 )
 
-type BlockNumber = ethrpctypes.BlockNumber
-type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
-type Transaction = ethtypes.Transaction
-
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
 type Block struct {
 	Author          *common.Address   `json:"author,omitempty"`
@@ -244,6 +240,10 @@ type logMarshaling struct {
 	TxIndex             hexutil.Uint   `json:"transactionIndex"`
 	TransactionLogIndex *hexutil.Uint  `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
 }
+
+type BlockNumber = ethrpctypes.BlockNumber
+type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
+type Transaction = ethtypes.Transaction
 
 func (bnh *BlockNumberOrHash) UnmarshalJSON(data []byte) error {
 	return (*ethrpctypes.BlockNumberOrHash)(bnh).UnmarshalJSON(data)

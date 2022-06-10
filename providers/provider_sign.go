@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/openweb3/go-rpc-provider"
 	pinterfaces "github.com/openweb3/go-rpc-provider/interfaces"
 	signers "github.com/openweb3/web3go/signers"
@@ -27,10 +29,12 @@ const (
 	METHOD_SEND_TRANSACTION = "eth_sendTransaction"
 )
 
-func NewLoggerProvider(p pinterfaces.Provider, signManager signers.SignerManager) *pproviders.MiddlewarableProvider {
+func NewSignableProvider(p pinterfaces.Provider, signManager *signers.SignerManager) *pproviders.MiddlewarableProvider {
 	mp := pproviders.NewMiddlewarableProvider(p)
 
-	mid := &SignableMiddleware{}
+	mid := &SignableMiddleware{
+		manager: *signManager,
+	}
 	mp.HookCallContext(mid.CallContextMiddleware)
 	mp.HookBatchCallContext(mid.BatchCallContextMiddleware)
 
@@ -45,6 +49,7 @@ func (s *SignableMiddleware) CallContextMiddleware(call pproviders.CallContextFu
 				return err
 			}
 			args[0] = rawTx
+			method = "eth_sendRawTransaction"
 		}
 		return call(ctx, resultPtr, method, args...)
 	}
@@ -70,7 +75,7 @@ func (s *SignableMiddleware) BatchCallContextMiddleware(batchCall pproviders.Bat
 	}
 }
 
-func (s *SignableMiddleware) signTxAndEncode(tx interface{}) ([]byte, error) {
+func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, error) {
 	m := map[string]interface{}{}
 
 	// tx maybe a struct or a map, so we need to convert it to map[string]interface{}
@@ -83,11 +88,18 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) ([]byte, error) {
 		return nil, err
 	}
 
+	fmt.Printf("tx: %v\n", m)
+
 	from := common.HexToAddress(m["from"].(string))
+	chainId := m["chainId"].(string)
+
 	signer, err := s.manager.Get(from)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Printf("find signer of %v: %v\n", from, signer)
+
 	if signer != nil {
 		j, err := json.Marshal(m)
 		if err != nil {
@@ -96,14 +108,24 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) ([]byte, error) {
 
 		tx2 := &types.Transaction{}
 		json.Unmarshal(j, tx2)
-		signedTx, err := signer.SignTransaction(tx2)
+
+		chainIdInBig, ok := new(big.Int).SetString(chainId, 0)
+		if !ok {
+			return nil, errors.New("invalid chainId")
+		}
+
+		tx2, err = signer.SignTransaction(tx2, chainIdInBig)
 		if err != nil {
 			return nil, err
 		}
-		rawTx, err := rlp.EncodeToBytes(signedTx)
+		rawTx, err := tx2.MarshalBinary()
 		if err != nil {
 			return nil, err
 		}
+
+		// tx2J, _ := json.Marshal(tx2)
+		// fmt.Printf("signed tx: %s\n", tx2J)
+		// fmt.Printf("signed raw tx: %x\n", rawTx)
 
 		return rawTx, nil
 	}

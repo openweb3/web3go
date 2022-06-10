@@ -3,7 +3,10 @@ package client
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"math/big"
+
+	"github.com/pkg/errors"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -139,6 +142,7 @@ func (c *RpcEthClient) BlockByNumber(blockNumber types.BlockNumber, isFull bool)
 
 /// Returns the number of transactions sent from given address at given time
 /// (block number).
+// TODO: nil *types.BlockNumberOrHash will be marshaled to null, which is not allowed in geth, but could work in ganache and not treat as latest, what behavior in conflux-rust should be investigate
 func (c *RpcEthClient) TransactionCount(addr common.Address, blockNum *types.BlockNumberOrHash) (val *big.Int, err error) {
 	var _val *hexutil.Big
 	err = c.CallContext(context.Background(), &_val, "eth_getTransactionCount", addr, blockNum)
@@ -186,7 +190,7 @@ func (c *RpcEthClient) CodeAt(addr common.Address, blockNum *types.BlockNumberOr
 	return
 }
 
-func (c *RpcEthClient) SendTransaction(from common.Address, tx types.Transaction) (val common.Hash, err error) {
+func (c *RpcEthClient) SendTransaction(from common.Address, tx *types.Transaction) (val common.Hash, err error) {
 	j, err := json.Marshal(tx)
 	if err != nil {
 		return
@@ -199,6 +203,36 @@ func (c *RpcEthClient) SendTransaction(from common.Address, tx types.Transaction
 	}
 
 	m["from"] = from
+
+	chainId, err := c.ChainId()
+	if err != nil {
+		err = errors.Wrap(err, "failed to get chain id")
+		return
+	}
+
+	if chainId == nil {
+		err = errors.New("block chain is not ready")
+		return
+	}
+
+	m["chainId"] = fmt.Sprintf("0x%x", *chainId)
+
+	// chainIDInBig, ok := new(big.Int).SetString(fmt.Sprintf("%v", *chainId), 0)
+	// if !ok {
+	// 	err = errors.Errorf("failed to convert chain id %v to big int", chainId)
+	// 	return
+	// }
+
+	// m["chainId"] = chainIDInBig
+	// chainIDInHexBig := (*hexutil.Big)(chainIDInBig)
+	// m["chainId"] = chainIDInHexBig
+	// j, err = json.Marshal(chainIDInHexBig)
+	// if err != nil {
+	// 	err = errors.Wrap(err, "failed to marshal chain id")
+	// 	return
+	// }
+	// m["chainId"] = string(j)
+
 	err = c.CallContext(context.Background(), &val, "eth_sendTransaction", m)
 	return
 }
