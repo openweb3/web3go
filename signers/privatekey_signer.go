@@ -73,7 +73,7 @@ func NewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *Mn
 		log.Fatal(err)
 	}
 
-	_path, err := hdwallet.ParseDerivationPath(fmt.Sprintf("%v/%v", option.DerivePath, addressIndex))
+	_path, err := hdwallet.ParseDerivationPath(fmt.Sprintf("%v/%v", option.BaseDerivePath, addressIndex))
 	if err != nil {
 		return nil, err
 	}

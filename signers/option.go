@@ -1,12 +1,12 @@
 package signers
 
 type MnemonicOption struct {
-	DerivePath string `default:"m/44'/60'/0'/0"`
-	Password   string `default:""`
+	BaseDerivePath string `default:"m/44'/60'/0'/0"`
+	Password       string `default:""`
 }
 
 func (m *MnemonicOption) WithDerivePath(derivePath string) *MnemonicOption {
-	m.DerivePath = derivePath
+	m.BaseDerivePath = derivePath
 	return m
 }
 
