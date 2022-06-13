@@ -12,11 +12,11 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-var _ = (*transactionMarshaling)(nil)
+var _ = (*transactionResponseMarshaling)(nil)
 
 // MarshalJSON marshals as JSON.
-func (t Transaction) MarshalJSON() ([]byte, error) {
-	type Transaction struct {
+func (t TransactionResponse) MarshalJSON() ([]byte, error) {
+	type TransactionResponse struct {
 		Accesses             types.AccessList `json:"accessList,omitempty"`
 		BlockHash            *common.Hash     `json:"blockHash"`
 		BlockNumber          *hexutil.Big     `json:"blockNumber"`
@@ -42,7 +42,7 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 		V                    *hexutil.Big     `json:"v"                              gencodec:"required"`
 		Value                *hexutil.Big     `json:"value"                          gencodec:"required"`
 	}
-	var enc Transaction
+	var enc TransactionResponse
 	enc.Accesses = t.Accesses
 	enc.BlockHash = t.BlockHash
 	enc.BlockNumber = (*hexutil.Big)(t.BlockNumber)
@@ -71,8 +71,8 @@ func (t Transaction) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON unmarshals from JSON.
-func (t *Transaction) UnmarshalJSON(input []byte) error {
-	type Transaction struct {
+func (t *TransactionResponse) UnmarshalJSON(input []byte) error {
+	type TransactionResponse struct {
 		Accesses             *types.AccessList `json:"accessList,omitempty"`
 		BlockHash            *common.Hash      `json:"blockHash"`
 		BlockNumber          *hexutil.Big      `json:"blockNumber"`
@@ -98,7 +98,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		V                    *hexutil.Big      `json:"v"                              gencodec:"required"`
 		Value                *hexutil.Big      `json:"value"                          gencodec:"required"`
 	}
-	var dec Transaction
+	var dec TransactionResponse
 	if err := json.Unmarshal(input, &dec); err != nil {
 		return err
 	}
@@ -121,7 +121,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		t.From = *dec.From
 	}
 	if dec.Gas == nil {
-		return errors.New("missing required field 'gas' for Transaction")
+		return errors.New("missing required field 'gas' for TransactionResponse")
 	}
 	t.Gas = uint64(*dec.Gas)
 	if dec.GasPrice != nil {
@@ -131,7 +131,7 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		t.Hash = *dec.Hash
 	}
 	if dec.Input == nil {
-		return errors.New("missing required field 'input' for Transaction")
+		return errors.New("missing required field 'input' for TransactionResponse")
 	}
 	t.Input = *dec.Input
 	if dec.MaxFeePerGas != nil {
@@ -141,21 +141,21 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		t.MaxPriorityFeePerGas = (*big.Int)(dec.MaxPriorityFeePerGas)
 	}
 	if dec.Nonce == nil {
-		return errors.New("missing required field 'nonce' for Transaction")
+		return errors.New("missing required field 'nonce' for TransactionResponse")
 	}
 	t.Nonce = uint64(*dec.Nonce)
 	if dec.PublicKey != nil {
 		t.PublicKey = dec.PublicKey
 	}
 	if dec.R == nil {
-		return errors.New("missing required field 'r' for Transaction")
+		return errors.New("missing required field 'r' for TransactionResponse")
 	}
 	t.R = (*big.Int)(dec.R)
 	if dec.Raw != nil {
 		t.Raw = dec.Raw
 	}
 	if dec.S == nil {
-		return errors.New("missing required field 's' for Transaction")
+		return errors.New("missing required field 's' for TransactionResponse")
 	}
 	t.S = (*big.Int)(dec.S)
 	if dec.StandardV != nil {
@@ -174,11 +174,11 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		t.Type = (*uint64)(dec.Type)
 	}
 	if dec.V == nil {
-		return errors.New("missing required field 'v' for Transaction")
+		return errors.New("missing required field 'v' for TransactionResponse")
 	}
 	t.V = (*big.Int)(dec.V)
 	if dec.Value == nil {
-		return errors.New("missing required field 'value' for Transaction")
+		return errors.New("missing required field 'value' for TransactionResponse")
 	}
 	t.Value = (*big.Int)(dec.Value)
 	return nil

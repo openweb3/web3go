@@ -16,7 +16,7 @@ const (
 
 type TxOrHashList struct {
 	vtype        txListType
-	transactions []Transaction
+	transactions []TransactionResponse
 	hashes       []common.Hash
 }
 
@@ -26,7 +26,7 @@ func NewTxOrHashList(isFull bool) *TxOrHashList {
 	return &l
 }
 
-func NewTxOrHashListByTxs(txs []Transaction) *TxOrHashList {
+func NewTxOrHashListByTxs(txs []TransactionResponse) *TxOrHashList {
 	return &TxOrHashList{
 		vtype:        TXLIST_TRANSACTION,
 		transactions: txs,
@@ -47,7 +47,7 @@ func TxListType(isFull bool) txListType {
 	return TXLIST_HASH
 }
 
-func (l *TxOrHashList) Transactions() []Transaction {
+func (l *TxOrHashList) Transactions() []TransactionResponse {
 	return l.transactions
 }
 
@@ -58,7 +58,7 @@ func (l *TxOrHashList) Hashes() []common.Hash {
 func (l *TxOrHashList) UnmarshalJSON(data []byte) error {
 
 	if l.vtype == TXLIST_TRANSACTION {
-		var txs []Transaction
+		var txs []TransactionResponse
 		e := json.Unmarshal(data, &txs)
 		l.transactions = txs
 		return e
@@ -71,7 +71,7 @@ func (l *TxOrHashList) UnmarshalJSON(data []byte) error {
 		return e
 	}
 
-	var txs []Transaction
+	var txs []TransactionResponse
 	var e error
 	if e = json.Unmarshal(data, &txs); e == nil {
 		l.vtype = TXLIST_TRANSACTION

@@ -142,14 +142,14 @@ func (c *RpcParityClient) RegistryAddress() (val *common.Address, err error) {
 
 /// Returns all addresses if Fat DB is enabled (`--fat-db`), or null if not.
 func (c *RpcParityClient) ListAccounts(count uint64, after *common.Address, blockNumber *types.BlockNumberOrHash) (val []common.Address, err error) {
-	err = c.CallContext(context.Background(), &val, "parity_listAccounts", count, after, blockNumber)
+	err = c.CallContext(context.Background(), &val, "parity_listAccounts", count, after, getRealBlockNumberOrHash(blockNumber))
 	return
 }
 
 /// Returns all storage keys of the given address (first parameter) if Fat DB is enabled (`--fat-db`),
 /// or null if not.
 func (c *RpcParityClient) ListStorageKeys(address common.Address, count uint64, after *common.Hash, blockNumber *types.BlockNumberOrHash) (val []common.Hash, err error) {
-	err = c.CallContext(context.Background(), &val, "parity_listStorageKeys", address, count, after, blockNumber)
+	err = c.CallContext(context.Background(), &val, "parity_listStorageKeys", address, count, after, getRealBlockNumberOrHash(blockNumber))
 	return
 }
 
@@ -165,7 +165,7 @@ func (c *RpcParityClient) EncryptMessage(key string, phrase []byte) (val []byte,
 }
 
 /// Returns all pending transactions from transaction queue.
-func (c *RpcParityClient) PendingTransactions(limit *uint, filter *types.TransactionFilter) (val []types.Transaction, err error) {
+func (c *RpcParityClient) PendingTransactions(limit *uint, filter *types.TransactionFilter) (val []types.TransactionResponse, err error) {
 	err = c.CallContext(context.Background(), &val, "parity_pendingTransactions", limit, filter)
 	return
 }
@@ -173,7 +173,7 @@ func (c *RpcParityClient) PendingTransactions(limit *uint, filter *types.Transac
 /// Returns all transactions from transaction queue.
 ///
 /// Some of them might not be ready to be included in a block yet.
-func (c *RpcParityClient) AllTransactions() (val []types.Transaction, err error) {
+func (c *RpcParityClient) AllTransactions() (val []types.TransactionResponse, err error) {
 	err = c.CallContext(context.Background(), &val, "parity_allTransactions")
 	return
 }
@@ -185,7 +185,7 @@ func (c *RpcParityClient) AllTransactionHashes() (val []common.Hash, err error) 
 }
 
 /// Returns all future transactions from transaction queue (deprecated)
-func (c *RpcParityClient) FutureTransactions() (val []types.Transaction, err error) {
+func (c *RpcParityClient) FutureTransactions() (val []types.TransactionResponse, err error) {
 	err = c.CallContext(context.Background(), &val, "parity_futureTransactions")
 	return
 }
@@ -248,23 +248,23 @@ func (c *RpcParityClient) NodeKind() (val types.NodeKind, err error) {
 
 /// Get block header.
 /// Same as `eth_getBlockByNumber` but without uncles and transactions.
-func (c *RpcParityClient) BlockHeader(number *types.BlockNumberOrHash) (val types.RichHeader, err error) {
-	err = c.CallContext(context.Background(), &val, "parity_getBlockHeaderByNumber", number)
+func (c *RpcParityClient) BlockHeader(blockNum *types.BlockNumberOrHash) (val types.RichHeader, err error) {
+	err = c.CallContext(context.Background(), &val, "parity_getBlockHeaderByNumber", getRealBlockNumberOrHash(blockNum))
 	return
 }
 
 /// Get block receipts.
 /// Allows you to fetch receipts from the entire block at once.
 /// If no parameter is provided defaults to `latest`.
-func (c *RpcParityClient) BlockReceipts(number *types.BlockNumberOrHash) (val []types.Receipt, err error) {
-	err = c.CallContext(context.Background(), &val, "parity_getBlockReceipts", number)
+func (c *RpcParityClient) BlockReceipts(blockNum *types.BlockNumberOrHash) (val []types.Receipt, err error) {
+	err = c.CallContext(context.Background(), &val, "parity_getBlockReceipts", getRealBlockNumberOrHash(blockNum))
 	return
 }
 
 /// Call contract, returning the output data.
-func (c *RpcParityClient) Call(requests []types.CallRequest, num *types.BlockNumberOrHash) (val [][]byte, err error) {
+func (c *RpcParityClient) Call(requests []types.CallRequest, blockNum *types.BlockNumberOrHash) (val [][]byte, err error) {
 	var _val []hexutil.Bytes
-	err = c.CallContext(context.Background(), &_val, "parity_call", requests, num)
+	err = c.CallContext(context.Background(), &_val, "parity_call", requests, getRealBlockNumberOrHash(blockNum))
 
 	for _, _valItem := range _val {
 		val = append(val, []byte(_valItem))

@@ -50,7 +50,7 @@ func (c *RpcTraceClient) Blocks(blockNumber types.BlockNumberOrHash) (val []type
 
 /// Executes the given call and returns a number of possible traces for it.
 func (c *RpcTraceClient) Call(request types.CallRequest, options types.TraceOptions, blockNumber *types.BlockNumberOrHash) (val types.TraceResults, err error) {
-	err = c.CallContext(context.Background(), &val, "trace_call", request, options, blockNumber)
+	err = c.CallContext(context.Background(), &val, "trace_call", request, options, getRealBlockNumberOrHash(blockNumber))
 	return
 }
 
@@ -66,7 +66,7 @@ func (c *RpcTraceClient) Call(request types.CallRequest, options types.TraceOpti
 /// Executes the given raw transaction and returns a number of possible traces for it.
 func (c *RpcTraceClient) RawTransaction(rawTransaction []byte, options types.TraceOptions, blockNumber *types.BlockNumberOrHash) (val types.TraceResults, err error) {
 	_rawTransaction := (hexutil.Bytes)(rawTransaction)
-	err = c.CallContext(context.Background(), &val, "trace_rawTransaction", _rawTransaction, options, blockNumber)
+	err = c.CallContext(context.Background(), &val, "trace_rawTransaction", _rawTransaction, options, getRealBlockNumberOrHash(blockNumber))
 	return
 }
 

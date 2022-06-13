@@ -2,7 +2,11 @@ package client
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"math/big"
+
+	"github.com/pkg/errors"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -108,7 +112,7 @@ func (c *RpcEthClient) BlockNumber() (val *big.Int, err error) {
 /// Returns balance of the given account.
 func (c *RpcEthClient) Balance(addr common.Address, block *types.BlockNumberOrHash) (val *big.Int, err error) {
 	var _val *hexutil.Big
-	err = c.CallContext(context.Background(), &_val, "eth_getBalance", addr, block)
+	err = c.CallContext(context.Background(), &_val, "eth_getBalance", addr, getRealBlockNumberOrHash(block))
 	val = (*big.Int)(_val)
 	return
 }
@@ -116,7 +120,7 @@ func (c *RpcEthClient) Balance(addr common.Address, block *types.BlockNumberOrHa
 /// Returns content of the storage at given address.
 func (c *RpcEthClient) StorageAt(addr common.Address, location *big.Int, block *types.BlockNumberOrHash) (val common.Hash, err error) {
 	_location := (*hexutil.Big)(location)
-	err = c.CallContext(context.Background(), &val, "eth_getStorageAt", addr, _location, block)
+	err = c.CallContext(context.Background(), &val, "eth_getStorageAt", addr, _location, getRealBlockNumberOrHash(block))
 	return
 }
 
@@ -138,9 +142,10 @@ func (c *RpcEthClient) BlockByNumber(blockNumber types.BlockNumber, isFull bool)
 
 /// Returns the number of transactions sent from given address at given time
 /// (block number).
+// TODO: nil *types.BlockNumberOrHash will be marshaled to null, which is not allowed in geth, but could work in ganache and not treat as latest, what behavior in conflux-rust should be investigate
 func (c *RpcEthClient) TransactionCount(addr common.Address, blockNum *types.BlockNumberOrHash) (val *big.Int, err error) {
 	var _val *hexutil.Big
-	err = c.CallContext(context.Background(), &_val, "eth_getTransactionCount", addr, blockNum)
+	err = c.CallContext(context.Background(), &_val, "eth_getTransactionCount", addr, getRealBlockNumberOrHash(blockNum))
 	val = (*big.Int)(_val)
 	return
 }
@@ -180,8 +185,39 @@ func (c *RpcEthClient) BlockUnclesCountByNumber(blockNum types.BlockNumber) (val
 /// Returns the code at given address at given time (block number).
 func (c *RpcEthClient) CodeAt(addr common.Address, blockNum *types.BlockNumberOrHash) (val []byte, err error) {
 	var _val hexutil.Bytes
-	err = c.CallContext(context.Background(), &_val, "eth_getCode", addr, blockNum)
+	err = c.CallContext(context.Background(), &_val, "eth_getCode", addr, getRealBlockNumberOrHash(blockNum))
 	val = ([]byte)(_val)
+	return
+}
+
+func (c *RpcEthClient) SendTransaction(from common.Address, tx *types.Transaction) (val common.Hash, err error) {
+	j, err := json.Marshal(tx)
+	if err != nil {
+		return
+	}
+
+	m := map[string]interface{}{}
+	err = json.Unmarshal(j, &m)
+	if err != nil {
+		return
+	}
+
+	m["from"] = from
+
+	chainId, err := c.ChainId()
+	if err != nil {
+		err = errors.Wrap(err, "failed to get chain id")
+		return
+	}
+
+	if chainId == nil {
+		err = errors.New("block chain is not ready")
+		return
+	}
+
+	m["chainId"] = fmt.Sprintf("0x%x", *chainId)
+
+	err = c.CallContext(context.Background(), &val, "eth_sendTransaction", m)
 	return
 }
 
@@ -202,7 +238,7 @@ func (c *RpcEthClient) SubmitTransaction(rawTx []byte) (val common.Hash, err err
 /// Call contract, returning the output data.
 func (c *RpcEthClient) Call(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash) (val []byte, err error) {
 	var _val hexutil.Bytes
-	err = c.CallContext(context.Background(), &_val, "eth_call", callRequest, blockNum)
+	err = c.CallContext(context.Background(), &_val, "eth_call", callRequest, getRealBlockNumberOrHash(blockNum))
 	val = ([]byte)(_val)
 	return
 }
@@ -210,25 +246,25 @@ func (c *RpcEthClient) Call(callRequest types.CallRequest, blockNum *types.Block
 /// Estimate gas needed for execution of given contract.
 func (c *RpcEthClient) EstimateGas(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash) (val *big.Int, err error) {
 	var _val *hexutil.Big
-	err = c.CallContext(context.Background(), &_val, "eth_estimateGas", callRequest, blockNum)
+	err = c.CallContext(context.Background(), &_val, "eth_estimateGas", callRequest, getRealBlockNumberOrHash(blockNum))
 	val = (*big.Int)(_val)
 	return
 }
 
 /// Get transaction by its hash.
-func (c *RpcEthClient) TransactionByHash(txHash common.Hash) (val *types.Transaction, err error) {
+func (c *RpcEthClient) TransactionByHash(txHash common.Hash) (val *types.TransactionResponse, err error) {
 	err = c.CallContext(context.Background(), &val, "eth_getTransactionByHash", txHash)
 	return
 }
 
 /// Returns transaction at given block hash and index.
-func (c *RpcEthClient) TransactionByBlockHashAndIndex(blockHash common.Hash, index uint) (val *types.Transaction, err error) {
+func (c *RpcEthClient) TransactionByBlockHashAndIndex(blockHash common.Hash, index uint) (val *types.TransactionResponse, err error) {
 	err = c.CallContext(context.Background(), &val, "eth_getTransactionByBlockHashAndIndex", blockHash, index)
 	return
 }
 
 /// Returns transaction by given block number and index.
-func (c *RpcEthClient) TransactionByBlockNumberAndIndex(blockNum types.BlockNumber, index uint) (val *types.Transaction, err error) {
+func (c *RpcEthClient) TransactionByBlockNumberAndIndex(blockNum types.BlockNumber, index uint) (val *types.TransactionResponse, err error) {
 	err = c.CallContext(context.Background(), &val, "eth_getTransactionByBlockNumberAndIndex", blockNum, index)
 	return
 }
