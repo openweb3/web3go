@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -88,8 +87,6 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 		return nil, err
 	}
 
-	fmt.Printf("tx: %v\n", m)
-
 	from := common.HexToAddress(m["from"].(string))
 	chainId := m["chainId"].(string)
 
@@ -97,8 +94,6 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("find signer of %v: %v\n", from, signer)
 
 	if signer != nil {
 		j, err := json.Marshal(m)
@@ -122,10 +117,6 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 		if err != nil {
 			return nil, err
 		}
-
-		// tx2J, _ := json.Marshal(tx2)
-		// fmt.Printf("signed tx: %s\n", tx2J)
-		// fmt.Printf("signed raw tx: %x\n", rawTx)
 
 		return rawTx, nil
 	}
