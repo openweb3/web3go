@@ -13,7 +13,6 @@ import (
 
 	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 
-	ethrpc "github.com/ethereum/go-ethereum/rpc"
 	"github.com/openweb3/go-rpc-provider/interfaces"
 	"github.com/openweb3/web3go/types"
 )
@@ -299,12 +298,4 @@ func (c *RpcEthClient) SubmitHashrate(rate *big.Int, id common.Hash) (val bool, 
 	_rate := (*hexutil.Big)(rate)
 	err = c.CallContext(context.Background(), &val, "eth_submitHashrate", _rate, id)
 	return
-}
-
-func getRealBlockNumberOrHash(input *types.BlockNumberOrHash) *types.BlockNumberOrHash {
-	if input == nil {
-		tmp := types.BlockNumberOrHashWithNumber(ethrpc.PendingBlockNumber)
-		return &tmp
-	}
-	return input
 }
