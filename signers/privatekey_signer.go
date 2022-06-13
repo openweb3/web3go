@@ -51,7 +51,7 @@ func NewPrivateKeySignerByString(keyString string) (*PrivateKeySigner, error) {
 	return NewPrivateKeySigner(privateKey), nil
 }
 
-func NewRandomPrivateKeySigner() (*PrivateKeySigner, error) {
+func RandomPrivateKeySigner() (*PrivateKeySigner, error) {
 	privateKey, err := ecdsa.GenerateKey(crypto.S256(), rand.Reader)
 	if err != nil {
 		return nil, err
@@ -60,20 +60,20 @@ func NewRandomPrivateKeySigner() (*PrivateKeySigner, error) {
 	return NewPrivateKeySigner(privateKey), nil
 }
 
-func NewPrivateKeySignerByMnemonic(mnemonic string, path string, password string) (*PrivateKeySigner, error) {
+func NewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *MnemonicOption) (*PrivateKeySigner, error) {
 
 	if !bip39.IsMnemonicValid(mnemonic) {
 		return nil, ErrInvalidMnemonic
 	}
 
-	seed := bip39.NewSeed(mnemonic, password)
+	seed := bip39.NewSeed(mnemonic, option.Password)
 
 	wallet, err := hdwallet.NewFromSeed(seed)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_path, err := hdwallet.ParseDerivationPath(path)
+	_path, err := hdwallet.ParseDerivationPath(fmt.Sprintf("%v/%v", option.DerivePath, addressIndex))
 	if err != nil {
 		return nil, err
 	}

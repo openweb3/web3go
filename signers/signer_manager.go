@@ -2,7 +2,6 @@ package signers
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/mcuadros/go-defaults"
@@ -40,11 +39,11 @@ func NewSignerManagerByPrivateKeyStrings(privateKeys []string) (*SignerManager, 
 	return NewSignerManager(signers), nil
 }
 
-func NewSignerManagerByMnemonic(mnemonic string, option *MnemonicOption) (*SignerManager, error) {
+func NewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *MnemonicOption) (*SignerManager, error) {
 	defaults.SetDefaults(option)
-	signers := make([]interfaces.Signer, option.Number)
-	for i := 0; i < option.Number; i++ {
-		s, err := NewPrivateKeySignerByMnemonic(mnemonic, fmt.Sprintf("%s/%v", option.DerivePath, i), option.Password)
+	signers := make([]interfaces.Signer, addressNumber)
+	for i := 0; i < addressNumber; i++ {
+		s, err := NewPrivateKeySignerByMnemonic(mnemonic, i, option)
 		if err != nil {
 			return nil, err
 		}
