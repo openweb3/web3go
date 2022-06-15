@@ -22,6 +22,14 @@ func NewClient(rawurl string) (*Client, error) {
 	})
 }
 
+func MustNewClinet(rawurl string) *Client {
+	c, err := NewClient(rawurl)
+	if err != nil {
+		panic(err)
+	}
+	return c
+}
+
 func NewClientWithOption(rawurl string, option *ClinetOption) (*Client, error) {
 	p, err := pproviders.NewProviderWithOption(rawurl, *option.Option)
 	if err != nil {
@@ -36,6 +44,14 @@ func NewClientWithOption(rawurl string, option *ClinetOption) (*Client, error) {
 	ec.option = option
 
 	return ec, nil
+}
+
+func MustNewClientWithOption(rawurl string, option *ClinetOption) *Client {
+	c, err := NewClientWithOption(rawurl, option)
+	if err != nil {
+		panic(err)
+	}
+	return c
 }
 
 func NewClientWithProvider(p interfaces.Provider) *Client {
