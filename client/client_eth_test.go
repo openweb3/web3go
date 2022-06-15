@@ -36,7 +36,7 @@ func TestSendTransaction(t *testing.T) {
 	ast.NoError(err)
 
 	tx := ethrpctypes.NewTransaction(nonce.Uint64(), from, big.NewInt(1000000), 1000000, big.NewInt(1), nil)
-	txhash, err := c.SendTransaction(from, tx)
+	txhash, err := c.SendTransaction(from, *tx)
 	ast.NoError(err)
 
 	fmt.Printf("txhash: %s\n", txhash)
@@ -44,15 +44,15 @@ func TestSendTransaction(t *testing.T) {
 	nonce, err = c.TransactionCount(from, &pendingBlock)
 	ast.NoError(err)
 	dtx := &ethrpctypes.DynamicFeeTx{
-		Nonce:     nonce.Uint64(),
-		GasTipCap: big.NewInt(100000),
-		GasFeeCap: big.NewInt(1000000),
-		Gas:       21000,
-		To:        &from,
-		Value:     big.NewInt(1),
-		Data:      nil,
+		Nonce: nonce.Uint64(),
+		// GasTipCap: big.NewInt(100000),
+		// GasFeeCap: big.NewInt(1000000),
+		Gas:   21000,
+		To:    &from,
+		Value: big.NewInt(1),
+		Data:  nil,
 	}
-	txhash, err = c.SendTransaction(from, ethrpctypes.NewTx(dtx))
+	txhash, err = c.SendTransaction(from, *ethrpctypes.NewTx(dtx))
 	ast.NoError(err)
 	fmt.Printf("txhash: %s\n", txhash)
 }

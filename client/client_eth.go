@@ -2,11 +2,7 @@ package client
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"math/big"
-
-	"github.com/pkg/errors"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -190,35 +186,18 @@ func (c *RpcEthClient) CodeAt(addr common.Address, blockNum *types.BlockNumberOr
 	return
 }
 
-func (c *RpcEthClient) SendTransaction(from common.Address, tx *types.Transaction) (val common.Hash, err error) {
-	j, err := json.Marshal(tx)
-	if err != nil {
+func (c *RpcEthClient) SendTransactionByArgs(args types.TransactionArgs) (txHash common.Hash, err error) {
+	if err = args.Populate(c); err != nil {
 		return
 	}
-
-	m := map[string]interface{}{}
-	err = json.Unmarshal(j, &m)
-	if err != nil {
-		return
-	}
-
-	m["from"] = from
-
-	chainId, err := c.ChainId()
-	if err != nil {
-		err = errors.Wrap(err, "failed to get chain id")
-		return
-	}
-
-	if chainId == nil {
-		err = errors.New("block chain is not ready")
-		return
-	}
-
-	m["chainId"] = fmt.Sprintf("0x%x", *chainId)
-
-	err = c.CallContext(context.Background(), &val, "eth_sendTransaction", m)
+	err = c.CallContext(context.Background(), &txHash, "eth_sendTransaction", args)
 	return
+	// return c.SendTransaction(*args.From, args.ToTransaction())
+}
+
+func (c *RpcEthClient) SendTransaction(from common.Address, tx types.Transaction) (txHash common.Hash, err error) {
+	txArgs := types.ConvertTransactionToArgs(from, tx)
+	return c.SendTransactionByArgs(*txArgs)
 }
 
 /// Sends signed transaction, returning its hash.
