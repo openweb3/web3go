@@ -9,24 +9,26 @@ import (
 // Client defines typed wrappers for the Ethereum RPC API.
 type Client struct {
 	*providers.MiddlewarableProvider
-	option *providers.Option
+	option *ClinetOption
 	Eth    *client.RpcEthClient
 	Trace  *client.RpcTraceClient
 	Parity *client.RpcParityClient
 }
 
 func NewClient(rawurl string) (*Client, error) {
-	return NewClientWithOption(rawurl, providers.Option{})
+	return NewClientWithOption(rawurl, &ClinetOption{
+		&providers.Option{}, nil,
+	})
 }
 
-func NewClientWithOption(rawurl string, option providers.Option) (*Client, error) {
-	p, err := providers.NewProviderWithOption(rawurl, option)
+func NewClientWithOption(rawurl string, option *ClinetOption) (*Client, error) {
+	p, err := providers.NewProviderWithOption(rawurl, *option.Option)
 	if err != nil {
 		return nil, err
 	}
 
 	ec := NewClientWithProvider(p)
-	ec.option = &option
+	ec.option = option
 
 	return ec, nil
 }
