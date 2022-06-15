@@ -20,11 +20,15 @@ type SignableMiddleware struct {
 }
 
 var (
-	ErrNoSigner error = errors.New("signer not found")
+	ErrNoSigner      error = errors.New("signer not found")
+	ErrChainNotReady error = errors.New("chain is not ready")
+	ErrNoTxArgs      error = errors.New("no transaction args")
 )
 
 const (
-	METHOD_SEND_TRANSACTION = "eth_sendTransaction"
+	METHOD_SEND_TRANSACTION     = "eth_sendTransaction"
+	METHOD_SEND_RAW_TRANSACTION = "eth_sendRawTransaction"
+	METHOD_CHAIN_ID             = "eth_chainId"
 )
 
 func NewSignableProvider(p pinterfaces.Provider, signManager *signers.SignerManager) *pproviders.MiddlewarableProvider {
@@ -48,7 +52,7 @@ func (s *SignableMiddleware) CallContextMiddleware(call pproviders.CallContextFu
 				return err
 			}
 			args[0] = rawTx
-			method = "eth_sendRawTransaction"
+			method = METHOD_SEND_RAW_TRANSACTION
 		}
 		return call(ctx, resultPtr, method, args...)
 	}
@@ -60,7 +64,7 @@ func (s *SignableMiddleware) BatchCallContextMiddleware(batchCall pproviders.Bat
 			if b[i].Method == METHOD_SEND_TRANSACTION {
 
 				if len(b[i].Args) == 0 {
-					return errors.New("no args")
+					return ErrNoTxArgs
 				}
 
 				rawTx, err := s.signTxAndEncode(b[i].Args[0])
@@ -94,48 +98,21 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 		txArgs = *tx.(*types.TransactionArgs)
 	}
 
-	// m := map[string]interface{}{}
-
-	// // tx maybe a struct or a map, so we need to convert it to map[string]interface{}
-	// j, err := json.Marshal(tx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// if err = json.Unmarshal(j, &m); err != nil {
-	// 	return nil, err
-	// }
-
-	// from := common.HexToAddress(m["from"].(string))
-	// chainId := m["chainId"].(string)
-
 	signer, err := s.manager.Get(*txArgs.From)
 	if err != nil {
 		return nil, err
 	}
 
 	if signer != nil {
-		// j, err := json.Marshal(m)
-		// if err != nil {
-		// 	return nil, err
-		// }
-
-		// tx2 := &types.Transaction{}
-		// json.Unmarshal(j, tx2)
-
-		// chainIdInBig, ok := new(big.Int).SetString(chainId, 0)
-		// if !ok {
-		// 	return nil, errors.New("invalid chainId")
-		// }
 
 		// get chainId from chain
 		var chainId *hexutil.Big
-		if err = s.provider.CallContext(context.Background(), &chainId, "eth_chainId"); err != nil {
+		if err = s.provider.CallContext(context.Background(), &chainId, METHOD_CHAIN_ID); err != nil {
 			return nil, err
 		}
 
 		if chainId == nil {
-			return nil, errors.New("chain is not ready")
+			return nil, ErrChainNotReady
 		}
 
 		tx2, err := txArgs.ToTransaction()

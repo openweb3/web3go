@@ -52,6 +52,11 @@ func (args *TransactionArgs) data() []byte {
 // ToTransaction converts the arguments to a transaction.
 // This assumes that setDefaults has been called.
 func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
+
+	if args.Nonce == nil || args.Gas == nil {
+		return nil, errors.New("nonce and gas are required")
+	}
+
 	genDynamicFeeTx := func() types.TxData {
 		al := types.AccessList{}
 		if args.AccessList != nil {

@@ -192,7 +192,6 @@ func (c *RpcEthClient) SendTransactionByArgs(args types.TransactionArgs) (txHash
 	}
 	err = c.CallContext(context.Background(), &txHash, "eth_sendTransaction", args)
 	return
-	// return c.SendTransaction(*args.From, args.ToTransaction())
 }
 
 func (c *RpcEthClient) SendTransaction(from common.Address, tx types.Transaction) (txHash common.Hash, err error) {
