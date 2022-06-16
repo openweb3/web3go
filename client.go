@@ -1,34 +1,64 @@
 package web3go
 
 import (
+	"errors"
+
 	"github.com/openweb3/go-rpc-provider/interfaces"
-	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
+	pproviders "github.com/openweb3/go-rpc-provider/provider_wrapper"
 	client "github.com/openweb3/web3go/client"
+	"github.com/openweb3/web3go/providers"
+	"github.com/openweb3/web3go/signers"
 )
 
 // Client defines typed wrappers for the Ethereum RPC API.
 type Client struct {
-	*providers.MiddlewarableProvider
-	option *providers.Option
+	*pproviders.MiddlewarableProvider
+	option *ClientOption
 	Eth    *client.RpcEthClient
 	Trace  *client.RpcTraceClient
 	Parity *client.RpcParityClient
 }
 
+var (
+	ErrNotFound = errors.New("not found")
+)
+
 func NewClient(rawurl string) (*Client, error) {
-	return NewClientWithOption(rawurl, providers.Option{})
+	return NewClientWithOption(rawurl, &ClientOption{
+		&pproviders.Option{}, nil,
+	})
 }
 
-func NewClientWithOption(rawurl string, option providers.Option) (*Client, error) {
-	p, err := providers.NewProviderWithOption(rawurl, option)
+func MustNewClient(rawurl string) *Client {
+	c, err := NewClient(rawurl)
+	if err != nil {
+		panic(err)
+	}
+	return c
+}
+
+func NewClientWithOption(rawurl string, option *ClientOption) (*Client, error) {
+	p, err := pproviders.NewProviderWithOption(rawurl, *option.Option)
 	if err != nil {
 		return nil, err
 	}
 
+	if option.SignerManager != nil {
+		p = providers.NewSignableProvider(p, option.SignerManager)
+	}
+
 	ec := NewClientWithProvider(p)
-	ec.option = &option
+	ec.option = option
 
 	return ec, nil
+}
+
+func MustNewClientWithOption(rawurl string, option *ClientOption) *Client {
+	c, err := NewClientWithOption(rawurl, option)
+	if err != nil {
+		panic(err)
+	}
+	return c
 }
 
 func NewClientWithProvider(p interfaces.Provider) *Client {
@@ -38,12 +68,24 @@ func NewClientWithProvider(p interfaces.Provider) *Client {
 }
 
 func (c *Client) SetProvider(p interfaces.Provider) {
-	c.MiddlewarableProvider = providers.NewMiddlewarableProvider(p)
+	if _, ok := p.(*pproviders.MiddlewarableProvider); !ok {
+		p = pproviders.NewMiddlewarableProvider(p)
+	}
+
+	c.MiddlewarableProvider = p.(*pproviders.MiddlewarableProvider)
 	c.Eth = client.NewRpcEthClient(p)
 	c.Trace = client.NewRpcTraceClient(p)
 	c.Parity = client.NewRpcParityClient(p)
 }
 
-func (c *Client) Provider() *providers.MiddlewarableProvider {
+func (c *Client) Provider() *pproviders.MiddlewarableProvider {
 	return c.MiddlewarableProvider
+}
+
+// GetSignerManager returns signer manager if exist in option, otherwise return error
+func (c *Client) GetSignerManager() (*signers.SignerManager, error) {
+	if c.option.SignerManager != nil {
+		return c.option.SignerManager, nil
+	}
+	return nil, ErrNotFound
 }

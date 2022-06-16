@@ -39,6 +39,14 @@ func NewSignerManagerByPrivateKeyStrings(privateKeys []string) (*SignerManager, 
 	return NewSignerManager(signers), nil
 }
 
+func MustNewSignerManagerByPrivateKeyStrings(privateKeys []string) *SignerManager {
+	sm, err := NewSignerManagerByPrivateKeyStrings(privateKeys)
+	if err != nil {
+		panic(err)
+	}
+	return sm
+}
+
 func NewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *MnemonicOption) (*SignerManager, error) {
 	defaults.SetDefaults(option)
 	signers := make([]interfaces.Signer, addressNumber)
@@ -50,6 +58,14 @@ func NewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *Mnem
 		signers[i] = s
 	}
 	return NewSignerManager(signers), nil
+}
+
+func MustNewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *MnemonicOption) *SignerManager {
+	sm, err := NewSignerManagerByMnemonic(mnemonic, addressNumber, option)
+	if err != nil {
+		panic(err)
+	}
+	return sm
 }
 
 func (s *SignerManager) Add(signer interfaces.Signer) {
