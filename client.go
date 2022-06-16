@@ -1,28 +1,35 @@
 package web3go
 
 import (
+	"errors"
+
 	"github.com/openweb3/go-rpc-provider/interfaces"
 	pproviders "github.com/openweb3/go-rpc-provider/provider_wrapper"
 	client "github.com/openweb3/web3go/client"
 	"github.com/openweb3/web3go/providers"
+	"github.com/openweb3/web3go/signers"
 )
 
 // Client defines typed wrappers for the Ethereum RPC API.
 type Client struct {
 	*pproviders.MiddlewarableProvider
-	option *ClinetOption
+	option *ClientOption
 	Eth    *client.RpcEthClient
 	Trace  *client.RpcTraceClient
 	Parity *client.RpcParityClient
 }
 
+var (
+	ErrNotFound = errors.New("not found")
+)
+
 func NewClient(rawurl string) (*Client, error) {
-	return NewClientWithOption(rawurl, &ClinetOption{
+	return NewClientWithOption(rawurl, &ClientOption{
 		&pproviders.Option{}, nil,
 	})
 }
 
-func MustNewClinet(rawurl string) *Client {
+func MustNewClient(rawurl string) *Client {
 	c, err := NewClient(rawurl)
 	if err != nil {
 		panic(err)
@@ -30,7 +37,7 @@ func MustNewClinet(rawurl string) *Client {
 	return c
 }
 
-func NewClientWithOption(rawurl string, option *ClinetOption) (*Client, error) {
+func NewClientWithOption(rawurl string, option *ClientOption) (*Client, error) {
 	p, err := pproviders.NewProviderWithOption(rawurl, *option.Option)
 	if err != nil {
 		return nil, err
@@ -46,7 +53,7 @@ func NewClientWithOption(rawurl string, option *ClinetOption) (*Client, error) {
 	return ec, nil
 }
 
-func MustNewClientWithOption(rawurl string, option *ClinetOption) *Client {
+func MustNewClientWithOption(rawurl string, option *ClientOption) *Client {
 	c, err := NewClientWithOption(rawurl, option)
 	if err != nil {
 		panic(err)
@@ -73,4 +80,12 @@ func (c *Client) SetProvider(p interfaces.Provider) {
 
 func (c *Client) Provider() *pproviders.MiddlewarableProvider {
 	return c.MiddlewarableProvider
+}
+
+// GetSignerManager returns signer manager if exist in option, otherwise return error
+func (c *Client) GetSignerManager() (*signers.SignerManager, error) {
+	if c.option.SignerManager != nil {
+		return c.option.SignerManager, nil
+	}
+	return nil, ErrNotFound
 }

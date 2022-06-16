@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"fmt"
 	"math/big"
 
@@ -190,7 +189,13 @@ func (args *TransactionArgs) populateGasPrice(reader ReaderForPopulate) error {
 	if err != nil {
 		return err
 	}
-	// 先确定txtype, support1559则为2；非support1559则如果有maxFeePerGas或maxPriorityFeePerGas则报错，否则为0
+
+	// set the txtype according to feeData
+	// - if support1559, then set txtype to 2
+	// - if not support1559
+	// - - if has maxFeePerGas or maxPriorityFeePerGas, then return error
+	// - - if contains accesslist, set txtype to 1
+	// - - else set txtype to 0
 	if argsTxType == nullType {
 		if gasFeeData.isSupport1559() {
 			argsTxType = types.DynamicFeeTxType
@@ -206,8 +211,7 @@ func (args *TransactionArgs) populateGasPrice(reader ReaderForPopulate) error {
 	}
 	args.TxType = &argsTxType
 
-	// txtype == LegacyTxType || AccessListTxType， 设置gasprice
-	// txtype == DynamicFeeTxType， gasPrice！=nil， 设置max...为gasPrice；gasPrice==nil, 链上获取
+	// if txtype is DynamicFeeTxType that means support 1559, so if gasPrice is not nil, set max... to gasPrice
 	if *args.TxType == types.DynamicFeeTxType {
 		if args.GasPrice != nil {
 			args.MaxFeePerGas = args.GasPrice
@@ -289,8 +293,5 @@ func ConvertTransactionToArgs(from common.Address, tx Transaction) *TransactionA
 			args.ChainID = (*hexutil.Big)(tx.ChainId())
 		}
 	}
-
-	j, _ := json.MarshalIndent(args, "", "  ")
-	fmt.Printf("convert tx to args result: %s\n", j)
 	return args
 }

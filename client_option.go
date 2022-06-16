@@ -8,32 +8,32 @@ import (
 	"github.com/openweb3/web3go/signers"
 )
 
-type ClinetOption struct {
+type ClientOption struct {
 	*providers.Option
 	SignerManager *signers.SignerManager
 }
 
-func (c *ClinetOption) WithRetry(retryCount int, retryInterval time.Duration) *ClinetOption {
+func (c *ClientOption) WithRetry(retryCount int, retryInterval time.Duration) *ClientOption {
 	c.Option.WithRetry(retryCount, retryInterval)
 	return c
 }
 
-func (c *ClinetOption) WithTimout(requestTimeout time.Duration) *ClinetOption {
+func (c *ClientOption) WithTimout(requestTimeout time.Duration) *ClientOption {
 	c.Option.WithTimout(requestTimeout)
 	return c
 }
 
-func (c *ClinetOption) WithMaxConnectionPerHost(maxConnectionPerHost int) *ClinetOption {
+func (c *ClientOption) WithMaxConnectionPerHost(maxConnectionPerHost int) *ClientOption {
 	c.Option.WithMaxConnectionPerHost(maxConnectionPerHost)
 	return c
 }
 
-func (c *ClinetOption) WithLooger(w io.Writer) *ClinetOption {
+func (c *ClientOption) WithLooger(w io.Writer) *ClientOption {
 	c.Option.WithLooger(w)
 	return c
 }
 
-func (c *ClinetOption) WithSignerManager(signerManager *signers.SignerManager) *ClinetOption {
+func (c *ClientOption) WithSignerManager(signerManager *signers.SignerManager) *ClientOption {
 	c.SignerManager = signerManager
 	return c
 }
