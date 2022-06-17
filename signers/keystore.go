@@ -65,7 +65,7 @@ func (p *PrivateKeySigner) SaveKeystore(dirPath string, auth string) error {
 
 	a := accounts.Account{
 		Address: key.Address,
-		URL:     accounts.URL{Scheme: keystore.KeyStoreScheme, Path: JoinPath(dirPath, keyFileName(key.Address))},
+		URL:     accounts.URL{Scheme: keystore.KeyStoreScheme, Path: filepath.Join(dirPath, keyFileName(key.Address))},
 	}
 
 	tmpName, err := writeTemporaryKeyFile(a.URL.Path, keyjson)
@@ -137,8 +137,4 @@ func toISO8601(t time.Time) string {
 	}
 	return fmt.Sprintf("%04d-%02d-%02dT%02d-%02d-%02d.%09d%s",
 		t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), tz)
-}
-
-func JoinPath(dirPath string, filename string) string {
-	return filepath.Join(dirPath, filename)
 }
