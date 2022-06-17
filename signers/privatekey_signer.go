@@ -51,13 +51,29 @@ func NewPrivateKeySignerByString(keyString string) (*PrivateKeySigner, error) {
 	return NewPrivateKeySigner(privateKey), nil
 }
 
-func RandomPrivateKeySigner() (*PrivateKeySigner, error) {
+func MustNewPrivateKeySignerByString(keyString string) *PrivateKeySigner {
+	signer, err := NewPrivateKeySignerByString(keyString)
+	if err != nil {
+		panic(err)
+	}
+	return signer
+}
+
+func NewRandomPrivateKeySigner() (*PrivateKeySigner, error) {
 	privateKey, err := ecdsa.GenerateKey(crypto.S256(), rand.Reader)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewPrivateKeySigner(privateKey), nil
+}
+
+func MustNewRandomPrivateKeySigner() *PrivateKeySigner {
+	signer, err := NewRandomPrivateKeySigner()
+	if err != nil {
+		panic(err)
+	}
+	return signer
 }
 
 func NewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *MnemonicOption) (*PrivateKeySigner, error) {
@@ -92,6 +108,14 @@ func NewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *Mn
 		privateKey: key,
 		address:    account.Address,
 	}, nil
+}
+
+func MustNewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *MnemonicOption) *PrivateKeySigner {
+	signer, err := NewPrivateKeySignerByMnemonic(mnemonic, addressIndex, option)
+	if err != nil {
+		panic(err)
+	}
+	return signer
 }
 
 func (p *PrivateKeySigner) Address() common.Address {

@@ -14,7 +14,6 @@ type SignerManager struct {
 }
 
 func NewSignerManager(signers []interfaces.Signer) *SignerManager {
-
 	sm := &SignerManager{
 		signerMap: make(map[common.Address]interfaces.Signer),
 		signers:   signers,
