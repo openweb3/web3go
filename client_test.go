@@ -4,9 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"testing"
 
-	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
+	pproviders "github.com/openweb3/go-rpc-provider/provider_wrapper"
+	"github.com/openweb3/web3go/signers"
+	"github.com/openweb3/web3go/types"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestClient(t *testing.T) {
@@ -16,7 +20,7 @@ func TestClient(t *testing.T) {
 	}
 
 	p := client.Provider()
-	mp := providers.NewMiddlewarableProvider(p)
+	mp := pproviders.NewMiddlewarableProvider(p)
 	mp.HookCallContext(callcontextLogMiddleware)
 	client.SetProvider(mp)
 
@@ -26,7 +30,7 @@ func TestClient(t *testing.T) {
 	}
 }
 
-func callcontextLogMiddleware(f providers.CallContextFunc) providers.CallContextFunc {
+func callcontextLogMiddleware(f pproviders.CallContextFunc) pproviders.CallContextFunc {
 	return func(ctx context.Context, resultPtr interface{}, method string, args ...interface{}) error {
 		fmt.Printf("request %v %v\n", method, args)
 		err := f(ctx, resultPtr, method, args...)
@@ -34,4 +38,20 @@ func callcontextLogMiddleware(f providers.CallContextFunc) providers.CallContext
 		fmt.Printf("response %s\n", j)
 		return err
 	}
+}
+
+func TestClientWithOption(t *testing.T) {
+	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
+	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
+	c, err := NewClientWithOption("https://evm.confluxrpc.com", *(new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)))
+	assert.NoError(t, err)
+
+	from := sm.List()[0].Address()
+	to := sm.List()[1].Address()
+	hash, err := c.Eth.SendTransactionByArgs(types.TransactionArgs{
+		From: &from,
+		To:   &to,
+	})
+	assert.NoError(t, err)
+	fmt.Printf("hash: %s\n", hash)
 }

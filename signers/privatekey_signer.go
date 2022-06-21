@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/mcuadros/go-defaults"
 	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"
 	"github.com/pkg/errors"
 	"github.com/tyler-smith/go-bip39"
@@ -81,6 +82,12 @@ func NewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *Mn
 	if !bip39.IsMnemonicValid(mnemonic) {
 		return nil, ErrInvalidMnemonic
 	}
+
+	if option == nil {
+		option = &MnemonicOption{}
+	}
+
+	defaults.SetDefaults(option)
 
 	seed := bip39.NewSeed(mnemonic, option.Password)
 

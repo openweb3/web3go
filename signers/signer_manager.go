@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/mcuadros/go-defaults"
 	"github.com/openweb3/web3go/interfaces"
 )
 
@@ -47,7 +46,6 @@ func MustNewSignerManagerByPrivateKeyStrings(privateKeys []string) *SignerManage
 }
 
 func NewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *MnemonicOption) (*SignerManager, error) {
-	defaults.SetDefaults(option)
 	signers := make([]interfaces.Signer, addressNumber)
 	for i := 0; i < addressNumber; i++ {
 		s, err := NewPrivateKeySignerByMnemonic(mnemonic, i, option)
