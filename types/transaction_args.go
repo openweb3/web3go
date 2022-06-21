@@ -56,11 +56,12 @@ func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
 		return nil, errors.New("nonce and gas are required")
 	}
 
+	al := types.AccessList{}
+	if args.AccessList != nil {
+		al = *args.AccessList
+	}
+
 	genDynamicFeeTx := func() types.TxData {
-		al := types.AccessList{}
-		if args.AccessList != nil {
-			al = *args.AccessList
-		}
 		return &types.DynamicFeeTx{
 			To:         args.To,
 			ChainID:    (*big.Int)(args.ChainID),
@@ -83,7 +84,7 @@ func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
 			GasPrice:   (*big.Int)(args.GasPrice),
 			Value:      (*big.Int)(args.Value),
 			Data:       args.data(),
-			AccessList: *args.AccessList,
+			AccessList: al,
 		}
 	}
 
@@ -117,17 +118,22 @@ func (args *TransactionArgs) Populate(reader ReaderForPopulate) error {
 	}
 
 	if err := args.populateGasPrice(reader); err != nil {
-		return err
+		return errors.Wrap(err, "failed to populate gas price")
 	}
 
 	if args.Value == nil {
 		args.Value = new(hexutil.Big)
 	}
 
+	// try get pending nonce first, if failed, try get nonce of latest block
 	if args.Nonce == nil {
-		nonce, err := reader.TransactionCount(*args.From, nil)
+		pending := BlockNumberOrHashWithNumber(PendingBlockNumber)
+		nonce, err := reader.TransactionCount(*args.From, &pending)
 		if err != nil {
-			return err
+			nonce, err = reader.TransactionCount(*args.From, nil)
+			if err != nil {
+				return errors.Wrap(err, "failed to get nonce of both pending and latest block")
+			}
 		}
 		temp := nonce.Uint64()
 		args.Nonce = (*hexutil.Uint64)(&temp)
@@ -155,7 +161,7 @@ func (args *TransactionArgs) Populate(reader ReaderForPopulate) error {
 		latest := BlockNumberOrHashWithNumber(rpc.LatestBlockNumber)
 		estimated, err := reader.EstimateGas(callArgs, &latest)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to estimate")
 		}
 
 		temp := estimated.Uint64()
@@ -164,7 +170,7 @@ func (args *TransactionArgs) Populate(reader ReaderForPopulate) error {
 	if args.ChainID == nil {
 		id, err := reader.ChainId()
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to get chaind")
 		}
 		temp := big.NewInt(0).SetUint64(*id)
 		args.ChainID = (*hexutil.Big)(temp)
@@ -187,7 +193,7 @@ func (args *TransactionArgs) populateGasPrice(reader ReaderForPopulate) error {
 
 	gasFeeData, err := getFeeData(reader)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to get fee data")
 	}
 
 	// set the txtype according to feeData
@@ -203,10 +209,12 @@ func (args *TransactionArgs) populateGasPrice(reader ReaderForPopulate) error {
 			if has1559 {
 				return errors.New("not support 1559 but (maxFeePerGas or maxPriorityFeePerGas) specified")
 			}
+
 			if args.AccessList == nil {
 				argsTxType = types.LegacyTxType
+			} else {
+				argsTxType = types.AccessListTxType
 			}
-			argsTxType = types.AccessListTxType
 		}
 	}
 	args.TxType = &argsTxType

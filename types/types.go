@@ -245,6 +245,12 @@ type BlockNumber = ethrpctypes.BlockNumber
 type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
 type Transaction = ethtypes.Transaction
 
+const (
+	PendingBlockNumber  = ethrpctypes.PendingBlockNumber
+	LatestBlockNumber   = ethrpctypes.LatestBlockNumber
+	EarliestBlockNumber = ethrpctypes.EarliestBlockNumber
+)
+
 func (bnh *BlockNumberOrHash) UnmarshalJSON(data []byte) error {
 	return (*ethrpctypes.BlockNumberOrHash)(bnh).UnmarshalJSON(data)
 }

@@ -24,9 +24,7 @@ var (
 )
 
 func NewClient(rawurl string) (*Client, error) {
-	return NewClientWithOption(rawurl, &ClientOption{
-		&pproviders.Option{}, nil,
-	})
+	return NewClientWithOption(rawurl, ClientOption{})
 }
 
 func MustNewClient(rawurl string) *Client {
@@ -37,8 +35,11 @@ func MustNewClient(rawurl string) *Client {
 	return c
 }
 
-func NewClientWithOption(rawurl string, option *ClientOption) (*Client, error) {
-	p, err := pproviders.NewProviderWithOption(rawurl, *option.Option)
+func NewClientWithOption(rawurl string, option ClientOption) (*Client, error) {
+
+	option.setDefault()
+
+	p, err := pproviders.NewProviderWithOption(rawurl, option.Option)
 	if err != nil {
 		return nil, err
 	}
@@ -48,12 +49,12 @@ func NewClientWithOption(rawurl string, option *ClientOption) (*Client, error) {
 	}
 
 	ec := NewClientWithProvider(p)
-	ec.option = option
+	ec.option = &option
 
 	return ec, nil
 }
 
-func MustNewClientWithOption(rawurl string, option *ClientOption) *Client {
+func MustNewClientWithOption(rawurl string, option ClientOption) *Client {
 	c, err := NewClientWithOption(rawurl, option)
 	if err != nil {
 		panic(err)

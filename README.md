@@ -2,11 +2,11 @@
 The web3go's goal is to build a golang SDK for supporting all Ethereum RPC
 
 ## Struct Fields Type Rule
-For developer convenience, the web3go use standard type instead of hex types in RPC response, for example, `*hexutil`.Big` will be `*big.Int` in client interface. As well as the struct fields, but `marshal/unmarshal` result still be hex format.
+For developer convenience, the web3go use standard type instead of hex types in RPC response, for example, `*hexutil.Big` will be `*big.Int` in client interface. As well as the struct fields, but `marshal/unmarshal` result still be hex format.
 1. The types of struct fields according to geth and parity and use the minimal type, such geth is `hexutil.Uint64` and parity is `*hexutil.Big`, then the filed type will be `uint64`
 2. The slice item always be a pointer if the item is struct to avoid value copy when iteration
 
-## Usage
+## Client
 
 ### NewClient
 
@@ -15,13 +15,13 @@ The `NewClient` creates a client with default timeout options.
 - the default timeout is 30 seconds 
 
 ```golang
-    NewClient("http://localhost:8545")
+	NewClient("http://localhost:8545")
 ```
 ### NewClientWithOption
-Use `NewClientWithOption` to specify retry and timeout options
+Use `NewClientWithOption` to specify retry, timeout and signer manager options, the signer manager option is used for signing transactions automatically when call `SendTransaction` or `SendTransactionByArgs`
 
 ```golang
-    NewClientWithOption("http://localhost:8545", providers.Option{...})
+	NewClientWithOption("http://localhost:8545", providers.Option{...})
 ```
 
 The provider of both clients created by `NewClient` and `NewClientWithOption` are [middlewarable providers](https://github.com/openweb3/go-rpc-provider).
@@ -54,4 +54,85 @@ the callLogMiddleware is like
 
 You also could set your customer provider by `NewClientWithProvider`
 
+## Sign
+
+### Signer
+There is an interface `signer` for signing transactions and messages.
+
+- `SignTransaction` to sign a transaction
+- `SignMessage` to sign a message
+
+We provide kinds of functions to create a private key signer, which means it will convert anything input to the private key.
+
+*create by private key*
+- `NewPrivateKeySigner`
+
+*create by private key string*
+- `NewPrivateKeySignerByString`
+- `MustNewPrivateKeySignerByString`
+
+*create a random private key*
+- `NewRandomPrivateKeySigner`
+- `MustNewRandomPrivateKeySigner`
+
+*create by mnemonic*
+- `NewPrivateKeySignerByMnemonic`
+- `MustNewPrivateKeySignerByMnemonic`
+
+*create by Keystore*
+- `NewPrivateKeySignerByKeystoreFile`
+- `MustNewPrivateKeySignerByKeystoreFile`
+- `NewPrivateKeySignerByKeystore`
+- `MustNewPrivateKeySignerByKeystore`
+
+### Signer Manager
+
+Signer Manager is for manager signers conveniently, support get/add/remove/list signer.
+
+And convenient functions to create signer managers, such as create by private key strings and mnemonic
+
+- `NewSignerManager`
+- `NewSignerManagerByPrivateKeyStrings`
+- `MustNewSignerManagerByPrivateKeyStrings`
+- `NewSignerManagerByMnemonic`
+- `MustNewSignerManagerByMnemonic`
+
+### Auto Sign
+
+There are two ways to create a client that can be automatically signed when sending transactions.
+
+- Firstly and the simple way is to create a client by `NewClientWithOption` and set the field `SignerManager` of `Option`
+
+```go
+	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
+	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
+	option := new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)
+	c, err := NewClientWithOption("https://evm.confluxrpc.com", *option)
+
+	from := sm.List()[0].Address()
+	to := sm.List()[1].Address()
+	hash, err := c.Eth.SendTransactionByArgs(types.TransactionArgs{
+		From: &from,
+		To:   &to,
+	})
+```
+
+- Another way is to create a `MiddlewareableProvider` by [`NewSignableProvider`](https://github.com/openweb3/web3go/blob/main/providers/provider_sign.go)
+
+```go
+	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
+	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
+	p := pproviders.MustNewBaseProvider(context.Background(), "https://evm.confluxrpc.com")
+	p = providers.NewSignableProvider(p, sm)
+	c := NewClientWithProvider(p)
+```
+
+#### Send Transaction
+
+There are two ways to send transactions and auto-sign, `SendTransaction` and `SendTransactionByArgs`
+
+- `SendTransaction` send by [transaction type of `go-ethereum`](https://github.com/openweb3/web3go/blob/08c2cb1790acbc92277f28b3d98e8b7347450cc5/types/types.go#L246) and needs to specify the sender
+- `SendTransactionByArgs` send by transaction type of `TransactionArgs` which contains all fields a transaction needs
+
+If the provider of client contains the signer of the transaction's `From`, both of them will populate transaction fields, sign the transaction and call `eth_sendRawTransaction` to send RLP-Encoded transaction. Otherwise will call `eth_sendTransaction`.
 

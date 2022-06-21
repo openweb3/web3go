@@ -4,13 +4,19 @@ import (
 	"io"
 	"time"
 
+	"github.com/mcuadros/go-defaults"
 	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 	"github.com/openweb3/web3go/signers"
 )
 
 type ClientOption struct {
-	*providers.Option
+	providers.Option
 	SignerManager *signers.SignerManager
+}
+
+func (c *ClientOption) setDefault() *ClientOption {
+	defaults.SetDefaults(&c.Option)
+	return c
 }
 
 func (c *ClientOption) WithRetry(retryCount int, retryInterval time.Duration) *ClientOption {
