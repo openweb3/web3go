@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
+	"github.com/pkg/errors"
 )
 
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
@@ -38,6 +39,37 @@ type Block struct {
 	Uncles           []common.Hash `json:"uncles"`
 	Sha3Uncles       common.Hash   `json:"sha3Uncles"`
 	// SealFields       [][]byte         `json:"sealFields"` //+ ?
+}
+
+func (b *Block) Header() (*Header, error) {
+
+	if b.MixHash == nil {
+		return nil, errors.New("MixHash is nil")
+	}
+
+	if b.Nonce == nil {
+		return nil, errors.New("Nonce is nil")
+	}
+
+	h := Header{
+		ParentHash:  b.ParentHash,
+		UncleHash:   b.Sha3Uncles,
+		Coinbase:    b.Miner,
+		Root:        b.StateRoot,
+		TxHash:      b.TransactionsRoot,
+		ReceiptHash: b.ReceiptsRoot,
+		Bloom:       b.LogsBloom,
+		Difficulty:  b.Difficulty,
+		Number:      b.Number,
+		GasLimit:    b.GasLimit,
+		GasUsed:     b.GasUsed,
+		Time:        b.Timestamp,
+		Extra:       b.ExtraData,
+		MixDigest:   *b.MixHash,
+		Nonce:       *b.Nonce,
+		BaseFee:     b.BaseFeePerGas,
+	}
+	return &h, nil
 }
 
 type blockMarshaling struct {
@@ -244,12 +276,17 @@ type logMarshaling struct {
 type BlockNumber = ethrpctypes.BlockNumber
 type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
 type Transaction = ethtypes.Transaction
+type Header = ethtypes.Header
 
 const (
 	PendingBlockNumber  = ethrpctypes.PendingBlockNumber
 	LatestBlockNumber   = ethrpctypes.LatestBlockNumber
 	EarliestBlockNumber = ethrpctypes.EarliestBlockNumber
 )
+
+func NewBlockNumber(blockNumber int64) BlockNumber {
+	return BlockNumber(blockNumber)
+}
 
 func (bnh *BlockNumberOrHash) UnmarshalJSON(data []byte) error {
 	return (*ethrpctypes.BlockNumberOrHash)(bnh).UnmarshalJSON(data)

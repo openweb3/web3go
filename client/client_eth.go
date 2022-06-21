@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
@@ -276,4 +277,16 @@ func (c *RpcEthClient) SubmitHashrate(rate *big.Int, id common.Hash) (val bool, 
 	_rate := (*hexutil.Big)(rate)
 	err = c.CallContext(context.Background(), &val, "eth_submitHashrate", _rate, id)
 	return
+}
+
+// SubscribeNewHead subscribes to notifications about the current blockchain head
+// on the given channel.
+func (c *RpcEthClient) SubscribeNewHead(ctx context.Context, ch chan<- *types.Header) (ethereum.Subscription, error) {
+	return c.Subscribe(ctx, "eth", ch, "newHeads")
+}
+
+// SubscribeNewHead subscribes to notifications about the current blockchain head
+// on the given channel.
+func (c *RpcEthClient) SubscribeFilterLogs(ctx context.Context, q types.FilterQuery, ch chan<- types.Log) (ethereum.Subscription, error) {
+	return c.Subscribe(ctx, "eth", ch, "newHeads")
 }
