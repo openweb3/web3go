@@ -79,6 +79,12 @@ We provide kinds of functions to create a private key signer, which means it wil
 - `NewPrivateKeySignerByMnemonic`
 - `MustNewPrivateKeySignerByMnemonic`
 
+*create by Keystore*
+- `NewPrivateKeySignerByKeystoreFile`
+- `MustNewPrivateKeySignerByKeystoreFile`
+- `NewPrivateKeySignerByKeystore`
+- `MustNewPrivateKeySignerByKeystore`
+
 ### Signer Manager
 
 Signer Manager is for manager signers conveniently, support get/add/remove/list signer.
@@ -128,5 +134,5 @@ There are two ways to send transactions and auto-sign, `SendTransaction` and `Se
 - `SendTransaction` send by [transaction type of `go-ethereum`](https://github.com/openweb3/web3go/blob/08c2cb1790acbc92277f28b3d98e8b7347450cc5/types/types.go#L246) and needs to specify the sender
 - `SendTransactionByArgs` send by transaction type of `TransactionArgs` which contains all fields a transaction needs
 
-If the provider of client contains the signer of the transaction's `From`, both of them will populate transaction fields, sign the transaction and call `eth_sendRawTransaction` to send RLP-Encoded transaction. Otherwise them will call `eth_sendTransaction`.
+If the provider of client contains the signer of the transaction's `From`, both of them will populate transaction fields, sign the transaction and call `eth_sendRawTransaction` to send RLP-Encoded transaction. Otherwise will call `eth_sendTransaction`.
 
