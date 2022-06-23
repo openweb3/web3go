@@ -101,9 +101,9 @@ type blockMarshaling struct {
 	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
 }
 
-//go:generate gencodec -type TransactionResponse -field-override transactionResponseMarshaling -out gen_transaction_response_json.go
+//go:generate gencodec -type PlainTransaction -field-override plainTransactionMarshaling -out gen_plain_transaction_json.go
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
-type TransactionResponse struct {
+type PlainTransaction struct {
 	Accesses    types.AccessList `json:"accessList,omitempty"`
 	BlockHash   *common.Hash     `json:"blockHash"`
 	BlockNumber *big.Int         `json:"blockNumber"`
@@ -134,7 +134,7 @@ type TransactionResponse struct {
 	Value            *big.Int        `json:"value"                          gencodec:"required"`
 }
 
-type transactionResponseMarshaling struct {
+type plainTransactionMarshaling struct {
 	Accesses             types.AccessList `json:"accessList,omitempty"`
 	BlockHash            *common.Hash     `json:"blockHash"`
 	BlockNumber          *hexutil.Big     `json:"blockNumber"`
