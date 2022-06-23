@@ -2,6 +2,7 @@ package signers
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/openweb3/web3go/interfaces"
@@ -10,6 +11,7 @@ import (
 type SignerManager struct {
 	signerMap map[common.Address]interfaces.Signer
 	signers   []interfaces.Signer
+	mutex     sync.Mutex
 }
 
 func NewSignerManager(signers []interfaces.Signer) *SignerManager {
@@ -65,9 +67,15 @@ func MustNewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *
 	return sm
 }
 
-func (s *SignerManager) Add(signer interfaces.Signer) {
+func (s *SignerManager) Add(signer interfaces.Signer) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	if _, ok := s.signerMap[signer.Address()]; ok {
+		return errors.New("signer already exists")
+	}
 	s.signers = append(s.signers, signer)
 	s.signerMap[signer.Address()] = signer
+	return nil
 }
 
 func (s *SignerManager) Remove(addr common.Address) error {
@@ -86,7 +94,7 @@ func (s *SignerManager) Remove(addr common.Address) error {
 }
 
 func (s *SignerManager) Get(addr common.Address) (interfaces.Signer, error) {
-	if s.signerMap[addr] == nil {
+	if _, ok := s.signerMap[addr]; !ok {
 		return nil, errors.New("signer not found")
 	}
 	return s.signerMap[addr], nil

@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/openweb3/web3go/types"
 )
 
@@ -23,14 +24,25 @@ func NewClientForContract(raw *Client) *ClientForContract {
 	}
 }
 
-func (c *ClientForContract) TransactionReceipt(ctx context.Context, txHash common.Hash) (*types.Receipt, error) {
-	return c.raw.Eth.TransactionReceipt(txHash)
+func (c *ClientForContract) TransactionReceipt(ctx context.Context, txHash common.Hash) (*ethtypes.Receipt, error) {
+	r, err := c.raw.Eth.TransactionReceipt(txHash)
+	if err != nil {
+		return nil, err
+	}
+	ethReceipt := toEthReceipt(*r)
+	return &ethReceipt, nil
 }
 
 func (c *ClientForContract) CodeAt(ctx context.Context, account common.Address, blockNumber *big.Int) ([]byte, error) {
 	bnInt64 := types.BlockNumber(blockNumber.Int64())
 	bnOrHash := types.BlockNumberOrHashWithNumber(bnInt64)
 	return c.raw.Eth.CodeAt(account, &bnOrHash)
+}
+
+func (c *ClientForContract) CallContract(ctx context.Context, call ethereum.CallMsg, blockNumber *big.Int) ([]byte, error) {
+	cr := convertCallMsg2CallRequest(call)
+	bn := types.BlockNumberOrHashWithNumber(types.NewBlockNumber(blockNumber.Int64()))
+	return c.raw.Eth.Call(cr, &bn)
 }
 
 // PendingCallContract executes an Ethereum contract call against the pending state.
@@ -130,16 +142,20 @@ func (c *ClientForContract) SendTransaction(ctx context.Context, tx *types.Trans
 // returning all the results in one batch.
 //
 // TODO(karalabe): Deprecate when the subscription one can return past data too.
-func (c *ClientForContract) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error) {
+func (c *ClientForContract) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]ethtypes.Log, error) {
 	q := convertFilterQuery(query)
-	return c.raw.Eth.Logs(q)
+	logs, err := c.raw.Eth.Logs(q)
+	if err != nil {
+		return nil, err
+	}
+	return toEthLogs(logs), nil
 }
 
 // SubscribeFilterLogs creates a background log filtering operation, returning
 // a subscription immediately, which can be used to stream the found events.
-func (c *ClientForContract) SubscribeFilterLogs(ctx context.Context, query ethereum.FilterQuery, ch chan<- types.Log) (ethereum.Subscription, error) {
+func (c *ClientForContract) SubscribeFilterLogs(ctx context.Context, query ethereum.FilterQuery, ch chan<- ethtypes.Log) (ethereum.Subscription, error) {
 	q := convertFilterQuery(query)
-	return c.raw.Eth.SubscribeFilterLogs(q, ch)
+	return c.raw.Subscribe(context.Background(), "eth", ch, "logs", q)
 }
 
 func convertFilterQuery(query ethereum.FilterQuery) types.FilterQuery {
@@ -166,5 +182,66 @@ func convertCallMsg2CallRequest(call ethereum.CallMsg) types.CallRequest {
 		Data:                 call.Data,
 		Input:                call.Data,
 		AccessList:           &call.AccessList,
+	}
+}
+
+func toEthReceipt(r types.Receipt) ethtypes.Receipt {
+	eReceipt := ethtypes.Receipt{
+		PostState:         r.Root,
+		CumulativeGasUsed: r.CumulativeGasUsed,
+		Bloom:             r.LogsBloom,
+		Logs:              toEthLogPtrs(r.Logs),
+		TxHash:            r.TransactionHash,
+		GasUsed:           r.GasUsed,
+		BlockHash:         r.BlockHash,
+		BlockNumber:       new(big.Int).SetUint64(r.BlockNumber),
+		TransactionIndex:  uint(r.TransactionIndex),
+	}
+	if r.Type != nil {
+		eReceipt.Type = uint8(*r.Type)
+	}
+
+	if r.Status != nil {
+		eReceipt.Status = *r.Status
+	}
+
+	if r.ContractAddress != nil {
+		eReceipt.ContractAddress = *r.ContractAddress
+	}
+	return eReceipt
+}
+
+func toEthLogs(logs []types.Log) []ethtypes.Log {
+	eLogs := make([]ethtypes.Log, len(logs))
+	for i, l := range logs {
+		eLogs[i] = toEthLog(l)
+	}
+	return eLogs
+}
+
+func toEthLogPtrs(logs []*types.Log) []*ethtypes.Log {
+	eLogs := make([]*ethtypes.Log, len(logs))
+	for i, l := range logs {
+		if l == nil {
+			eLogs[i] = nil
+			continue
+		}
+		el := toEthLog(*l)
+		eLogs[i] = &el
+	}
+	return eLogs
+}
+
+func toEthLog(log types.Log) ethtypes.Log {
+	return ethtypes.Log{
+		Address:     log.Address,
+		Topics:      log.Topics,
+		Data:        log.Data,
+		BlockNumber: log.BlockNumber,
+		TxHash:      log.TxHash,
+		TxIndex:     log.TxIndex,
+		BlockHash:   log.BlockHash,
+		Index:       log.Index,
+		Removed:     log.Removed,
 	}
 }
