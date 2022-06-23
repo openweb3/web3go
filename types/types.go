@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -277,6 +278,7 @@ type BlockNumber = ethrpctypes.BlockNumber
 type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
 type Transaction = ethtypes.Transaction
 type Header = ethtypes.Header
+type Subscription = ethereum.Subscription
 
 const (
 	PendingBlockNumber  = ethrpctypes.PendingBlockNumber
