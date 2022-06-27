@@ -40,7 +40,7 @@ func callcontextLogMiddleware(f pproviders.CallContextFunc) pproviders.CallConte
 	}
 }
 
-func TestClientWithOption(t *testing.T) {
+func TestSendTxByArgsUseClientWithOption(t *testing.T) {
 	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
 	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
 	c, err := NewClientWithOption("https://evm.confluxrpc.com", *(new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)))
