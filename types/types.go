@@ -283,6 +283,12 @@ func NewBlockNumber(blockNumber int64) BlockNumber {
 	return BlockNumber(blockNumber)
 }
 
+const (
+	PendingBlockNumber  = ethrpctypes.PendingBlockNumber
+	LatestBlockNumber   = ethrpctypes.LatestBlockNumber
+	EarliestBlockNumber = ethrpctypes.EarliestBlockNumber
+)
+
 func (bnh *BlockNumberOrHash) UnmarshalJSON(data []byte) error {
 	return (*ethrpctypes.BlockNumberOrHash)(bnh).UnmarshalJSON(data)
 }
