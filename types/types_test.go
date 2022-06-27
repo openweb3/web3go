@@ -1,7 +1,6 @@
 package types
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -17,15 +16,10 @@ func TestUnMarshalCallRequest(t *testing.T) {
 			Data: nil,
 		},
 		{
-			Input: nil,
+			Data: []byte{0x1, 0x2, 0x3},
 		},
 		{
-			Data:  []byte{0x1, 0x2, 0x3},
-			Input: nil,
-		},
-		{
-			Data:  nil,
-			Input: []byte{0x1, 0x2, 0x3},
+			Data: nil,
 		},
 	}
 
@@ -42,27 +36,7 @@ func TestUnMarshalCallRequest(t *testing.T) {
 			t.Fatal(e)
 		}
 		fmt.Printf("unmarshaled %+v\n", item)
-
-		// assert.Equal(t, item.Input, ([]byte)(nil))
-		if !bytes.Equal(item.Input, ([]byte)(nil)) {
-			t.Fatal("item.Input not nil")
-		}
 	}
-
-	bads := []CallRequest{
-		{
-			Data:  []byte{0x1, 0x2},
-			Input: []byte{0x1, 0x2, 0x3},
-		},
-	}
-
-	for _, item := range bads {
-		_, e := json.Marshal(item)
-		if e == nil {
-			t.Fatalf("expected error, got nil")
-		}
-	}
-
 }
 
 func TestBlockNumberOrHashMarshal(t *testing.T) {

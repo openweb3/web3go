@@ -165,7 +165,7 @@ func (c *RpcParityClient) EncryptMessage(key string, phrase []byte) (val []byte,
 }
 
 /// Returns all pending transactions from transaction queue.
-func (c *RpcParityClient) PendingTransactions(limit *uint, filter *types.TransactionFilter) (val []types.PlainTransaction, err error) {
+func (c *RpcParityClient) PendingTransactions(limit *uint, filter *types.TransactionFilter) (val []types.TransactionDetail, err error) {
 	err = c.CallContext(context.Background(), &val, "parity_pendingTransactions", limit, filter)
 	return
 }
@@ -173,7 +173,7 @@ func (c *RpcParityClient) PendingTransactions(limit *uint, filter *types.Transac
 /// Returns all transactions from transaction queue.
 ///
 /// Some of them might not be ready to be included in a block yet.
-func (c *RpcParityClient) AllTransactions() (val []types.PlainTransaction, err error) {
+func (c *RpcParityClient) AllTransactions() (val []types.TransactionDetail, err error) {
 	err = c.CallContext(context.Background(), &val, "parity_allTransactions")
 	return
 }
@@ -185,7 +185,7 @@ func (c *RpcParityClient) AllTransactionHashes() (val []common.Hash, err error) 
 }
 
 /// Returns all future transactions from transaction queue (deprecated)
-func (c *RpcParityClient) FutureTransactions() (val []types.PlainTransaction, err error) {
+func (c *RpcParityClient) FutureTransactions() (val []types.TransactionDetail, err error) {
 	err = c.CallContext(context.Background(), &val, "parity_futureTransactions")
 	return
 }

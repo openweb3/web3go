@@ -15,7 +15,7 @@ import (
 var _ = (*plainTransactionMarshaling)(nil)
 
 // MarshalJSON marshals as JSON.
-func (p PlainTransaction) MarshalJSON() ([]byte, error) {
+func (p TransactionDetail) MarshalJSON() ([]byte, error) {
 	type PlainTransaction struct {
 		Accesses             types.AccessList `json:"accessList,omitempty"`
 		BlockHash            *common.Hash     `json:"blockHash"`
@@ -71,7 +71,7 @@ func (p PlainTransaction) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON unmarshals from JSON.
-func (p *PlainTransaction) UnmarshalJSON(input []byte) error {
+func (p *TransactionDetail) UnmarshalJSON(input []byte) error {
 	type PlainTransaction struct {
 		Accesses             *types.AccessList `json:"accessList,omitempty"`
 		BlockHash            *common.Hash      `json:"blockHash"`

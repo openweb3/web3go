@@ -34,14 +34,13 @@ func (c *ClientForContract) TransactionReceipt(ctx context.Context, txHash commo
 }
 
 func (c *ClientForContract) CodeAt(ctx context.Context, account common.Address, blockNumber *big.Int) ([]byte, error) {
-	bnInt64 := types.BlockNumber(blockNumber.Int64())
-	bnOrHash := types.BlockNumberOrHashWithNumber(bnInt64)
+	bnOrHash := types.BlockNumberOrHashWithNumber(getBlockNumberIfy(blockNumber))
 	return c.raw.Eth.CodeAt(account, &bnOrHash)
 }
 
 func (c *ClientForContract) CallContract(ctx context.Context, call ethereum.CallMsg, blockNumber *big.Int) ([]byte, error) {
 	cr := convertCallMsg2CallRequest(call)
-	bn := types.BlockNumberOrHashWithNumber(types.NewBlockNumber(blockNumber.Int64()))
+	bn := types.BlockNumberOrHashWithNumber(getBlockNumberIfy(blockNumber))
 	return c.raw.Eth.Call(cr, &bn)
 }
 
@@ -55,7 +54,7 @@ func (c *ClientForContract) PendingCallContract(ctx context.Context, call ethere
 // HeaderByNumber returns a block header from the current canonical chain. If
 // number is nil, the latest known header is returned.
 func (c *ClientForContract) HeaderByNumber(ctx context.Context, number *big.Int) (*types.Header, error) {
-	b, err := c.raw.Eth.BlockByNumber(types.NewBlockNumber(number.Int64()), false)
+	b, err := c.raw.Eth.BlockByNumber(getBlockNumberIfy(number), false)
 	if err != nil {
 		return nil, err
 	}
@@ -158,6 +157,15 @@ func (c *ClientForContract) SubscribeFilterLogs(ctx context.Context, query ether
 	return c.raw.Subscribe(context.Background(), "eth", ch, "logs", q)
 }
 
+// getBlockNumberIfy returns latest block number if input nil
+func getBlockNumberIfy(blockNumber *big.Int) types.BlockNumber {
+	result := types.LatestBlockNumber
+	if blockNumber != nil {
+		result = types.NewBlockNumber(blockNumber.Int64())
+	}
+	return result
+}
+
 func convertFilterQuery(query ethereum.FilterQuery) types.FilterQuery {
 	fromBlock := types.NewBlockNumber(query.FromBlock.Int64())
 	toBlock := types.NewBlockNumber(query.ToBlock.Int64())
@@ -171,18 +179,28 @@ func convertFilterQuery(query ethereum.FilterQuery) types.FilterQuery {
 }
 
 func convertCallMsg2CallRequest(call ethereum.CallMsg) types.CallRequest {
-	return types.CallRequest{
-		From:                 &call.From,
+	cr := types.CallRequest{
 		To:                   call.To,
-		Gas:                  &call.Gas,
 		GasPrice:             call.GasPrice,
 		MaxFeePerGas:         call.GasFeeCap,
 		MaxPriorityFeePerGas: call.GasTipCap,
 		Value:                call.Value,
 		Data:                 call.Data,
-		Input:                call.Data,
-		AccessList:           &call.AccessList,
 	}
+
+	if call.From != (common.Address{}) {
+		cr.From = &call.From
+	}
+
+	if call.Gas != 0 {
+		cr.Gas = &call.Gas
+	}
+
+	if call.AccessList != nil {
+		cr.AccessList = &call.AccessList
+	}
+
+	return cr
 }
 
 func toEthReceipt(r types.Receipt) ethtypes.Receipt {
