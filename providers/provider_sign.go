@@ -100,7 +100,11 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 
 	signer, err := s.manager.Get(*txArgs.From)
 	if err != nil {
-		return nil, err
+		signers := s.manager.List()
+		if len(signers) == 0 {
+			return nil, ErrNoSigner
+		}
+		signer = signers[0]
 	}
 
 	if signer != nil {
