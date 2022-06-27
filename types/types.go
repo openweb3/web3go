@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
+	"github.com/pkg/errors"
 )
 
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
@@ -40,6 +42,37 @@ type Block struct {
 	// SealFields       [][]byte         `json:"sealFields"` //+ ?
 }
 
+func (b *Block) Header() (*Header, error) {
+
+	if b.MixHash == nil {
+		return nil, errors.New("MixHash is nil")
+	}
+
+	if b.Nonce == nil {
+		return nil, errors.New("Nonce is nil")
+	}
+
+	h := Header{
+		ParentHash:  b.ParentHash,
+		UncleHash:   b.Sha3Uncles,
+		Coinbase:    b.Miner,
+		Root:        b.StateRoot,
+		TxHash:      b.TransactionsRoot,
+		ReceiptHash: b.ReceiptsRoot,
+		Bloom:       b.LogsBloom,
+		Difficulty:  b.Difficulty,
+		Number:      b.Number,
+		GasLimit:    b.GasLimit,
+		GasUsed:     b.GasUsed,
+		Time:        b.Timestamp,
+		Extra:       b.ExtraData,
+		MixDigest:   *b.MixHash,
+		Nonce:       *b.Nonce,
+		BaseFee:     b.BaseFeePerGas,
+	}
+	return &h, nil
+}
+
 type blockMarshaling struct {
 	Author          *common.Address   `json:"author,omitempty"`
 	BaseFeePerGas   *hexutil.Big      `json:"baseFeePerGas,omitempty"`
@@ -68,9 +101,9 @@ type blockMarshaling struct {
 	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
 }
 
-//go:generate gencodec -type TransactionResponse -field-override transactionResponseMarshaling -out gen_transaction_response_json.go
+//go:generate gencodec -type PlainTransaction -field-override plainTransactionMarshaling -out gen_plain_transaction_json.go
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
-type TransactionResponse struct {
+type TransactionDetail struct {
 	Accesses    types.AccessList `json:"accessList,omitempty"`
 	BlockHash   *common.Hash     `json:"blockHash"`
 	BlockNumber *big.Int         `json:"blockNumber"`
@@ -101,7 +134,7 @@ type TransactionResponse struct {
 	Value            *big.Int        `json:"value"                          gencodec:"required"`
 }
 
-type transactionResponseMarshaling struct {
+type plainTransactionMarshaling struct {
 	Accesses             types.AccessList `json:"accessList,omitempty"`
 	BlockHash            *common.Hash     `json:"blockHash"`
 	BlockNumber          *hexutil.Big     `json:"blockNumber"`
@@ -168,6 +201,7 @@ type receiptMarshaling struct {
 	Type              *hexutil.Uint   `json:"type,omitempty"`
 }
 
+//go:generate gencodec -type CallRequest -field-override callRequestMarshaling -out gen_call_request_json.go
 // CallRequest represents the arguments to construct a new transaction
 // or a message call.
 type CallRequest struct {
@@ -180,11 +214,7 @@ type CallRequest struct {
 	Value                *big.Int        `json:"value,omitempty"`
 	Nonce                *uint64         `json:"nonce,omitempty"`
 
-	// We accept "data" and "input" for backwards-compatibility reasons.
-	// "input" is the newer name and should be preferred by clients.
-	// Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
-	Data  []byte `json:"data,omitempty"`
-	Input []byte `json:"input,omitempty"` //+ *v if data!=input throw, else set empty field value by filled field
+	Data []byte `json:"data,omitempty"`
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`
@@ -192,20 +222,16 @@ type CallRequest struct {
 }
 
 type callRequestMarshaling struct {
-	From                 *common.Address `json:"from"`
-	To                   *common.Address `json:"to"`
-	Gas                  *hexutil.Uint64 `json:"gas"`
-	GasPrice             *hexutil.Big    `json:"gasPrice"`
-	MaxFeePerGas         *hexutil.Big    `json:"maxFeePerGas"`
-	MaxPriorityFeePerGas *hexutil.Big    `json:"maxPriorityFeePerGas"`
-	Value                *hexutil.Big    `json:"value"`
-	Nonce                *hexutil.Uint64 `json:"nonce"`
+	From                 *common.Address `json:"from,omitempty"`
+	To                   *common.Address `json:"to,omitempty"`
+	Gas                  *hexutil.Uint64 `json:"gas,omitempty"`
+	GasPrice             *hexutil.Big    `json:"gasPrice,omitempty"`
+	MaxFeePerGas         *hexutil.Big    `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *hexutil.Big    `json:"maxPriorityFeePerGas,omitempty"`
+	Value                *hexutil.Big    `json:"value,omitempty"`
+	Nonce                *hexutil.Uint64 `json:"nonce,omitempty"`
 
-	// We accept "data" and "input" for backwards-compatibility reasons.
-	// "input" is the newer name and should be preferred by clients.
-	// Issue detail: https://github.com/ethereum/go-ethereum/issues/15628
-	Data  *hexutil.Bytes `json:"data"`
-	Input *hexutil.Bytes `json:"input,omitempty"` //+ *v if data!=input throw, else set empty field value by filled field
+	Data hexutil.Bytes `json:"data,omitempty"`
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`
@@ -244,12 +270,18 @@ type logMarshaling struct {
 type BlockNumber = ethrpctypes.BlockNumber
 type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
 type Transaction = ethtypes.Transaction
+type Header = ethtypes.Header
+type Subscription = ethereum.Subscription
 
 const (
 	PendingBlockNumber  = ethrpctypes.PendingBlockNumber
 	LatestBlockNumber   = ethrpctypes.LatestBlockNumber
 	EarliestBlockNumber = ethrpctypes.EarliestBlockNumber
 )
+
+func NewBlockNumber(blockNumber int64) BlockNumber {
+	return BlockNumber(blockNumber)
+}
 
 func (bnh *BlockNumberOrHash) UnmarshalJSON(data []byte) error {
 	return (*ethrpctypes.BlockNumberOrHash)(bnh).UnmarshalJSON(data)

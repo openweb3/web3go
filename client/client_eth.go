@@ -186,6 +186,8 @@ func (c *RpcEthClient) CodeAt(addr common.Address, blockNum *types.BlockNumberOr
 	return
 }
 
+// SendTransaction sends a transaction by TransactionArgs which contains all fields a transaction needs,
+// it will populate empty fields automatically before sending.
 func (c *RpcEthClient) SendTransactionByArgs(args types.TransactionArgs) (txHash common.Hash, err error) {
 	if err = args.Populate(c); err != nil {
 		return
@@ -230,19 +232,19 @@ func (c *RpcEthClient) EstimateGas(callRequest types.CallRequest, blockNum *type
 }
 
 /// Get transaction by its hash.
-func (c *RpcEthClient) TransactionByHash(txHash common.Hash) (val *types.TransactionResponse, err error) {
+func (c *RpcEthClient) TransactionByHash(txHash common.Hash) (val *types.TransactionDetail, err error) {
 	err = c.CallContext(context.Background(), &val, "eth_getTransactionByHash", txHash)
 	return
 }
 
 /// Returns transaction at given block hash and index.
-func (c *RpcEthClient) TransactionByBlockHashAndIndex(blockHash common.Hash, index uint) (val *types.TransactionResponse, err error) {
+func (c *RpcEthClient) TransactionByBlockHashAndIndex(blockHash common.Hash, index uint) (val *types.TransactionDetail, err error) {
 	err = c.CallContext(context.Background(), &val, "eth_getTransactionByBlockHashAndIndex", blockHash, index)
 	return
 }
 
 /// Returns transaction by given block number and index.
-func (c *RpcEthClient) TransactionByBlockNumberAndIndex(blockNum types.BlockNumber, index uint) (val *types.TransactionResponse, err error) {
+func (c *RpcEthClient) TransactionByBlockNumberAndIndex(blockNum types.BlockNumber, index uint) (val *types.TransactionDetail, err error) {
 	err = c.CallContext(context.Background(), &val, "eth_getTransactionByBlockNumberAndIndex", blockNum, index)
 	return
 }
@@ -276,4 +278,16 @@ func (c *RpcEthClient) SubmitHashrate(rate *big.Int, id common.Hash) (val bool, 
 	_rate := (*hexutil.Big)(rate)
 	err = c.CallContext(context.Background(), &val, "eth_submitHashrate", _rate, id)
 	return
+}
+
+// SubscribeNewHead subscribes to notifications about the current blockchain head
+// on the given channel.
+func (c *RpcEthClient) SubscribeNewHead(ch chan<- *types.Header) (types.Subscription, error) {
+	return c.Subscribe(context.Background(), "eth", ch, "newHeads")
+}
+
+// SubscribeNewHead subscribes to notifications about the current blockchain head
+// on the given channel.
+func (c *RpcEthClient) SubscribeFilterLogs(q types.FilterQuery, ch chan<- types.Log) (types.Subscription, error) {
+	return c.Subscribe(context.Background(), "eth", ch, "logs", q)
 }
