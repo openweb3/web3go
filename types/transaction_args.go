@@ -31,6 +31,8 @@ type TransactionArgs struct {
 	Value                *hexutil.Big    `json:"value"`
 	Nonce                *hexutil.Uint64 `json:"nonce"`
 
+	// use pointer to keep same with go-ethereum behavior, beacuse nil *hexutil.Bytes will be marshaled to nil,
+	// but nil hexutil.Bytes will be marshaled to '0x'
 	Data *hexutil.Bytes `json:"data"`
 
 	// Introduced by AccessListTxType transaction.
