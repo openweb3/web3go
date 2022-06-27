@@ -135,7 +135,7 @@ There are two ways to send transactions and auto-sign, `SendTransaction` and `Se
 ```golang
 	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
 	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
-	c := MustNewClientWithOption("https://ropsten.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1", *(new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)))
+	c := MustNewClientWithOption("https://ropsten.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1", *(new(ClientOption).WithLoger(os.Stdout).WithSignerManager(sm)))
 
 	// send legacy tx
 	tx := ethrpctypes.NewTransaction(nonce.Uint64(), from, big.NewInt(1000000), 1000000, big.NewInt(1), nil)
@@ -161,7 +161,7 @@ There are two ways to send transactions and auto-sign, `SendTransaction` and `Se
 ```golang
 	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
 	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
-	c := MustNewClientWithOption("https://ropsten.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1", *(new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)))
+	c := MustNewClientWithOption("https://ropsten.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1", *(new(ClientOption).WithLoger(os.Stdout).WithSignerManager(sm)))
 
 	from := sm.List()[0].Address()
 	to := sm.List()[1].Address()

@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/openweb3/go-rpc-provider"
 	pinterfaces "github.com/openweb3/go-rpc-provider/interfaces"
+	"github.com/openweb3/web3go/interfaces"
 	signers "github.com/openweb3/web3go/signers"
 	"github.com/openweb3/web3go/types"
 
@@ -98,43 +99,49 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 		txArgs = *tx.(*types.TransactionArgs)
 	}
 
-	signer, err := s.manager.Get(*txArgs.From)
-	if err != nil {
+	var signer interfaces.Signer
+	if txArgs.From == nil {
 		signers := s.manager.List()
 		if len(signers) == 0 {
 			return nil, ErrNoSigner
 		}
 		signer = signers[0]
+	} else {
+		var err error
+		signer, err = s.manager.Get(*txArgs.From)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	if signer != nil {
-
-		// get chainId from chain
-		var chainId *hexutil.Big
-		if err = s.provider.CallContext(context.Background(), &chainId, METHOD_CHAIN_ID); err != nil {
-			return nil, err
-		}
-
-		if chainId == nil {
-			return nil, ErrChainNotReady
-		}
-
-		tx2, err := txArgs.ToTransaction()
-		if err != nil {
-			return nil, err
-		}
-
-		tx2, err = signer.SignTransaction(tx2, chainId.ToInt())
-		if err != nil {
-			return nil, err
-		}
-
-		rawTx, err := tx2.MarshalBinary()
-		if err != nil {
-			return nil, err
-		}
-
-		return rawTx, nil
+	if signer == nil {
+		return nil, ErrNoSigner
 	}
-	return nil, ErrNoSigner
+
+	// get chainId from chain
+	var chainId *hexutil.Big
+	if err := s.provider.CallContext(context.Background(), &chainId, METHOD_CHAIN_ID); err != nil {
+		return nil, err
+	}
+
+	if chainId == nil {
+		return nil, ErrChainNotReady
+	}
+
+	tx2, err := txArgs.ToTransaction()
+	if err != nil {
+		return nil, err
+	}
+
+	tx2, err = signer.SignTransaction(tx2, chainId.ToInt())
+	if err != nil {
+		return nil, err
+	}
+
+	rawTx, err := tx2.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+
+	return rawTx, nil
 }
