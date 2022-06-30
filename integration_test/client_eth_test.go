@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"os"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
 	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 	"github.com/openweb3/go-sdk-common/rpctest"
+	"github.com/openweb3/web3go"
 	"github.com/openweb3/web3go/client"
 )
 
@@ -170,4 +172,13 @@ func callcontextFuncLogMiddle(f providers.CallContextFunc) providers.CallContext
 func TestClienEth(t *testing.T) {
 	config := getEthTestConfig()
 	rpctest.DoClientTest(t, config)
+}
+
+func TestInfura(t *testing.T) {
+	config := getEthTestConfig()
+	config.ExamplesUrl = "https://raw.githubusercontent.com/Conflux-Chain/jsonrpc-spec/test-unifra/src/eth/examples_unifra.json"
+	config.Client = web3go.MustNewClientWithOption("https://cfx-espace.unifra.io/v1/2d3cc5154f8146c58d4a4995acb7f0aa", *new(web3go.ClientOption).WithLooger(os.Stdout)).Eth
+	if err := rpctest.ExecuteExamples(config, nil); err != nil {
+		t.Fatal(err)
+	}
 }
