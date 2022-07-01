@@ -1,3 +1,7 @@
+// Copyright 2019 OpenWeb3. All rights reserved.
+// Conflux is free software and distributed under GNU General Public License.
+// See http://www.gnu.org/licenses/
+
 package web3go
 
 import (
