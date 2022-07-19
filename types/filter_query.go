@@ -27,7 +27,6 @@ type FilterQuery struct {
 	// {{A}, {B}}         matches topic A in first position AND B in second position
 	// {{A, B}, {C, D}}   matches topic (A OR B) in first position AND (C OR D) in second position
 	Topics [][]common.Hash `json:"topics,omitempty"`
-	Limit  *uint           `json:"limit,omitempty"`
 }
 
 func (args *FilterQuery) UnmarshalJSON(data []byte) error {
