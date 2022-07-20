@@ -8,6 +8,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/openweb3/go-sdk-common/privatekeyhelper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,16 +31,16 @@ func TestNewPrivateKeySignerByString(t *testing.T) {
 
 func TestNewPrivateSignerByMnemonic(t *testing.T) {
 	a := assert.New(t)
-	_, err := NewPrivateKeySignerByMnemonic("", 0, &MnemonicOption{
+	_, err := NewPrivateKeySignerByMnemonic("", 0, &privatekeyhelper.MnemonicOption{
 		BaseDerivePath: "m/44'/60'/0'/0",
 	})
 	a.EqualError(err, ErrInvalidMnemonic.Error())
 
 	m := "sister horse tag together deposit lazy wide trust stay vital six napkin"
-	s, _ := NewPrivateKeySignerByMnemonic(m, 0, &MnemonicOption{BaseDerivePath: "m/44'/60'/0'/0"})
+	s, _ := NewPrivateKeySignerByMnemonic(m, 0, &privatekeyhelper.MnemonicOption{BaseDerivePath: "m/44'/60'/0'/0"})
 	a.Equal(common.HexToAddress("0xe6D148D8398c4cb456196C776D2d9093Dd62C9B0"), s.Address())
 
-	s, _ = NewPrivateKeySignerByMnemonic(m, 1, &MnemonicOption{BaseDerivePath: "m/44'/60'/0'/0"})
+	s, _ = NewPrivateKeySignerByMnemonic(m, 1, &privatekeyhelper.MnemonicOption{BaseDerivePath: "m/44'/60'/0'/0"})
 	a.Equal(common.HexToAddress("0x3a3347C42705C5328012dE9a38b030128eee4F83"), s.Address())
 }
 

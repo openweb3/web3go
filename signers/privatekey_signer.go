@@ -2,9 +2,7 @@ package signers
 
 import (
 	"crypto/ecdsa"
-	"crypto/rand"
 	"fmt"
-	"log"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts"
@@ -12,10 +10,8 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/mcuadros/go-defaults"
-	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"
+	"github.com/openweb3/go-sdk-common/privatekeyhelper"
 	"github.com/pkg/errors"
-	"github.com/tyler-smith/go-bip39"
 )
 
 var (
@@ -39,17 +35,27 @@ func NewPrivateKeySigner(privateKey *ecdsa.PrivateKey) *PrivateKeySigner {
 }
 
 func NewPrivateKeySignerByString(keyString string) (*PrivateKeySigner, error) {
-	if len(keyString) >= 2 && keyString[0:2] == "0x" {
-		keyString = keyString[2:]
-	}
-
-	privateKey, err := crypto.HexToECDSA(keyString)
-
+	key, err := privatekeyhelper.NewFromKeyString(keyString)
 	if err != nil {
-		return nil, errors.Wrap(err, "invalid HEX format of private key")
+		return nil, err
 	}
+	return NewPrivateKeySigner(key), nil
+}
 
-	return NewPrivateKeySigner(privateKey), nil
+func NewRandomPrivateKeySigner() (*PrivateKeySigner, error) {
+	key, err := privatekeyhelper.NewRandom()
+	if err != nil {
+		return nil, err
+	}
+	return NewPrivateKeySigner(key), nil
+}
+
+func NewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *privatekeyhelper.MnemonicOption) (*PrivateKeySigner, error) {
+	key, err := privatekeyhelper.NewFromMnemonic(mnemonic, addressIndex, option)
+	if err != nil {
+		return nil, err
+	}
+	return NewPrivateKeySigner(key), nil
 }
 
 func MustNewPrivateKeySignerByString(keyString string) *PrivateKeySigner {
@@ -60,15 +66,6 @@ func MustNewPrivateKeySignerByString(keyString string) *PrivateKeySigner {
 	return signer
 }
 
-func NewRandomPrivateKeySigner() (*PrivateKeySigner, error) {
-	privateKey, err := ecdsa.GenerateKey(crypto.S256(), rand.Reader)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewPrivateKeySigner(privateKey), nil
-}
-
 func MustNewRandomPrivateKeySigner() *PrivateKeySigner {
 	signer, err := NewRandomPrivateKeySigner()
 	if err != nil {
@@ -77,47 +74,7 @@ func MustNewRandomPrivateKeySigner() *PrivateKeySigner {
 	return signer
 }
 
-func NewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *MnemonicOption) (*PrivateKeySigner, error) {
-
-	if !bip39.IsMnemonicValid(mnemonic) {
-		return nil, ErrInvalidMnemonic
-	}
-
-	if option == nil {
-		option = &MnemonicOption{}
-	}
-
-	defaults.SetDefaults(option)
-
-	seed := bip39.NewSeed(mnemonic, option.Password)
-
-	wallet, err := hdwallet.NewFromSeed(seed)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_path, err := hdwallet.ParseDerivationPath(fmt.Sprintf("%v/%v", option.BaseDerivePath, addressIndex))
-	if err != nil {
-		return nil, err
-	}
-
-	account, err := wallet.Derive(_path, false)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	key, err := wallet.PrivateKey(account)
-	if err != nil {
-		return nil, err
-	}
-
-	return &PrivateKeySigner{
-		privateKey: key,
-		address:    account.Address,
-	}, nil
-}
-
-func MustNewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *MnemonicOption) *PrivateKeySigner {
+func MustNewPrivateKeySignerByMnemonic(mnemonic string, addressIndex int, option *privatekeyhelper.MnemonicOption) *PrivateKeySigner {
 	signer, err := NewPrivateKeySignerByMnemonic(mnemonic, addressIndex, option)
 	if err != nil {
 		panic(err)
