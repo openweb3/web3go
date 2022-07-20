@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/openweb3/go-sdk-common/privatekeyhelper"
 	"github.com/openweb3/web3go/interfaces"
 )
 
@@ -47,7 +48,7 @@ func MustNewSignerManagerByPrivateKeyStrings(privateKeys []string) *SignerManage
 	return sm
 }
 
-func NewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *MnemonicOption) (*SignerManager, error) {
+func NewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *privatekeyhelper.MnemonicOption) (*SignerManager, error) {
 	signers := make([]interfaces.Signer, addressNumber)
 	for i := 0; i < addressNumber; i++ {
 		s, err := NewPrivateKeySignerByMnemonic(mnemonic, i, option)
@@ -59,7 +60,7 @@ func NewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *Mnem
 	return NewSignerManager(signers), nil
 }
 
-func MustNewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *MnemonicOption) *SignerManager {
+func MustNewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *privatekeyhelper.MnemonicOption) *SignerManager {
 	sm, err := NewSignerManagerByMnemonic(mnemonic, addressNumber, option)
 	if err != nil {
 		panic(err)
@@ -70,6 +71,7 @@ func MustNewSignerManagerByMnemonic(mnemonic string, addressNumber int, option *
 func (s *SignerManager) Add(signer interfaces.Signer) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
+
 	if _, ok := s.signerMap[signer.Address()]; ok {
 		return errors.New("signer already exists")
 	}
@@ -79,6 +81,9 @@ func (s *SignerManager) Add(signer interfaces.Signer) error {
 }
 
 func (s *SignerManager) Remove(addr common.Address) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	if _, err := s.Get(addr); err != nil {
 		return err
 	}
