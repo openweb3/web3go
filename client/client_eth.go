@@ -6,6 +6,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/rpc"
 
 	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 
@@ -290,4 +291,10 @@ func (c *RpcEthClient) SubscribeNewHead(ch chan<- *types.Header) (types.Subscrip
 // on the given channel.
 func (c *RpcEthClient) SubscribeFilterLogs(q types.FilterQuery, ch chan<- types.Log) (types.Subscription, error) {
 	return c.Subscribe(context.Background(), "eth", ch, "logs", q)
+}
+
+// FeeHistory returns the fee market history.
+func (c *RpcEthClient) FeeHistory(blockCount rpc.DecimalOrHex, lastBlock types.BlockNumber, rewardPercentiles []float64) (val *types.FeeHistoryResult, err error) {
+	err = c.CallContext(context.Background(), &val, "eth_feeHistory", blockCount, lastBlock, rewardPercentiles)
+	return
 }
