@@ -67,8 +67,9 @@ func (c *ClientForContract) HeaderByNumber(ctx context.Context, number *big.Int)
 
 // PendingCodeAt returns the code of the given account in the pending state.
 func (c *ClientForContract) PendingCodeAt(ctx context.Context, account common.Address) ([]byte, error) {
-	pending := types.BlockNumberOrHashWithNumber(types.PendingBlockNumber)
-	return c.raw.Eth.CodeAt(account, &pending)
+	// pending := types.BlockNumberOrHashWithNumber(types.PendingBlockNumber)
+	latest := types.BlockNumberOrHashWithNumber(types.LatestBlockNumber)
+	return c.raw.Eth.CodeAt(account, &latest)
 }
 
 // PendingNonceAt retrieves the current pending nonce associated with an account.
