@@ -102,8 +102,9 @@ func (c *ClientForContract) SuggestGasTipCap(ctx context.Context) (*big.Int, err
 func (c *ClientForContract) EstimateGas(ctx context.Context, call ethereum.CallMsg) (gas uint64, err error) {
 	cr := convertCallMsg2CallRequest(call)
 
-	pending := types.BlockNumberOrHashWithNumber(types.PendingBlockNumber)
-	val, err := c.raw.Eth.EstimateGas(cr, &pending)
+	// pending := types.BlockNumberOrHashWithNumber(types.PendingBlockNumber)
+	latest := types.BlockNumberOrHashWithNumber(types.LatestBlockNumber)
+	val, err := c.raw.Eth.EstimateGas(cr, &latest)
 	if err != nil {
 		return 0, err
 	}
