@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
+	"github.com/openweb3/go-rpc-provider"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -96,7 +97,8 @@ func TestUnmarshalFilterChanges(t *testing.T) {
 		"0x026a7262eaeb9cf63ee4fc51b40b95e49948f791a416245507069607d6882147"
 	]`), &f)
 	assert.NoError(t, err)
-	fmt.Println(f)
+	assert.Equal(t, 0, len(f.Logs))
+	assert.Equal(t, 4, len(f.Hashes))
 
 	f = FilterChanges{}
 	logs := []Log{
@@ -107,6 +109,14 @@ func TestUnmarshalFilterChanges(t *testing.T) {
 	j, _ := json.Marshal(logs)
 	err = json.Unmarshal(j, &f)
 	assert.NoError(t, err)
+	assert.Equal(t, 1, len(f.Logs))
+	assert.Equal(t, 0, len(f.Hashes))
+}
 
-	fmt.Println(f)
+func TestUnmarshalRpcID(t *testing.T) {
+	j, _ := json.Marshal("0x39")
+	var val *rpc.ID
+	err := json.Unmarshal(j, &val)
+	assert.NoError(t, err)
+	assert.Equal(t, *val, rpc.ID("0x39"))
 }
