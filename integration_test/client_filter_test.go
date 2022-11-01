@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFilters(t *testing.T) {
+func _TestFilters(t *testing.T) {
 	client, err := web3go.NewClientWithOption("https://evmtestnet-internal.confluxrpc.com", web3go.ClientOption{
 		Option: providers.Option{
 			// Logger: os.Stdout,

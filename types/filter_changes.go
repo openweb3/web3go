@@ -21,7 +21,6 @@ func (f *FilterChanges) UnmarshalJSON(input []byte) error {
 
 	hashes := []common.Hash{}
 	if err := json.Unmarshal(input, &hashes); err == nil {
-		// fmt.Println("success unmarshl to hashes")
 		f.Hashes = hashes
 		return nil
 	}

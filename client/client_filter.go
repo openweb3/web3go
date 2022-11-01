@@ -10,35 +10,6 @@ import (
 	"github.com/openweb3/web3go/types"
 )
 
-// /// Eth filters rpc api (polling).
-// // TODO: do filters api properly
-// #[rpc(server)]
-// pub trait EthFilter {
-//     /// Returns id of new filter.
-//     #[rpc(name = "eth_newFilter")]
-//     fn new_filter(&self, _: EthRpcLogFilter) -> Result<U256>;
-
-//     /// Returns id of new block filter.
-//     #[rpc(name = "eth_newBlockFilter")]
-//     fn new_block_filter(&self) -> Result<U256>;
-
-//     /// Returns id of new block filter.
-//     #[rpc(name = "eth_newPendingTransactionFilter")]
-//     fn new_pending_transaction_filter(&self) -> Result<U256>;
-
-//     /// Returns filter changes since last poll.
-//     #[rpc(name = "eth_getFilterChanges")]
-//     fn filter_changes(&self, _: Index) -> Result<FilterChanges>;
-
-//     /// Returns all logs matching given filter (in a range 'from' - 'to').
-//     #[rpc(name = "eth_getFilterLogs")]
-//     fn filter_logs(&self, _: Index) -> Result<Vec<Log>>;
-
-//     /// Uninstalls filter.
-//     #[rpc(name = "eth_uninstallFilter")]
-//     fn uninstall_filter(&self, _: Index) -> Result<bool>;
-// }
-
 type RpcFilterClient struct {
 	*providers.MiddlewarableProvider
 }
