@@ -25,6 +25,7 @@ type Client struct {
 	Eth    *client.RpcEthClient
 	Trace  *client.RpcTraceClient
 	Parity *client.RpcParityClient
+	Filter *client.RpcFilterClient
 }
 
 var (
@@ -85,6 +86,7 @@ func (c *Client) SetProvider(p interfaces.Provider) {
 	c.Eth = client.NewRpcEthClient(p)
 	c.Trace = client.NewRpcTraceClient(p)
 	c.Parity = client.NewRpcParityClient(p)
+	c.Filter = client.NewRpcFilterClient(p)
 }
 
 func (c *Client) Provider() *pproviders.MiddlewarableProvider {
