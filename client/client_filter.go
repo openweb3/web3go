@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/openweb3/go-rpc-provider"
 	"github.com/openweb3/go-rpc-provider/interfaces"
 	providers "github.com/openweb3/go-rpc-provider/provider_wrapper"
 	"github.com/openweb3/web3go/types"
