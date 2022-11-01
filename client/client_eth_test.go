@@ -23,7 +23,7 @@ func TestSendTransaction(t *testing.T) {
 	sm, err := signers.NewSignerManagerByPrivateKeyStrings([]string{"9ec393923a14eeb557600010ea05d635c667a6995418f8a8f4bdecc63dfe0bb9"})
 	ast.NoError(err)
 
-	provider := pproviders.MustNewBaseProvider(context.Background(), "https://ropsten.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1")
+	provider := pproviders.MustNewBaseProvider(context.Background(), "https://goerli.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1")
 	provider = pproviders.NewLoggerProvider(provider, os.Stdout)
 	provider = providers.NewSignableProvider(provider, sm)
 	provider = pproviders.NewLoggerProvider(provider, os.Stdout)
