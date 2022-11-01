@@ -47,7 +47,6 @@ func (c *RpcFilterClient) NewPendingTransactionFilter() (val *big.Int, err error
 // Returns filter changes since last poll.
 func (c *RpcFilterClient) GetFilterChanges(filterID *big.Int) (val *types.FilterChanges, err error) {
 	_filterID := (*hexutil.Big)(filterID)
-	// var _val interface{}
 	err = c.CallContext(context.Background(), &val, "eth_getFilterChanges", _filterID)
 	return
 }
