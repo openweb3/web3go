@@ -13,21 +13,30 @@ type FilterChanges struct {
 }
 
 func (f *FilterChanges) UnmarshalJSON(input []byte) error {
-	if err := json.Unmarshal(input, &f.Logs); err == nil {
+	logs := []Log{}
+	if err := json.Unmarshal(input, &logs); err == nil {
+		f.Logs = logs
 		return nil
 	}
-	if err := json.Unmarshal(input, &f.Hashes); err == nil {
+
+	hashes := []common.Hash{}
+	if err := json.Unmarshal(input, &hashes); err == nil {
+		// fmt.Println("success unmarshl to hashes")
+		f.Hashes = hashes
 		return nil
 	}
+
 	return fmt.Errorf("failed to unmarshal filter changes by %x", input)
 }
 
 func (f *FilterChanges) MarshalJSON() ([]byte, error) {
 	if f.Logs != nil {
+		fmt.Println("logs not nil")
 		return json.Marshal(f.Logs)
 	}
 
 	if f.Hashes != nil {
+		fmt.Println("hashes not nil")
 		return json.Marshal(f.Hashes)
 	}
 

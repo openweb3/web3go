@@ -7,7 +7,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
-	"gotest.tools/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUnMarshalCallRequest(t *testing.T) {
@@ -72,7 +72,7 @@ func TestBlockNumberOrHashMarshal(t *testing.T) {
 		if e != nil {
 			t.Fatal(e)
 		}
-		assert.DeepEqual(t, string(j), v.out)
+		assert.EqualValues(t, string(j), v.out)
 	}
 }
 
@@ -84,4 +84,29 @@ func TestReceiptMarshal(t *testing.T) {
 
 	j, _ := json.Marshal(r)
 	fmt.Printf("%s\n", j)
+}
+
+func TestUnmarshalFilterChanges(t *testing.T) {
+	var f FilterChanges
+
+	err := json.Unmarshal([]byte(`[
+		"0x3236cdebd39cf8470de82dc7b35bab55e29622dd03a941fbaa9de291b8fa6787",
+		"0xcc9a4e25d1164841ae8ed2424cb2a007b6cb67feb3723366a0459c046c8e132f",
+		"0xe9f3bd4466b8b8625f76e4adde77aef7cc369086cb325147dff42a5cd8b04a60",
+		"0x026a7262eaeb9cf63ee4fc51b40b95e49948f791a416245507069607d6882147"
+	]`), &f)
+	assert.NoError(t, err)
+	fmt.Println(f)
+
+	f = FilterChanges{}
+	logs := []Log{
+		{
+			Address: common.HexToAddress("0x09b5928d6ab3381c7d090b6fbe528db136e0bea3"),
+		},
+	}
+	j, _ := json.Marshal(logs)
+	err = json.Unmarshal(j, &f)
+	assert.NoError(t, err)
+
+	fmt.Println(f)
 }
