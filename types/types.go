@@ -10,8 +10,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	// rpc "github.com/ethereum/go-ethereum/rpc"
-
 	rpc "github.com/openweb3/go-rpc-provider"
 	"github.com/pkg/errors"
 )

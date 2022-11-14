@@ -3,7 +3,6 @@ package types
 import (
 	"math/big"
 
-	// "github.com/ethereum/go-ethereum/rpc"
 	"github.com/openweb3/go-rpc-provider"
 )
 
