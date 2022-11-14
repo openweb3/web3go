@@ -8,7 +8,9 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/rpc"
+	// "github.com/ethereum/go-ethereum/rpc"
+
+	rpc "github.com/openweb3/go-rpc-provider"
 
 	ethrpctypes "github.com/ethereum/go-ethereum/core/types"
 	pproviders "github.com/openweb3/go-rpc-provider/provider_wrapper"

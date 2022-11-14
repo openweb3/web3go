@@ -9,7 +9,10 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
+
+	// rpc "github.com/ethereum/go-ethereum/rpc"
+
+	rpc "github.com/openweb3/go-rpc-provider"
 	"github.com/pkg/errors"
 )
 
@@ -267,16 +270,18 @@ type logMarshaling struct {
 	TransactionLogIndex *hexutil.Uint  `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
 }
 
-type BlockNumber = ethrpctypes.BlockNumber
-type BlockNumberOrHash ethrpctypes.BlockNumberOrHash
+type BlockNumber = rpc.BlockNumber
+type BlockNumberOrHash rpc.BlockNumberOrHash
 type Transaction = ethtypes.Transaction
 type Header = ethtypes.Header
 type Subscription = ethereum.Subscription
 
 const (
-	PendingBlockNumber  = ethrpctypes.PendingBlockNumber
-	LatestBlockNumber   = ethrpctypes.LatestBlockNumber
-	EarliestBlockNumber = ethrpctypes.EarliestBlockNumber
+	SafeBlockNumber      = rpc.SafeBlockNumber
+	FinalizedBlockNumber = rpc.FinalizedBlockNumber
+	PendingBlockNumber   = rpc.PendingBlockNumber
+	LatestBlockNumber    = rpc.LatestBlockNumber
+	EarliestBlockNumber  = rpc.EarliestBlockNumber
 )
 
 func NewBlockNumber(blockNumber int64) BlockNumber {
@@ -284,32 +289,32 @@ func NewBlockNumber(blockNumber int64) BlockNumber {
 }
 
 func (bnh *BlockNumberOrHash) UnmarshalJSON(data []byte) error {
-	return (*ethrpctypes.BlockNumberOrHash)(bnh).UnmarshalJSON(data)
+	return (*rpc.BlockNumberOrHash)(bnh).UnmarshalJSON(data)
 }
 
 func (bnh BlockNumberOrHash) MarshalJSON() ([]byte, error) {
 	if bnh.BlockNumber != nil {
 		return json.Marshal(bnh.BlockNumber)
 	}
-	return json.Marshal(ethrpctypes.BlockNumberOrHash(bnh))
+	return json.Marshal(rpc.BlockNumberOrHash(bnh))
 }
 
 func (bnh *BlockNumberOrHash) Number() (BlockNumber, bool) {
-	return (*ethrpctypes.BlockNumberOrHash)(bnh).Number()
+	return (*rpc.BlockNumberOrHash)(bnh).Number()
 }
 
 func (bnh *BlockNumberOrHash) String() string {
-	return (*ethrpctypes.BlockNumberOrHash)(bnh).String()
+	return (*rpc.BlockNumberOrHash)(bnh).String()
 }
 
 func (bnh *BlockNumberOrHash) Hash() (common.Hash, bool) {
-	return (*ethrpctypes.BlockNumberOrHash)(bnh).Hash()
+	return (*rpc.BlockNumberOrHash)(bnh).Hash()
 }
 
 func BlockNumberOrHashWithNumber(blockNr BlockNumber) BlockNumberOrHash {
-	return (BlockNumberOrHash)(ethrpctypes.BlockNumberOrHashWithNumber(blockNr))
+	return (BlockNumberOrHash)(rpc.BlockNumberOrHashWithNumber(blockNr))
 }
 
 func BlockNumberOrHashWithHash(hash common.Hash, canonical bool) BlockNumberOrHash {
-	return (BlockNumberOrHash)(ethrpctypes.BlockNumberOrHashWithHash(hash, canonical))
+	return (BlockNumberOrHash)(rpc.BlockNumberOrHashWithHash(hash, canonical))
 }

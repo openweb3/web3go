@@ -13,5 +13,5 @@ require (
 )
 
 // replace github.com/openweb3/go-sdk-common => ../go-sdk-common
-// replace github.com/openweb3/go-rpc-provider v0.1.2 => ../go-rpc-provider
+replace github.com/openweb3/go-rpc-provider v0.2.2 => ../go-rpc-provider
 // replace github.com/openweb3/go-sdk-common v0.0.0 => ../go-sdk-common
