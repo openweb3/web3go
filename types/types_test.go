@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
-	ethrpctypes "github.com/ethereum/go-ethereum/rpc"
+
 	"github.com/openweb3/go-rpc-provider"
 	"github.com/stretchr/testify/assert"
 )
@@ -41,7 +41,7 @@ func TestUnMarshalCallRequest(t *testing.T) {
 }
 
 func TestBlockNumberOrHashMarshal(t *testing.T) {
-	latest := ethrpctypes.LatestBlockNumber
+	latest := rpc.LatestBlockNumber
 
 	table := []struct {
 		in  BlockNumberOrHash
@@ -53,11 +53,11 @@ func TestBlockNumberOrHashMarshal(t *testing.T) {
 			out: `"latest"`,
 		},
 		{
-			in:  BlockNumberOrHash(ethrpctypes.BlockNumberOrHashWithNumber(10)),
+			in:  BlockNumberOrHash(rpc.BlockNumberOrHashWithNumber(10)),
 			out: `"0xa"`,
 		},
 		{
-			in:  BlockNumberOrHash(ethrpctypes.BlockNumberOrHashWithHash(common.HexToHash("0xae7fbe443ce1e7b7ad867e246f79f4ea316fbcc545f1e6238bbfa697d623b6b9"), true)),
+			in:  BlockNumberOrHash(rpc.BlockNumberOrHashWithHash(common.HexToHash("0xae7fbe443ce1e7b7ad867e246f79f4ea316fbcc545f1e6238bbfa697d623b6b9"), true)),
 			out: `{"blockHash":"0xae7fbe443ce1e7b7ad867e246f79f4ea316fbcc545f1e6238bbfa697d623b6b9","requireCanonical":true}`,
 		},
 	}
