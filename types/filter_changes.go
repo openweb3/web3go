@@ -30,12 +30,10 @@ func (f *FilterChanges) UnmarshalJSON(input []byte) error {
 
 func (f *FilterChanges) MarshalJSON() ([]byte, error) {
 	if f.Logs != nil {
-		fmt.Println("logs not nil")
 		return json.Marshal(f.Logs)
 	}
 
 	if f.Hashes != nil {
-		fmt.Println("hashes not nil")
 		return json.Marshal(f.Hashes)
 	}
 
