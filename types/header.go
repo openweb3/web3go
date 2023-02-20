@@ -41,7 +41,7 @@ func (h *Header) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (h *Header) MarshalJSON() ([]byte, error) {
+func (h Header) MarshalJSON() ([]byte, error) {
 	type Header struct {
 		ParentHash  common.Hash         `json:"parentHash"       gencodec:"required"`
 		UncleHash   common.Hash         `json:"sha3Uncles"       gencodec:"required"`
