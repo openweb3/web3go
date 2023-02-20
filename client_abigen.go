@@ -53,7 +53,7 @@ func (c *ClientForContract) PendingCallContract(ctx context.Context, call ethere
 
 // HeaderByNumber returns a block header from the current canonical chain. If
 // number is nil, the latest known header is returned.
-func (c *ClientForContract) HeaderByNumber(ctx context.Context, number *big.Int) (*types.Header, error) {
+func (c *ClientForContract) HeaderByNumber(ctx context.Context, number *big.Int) (*ethtypes.Header, error) {
 	b, err := c.raw.Eth.BlockByNumber(getBlockNumberIfy(number), false)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (c *ClientForContract) HeaderByNumber(ctx context.Context, number *big.Int)
 	if err != nil {
 		return nil, err
 	}
-	return h, nil
+	return &h.Header, nil
 }
 
 // PendingCodeAt returns the code of the given account in the pending state.
