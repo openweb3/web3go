@@ -166,14 +166,18 @@ func (l *Trace) UnmarshalJSON(data []byte) error {
 }
 
 func (l *LocalizedTrace) UnmarshalJSON(data []byte) error {
-	type alias LocalizedTrace
+	type alias struct {
+		LocalizedTrace
+		BlockNumber hexutil.Uint64 `json:"blockNumber"`
+	}
 
 	a := alias{}
 	err := json.Unmarshal(data, &a)
 	if err != nil {
 		return err
 	}
-	*l = LocalizedTrace(a)
+	*l = LocalizedTrace(a.LocalizedTrace)
+	l.BlockNumber = uint64(a.BlockNumber)
 
 	l.Action, l.Result, err = getActionAndResult(data)
 	return err
