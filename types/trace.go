@@ -31,17 +31,17 @@ type Trace struct {
 }
 
 type LocalizedTrace struct {
-	Type                TraceType    `json:"type"`
-	Action              interface{}  `json:"action"`
-	Result              interface{}  `json:"result,omitempty"`
-	Error               *string      `json:"error,omitempty"`
-	TraceAddress        []uint       `json:"traceAddress"`
-	Subtraces           uint         `json:"subtraces"`
-	TransactionPosition *uint        `json:"transactionPosition"`
-	TransactionHash     *common.Hash `json:"transactionHash"`
-	BlockNumber         uint64       `json:"blockNumber"`
-	BlockHash           common.Hash  `json:"blockHash"`
-	Valid               *bool        `json:"valid,omitempty"` // exist in conflux-espace, not in openethereum
+	Type                TraceType       `json:"type"`
+	Action              interface{}     `json:"action"`
+	Result              interface{}     `json:"result,omitempty"`
+	Error               *string         `json:"error,omitempty"`
+	TraceAddress        []uint          `json:"traceAddress"`
+	Subtraces           hexutil.Uint64  `json:"subtraces"`
+	TransactionPosition *hexutil.Uint64 `json:"transactionPosition"`
+	TransactionHash     *common.Hash    `json:"transactionHash"`
+	BlockNumber         hexutil.Uint64  `json:"blockNumber"`
+	BlockHash           common.Hash     `json:"blockHash"`
+	Valid               *bool           `json:"valid,omitempty"` // exist in conflux-espace, not in openethereum
 }
 
 type StateDiff map[common.Hash]AccountDiff
@@ -166,18 +166,14 @@ func (l *Trace) UnmarshalJSON(data []byte) error {
 }
 
 func (l *LocalizedTrace) UnmarshalJSON(data []byte) error {
-	type alias struct {
-		LocalizedTrace
-		BlockNumber hexutil.Uint64 `json:"blockNumber"`
-	}
+	type alias LocalizedTrace
 
 	a := alias{}
 	err := json.Unmarshal(data, &a)
 	if err != nil {
 		return err
 	}
-	*l = LocalizedTrace(a.LocalizedTrace)
-	l.BlockNumber = uint64(a.BlockNumber)
+	*l = LocalizedTrace(a)
 
 	l.Action, l.Result, err = getActionAndResult(data)
 	return err
