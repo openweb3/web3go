@@ -232,7 +232,7 @@ func toEthReceipt(r types.Receipt) ethtypes.Receipt {
 func toEthLogs(logs []types.Log) []ethtypes.Log {
 	eLogs := make([]ethtypes.Log, len(logs))
 	for i, l := range logs {
-		eLogs[i] = toEthLog(l)
+		eLogs[i] = *l.ToEthLog()
 	}
 	return eLogs
 }
@@ -244,22 +244,7 @@ func toEthLogPtrs(logs []*types.Log) []*ethtypes.Log {
 			eLogs[i] = nil
 			continue
 		}
-		el := toEthLog(*l)
-		eLogs[i] = &el
+		eLogs[i] = l.ToEthLog()
 	}
 	return eLogs
-}
-
-func toEthLog(log types.Log) ethtypes.Log {
-	return ethtypes.Log{
-		Address:     log.Address,
-		Topics:      log.Topics,
-		Data:        log.Data,
-		BlockNumber: log.BlockNumber,
-		TxHash:      log.TxHash,
-		TxIndex:     log.TxIndex,
-		BlockHash:   log.BlockHash,
-		Index:       log.Index,
-		Removed:     log.Removed,
-	}
 }

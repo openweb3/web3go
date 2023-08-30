@@ -109,8 +109,9 @@ type blockMarshaling struct {
 	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
 }
 
-//go:generate gencodec -type PlainTransaction -field-override plainTransactionMarshaling -out gen_plain_transaction_json.go
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
+//
+//go:generate gencodec -type PlainTransaction -field-override plainTransactionMarshaling -out gen_plain_transaction_json.go
 type TransactionDetail struct {
 	Accesses    types.AccessList `json:"accessList,omitempty"`
 	BlockHash   *common.Hash     `json:"blockHash"`
@@ -169,8 +170,9 @@ type plainTransactionMarshaling struct {
 	Value                *hexutil.Big     `json:"value"`
 }
 
-//go:generate gencodec -type Receipt -field-override receiptMarshaling -out gen_receipt_json.go
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
+//
+//go:generate gencodec -type Receipt -field-override receiptMarshaling -out gen_receipt_json.go
 type Receipt struct {
 	BlockHash         common.Hash     `json:"blockHash"`
 	BlockNumber       uint64          `json:"blockNumber"`
@@ -209,9 +211,10 @@ type receiptMarshaling struct {
 	Type              *hexutil.Uint   `json:"type,omitempty"`
 }
 
-//go:generate gencodec -type CallRequest -field-override callRequestMarshaling -out gen_call_request_json.go
 // CallRequest represents the arguments to construct a new transaction
 // or a message call.
+//
+//go:generate gencodec -type CallRequest -field-override callRequestMarshaling -out gen_call_request_json.go
 type CallRequest struct {
 	From                 *common.Address `json:"from,omitempty"`
 	To                   *common.Address `json:"to,omitempty"`
@@ -259,6 +262,20 @@ type Log struct {
 	TxHash              common.Hash    `json:"transactionHash"`
 	TxIndex             uint           `json:"transactionIndex"`
 	TransactionLogIndex *uint          `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
+}
+
+func (l *Log) ToEthLog() *ethtypes.Log {
+	return &ethtypes.Log{
+		Address:     l.Address,
+		Topics:      l.Topics,
+		Data:        l.Data,
+		BlockNumber: l.BlockNumber,
+		TxHash:      l.TxHash,
+		TxIndex:     l.TxIndex,
+		BlockHash:   l.BlockHash,
+		Index:       l.Index,
+		Removed:     l.Removed,
+	}
 }
 
 type logMarshaling struct {
