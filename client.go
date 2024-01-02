@@ -5,6 +5,7 @@
 package web3go
 
 import (
+	"context"
 	"errors"
 	"math/big"
 
@@ -21,11 +22,12 @@ import (
 // Client defines typed wrappers for the Ethereum RPC API.
 type Client struct {
 	*pproviders.MiddlewarableProvider
-	option *ClientOption
-	Eth    *client.RpcEthClient
-	Trace  *client.RpcTraceClient
-	Parity *client.RpcParityClient
-	Filter *client.RpcFilterClient
+	context context.Context
+	option  *ClientOption
+	Eth     *client.RpcEthClient
+	Trace   *client.RpcTraceClient
+	Parity  *client.RpcParityClient
+	Filter  *client.RpcFilterClient
 }
 
 var (
@@ -75,6 +77,32 @@ func NewClientWithProvider(p interfaces.Provider) *Client {
 	c := &Client{}
 	c.SetProvider(p)
 	return c
+}
+
+// WithContext creates a new Client with specified context
+func (client *Client) WithContext(ctx context.Context) *Client {
+	_client := client.copy()
+	_client.context = ctx
+	_client.Eth.SetContext(ctx)
+	_client.Filter.SetContext(ctx)
+	_client.Parity.SetContext(ctx)
+	_client.Trace.SetContext(ctx)
+	return _client
+}
+
+func (client *Client) copy() *Client {
+	_client := *client
+	eth := *client.Eth
+	filter := *client.Filter
+	parity := *client.Parity
+	trace := *client.Trace
+
+	_client.Eth = &eth
+	_client.Filter = &filter
+	_client.Parity = &parity
+	_client.Trace = &trace
+
+	return &_client
 }
 
 func (c *Client) SetProvider(p interfaces.Provider) {

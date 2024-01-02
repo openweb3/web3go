@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	rpc "github.com/openweb3/go-rpc-provider"
 
@@ -50,4 +51,25 @@ func TestSendTransaction(t *testing.T) {
 	txhash, err = c.SendTransaction(from, *ethrpctypes.NewTx(dtx))
 	ast.NoError(err)
 	fmt.Printf("txhash: %s\n", txhash)
+}
+
+func TestBatchCall(t *testing.T) {
+	provider := pproviders.MustNewBaseProvider(context.Background(), "https://goerli.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1")
+	provider = pproviders.NewLoggerProvider(provider, os.Stdout)
+
+	var batchElems []rpc.BatchElem
+	batchElems = append(batchElems, rpc.BatchElem{
+		Method: "eth_blockNumber",
+		Args:   nil,
+		Result: new(hexutil.Big),
+	}, rpc.BatchElem{
+		Method: "eth_getBlockByNumber",
+		Args:   []interface{}{types.LatestBlockNumber, false},
+		Result: new(types.Block),
+	},
+	)
+	err := provider.BatchCallContext(context.Background(), batchElems)
+	assert.NoError(t, err)
+	assert.NotEqual(t, 0, *batchElems[0].Result.(*hexutil.Big))
+	assert.NotEqual(t, types.Block{}, *batchElems[1].Result.(*types.Block))
 }
