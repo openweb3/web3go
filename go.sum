@@ -340,6 +340,8 @@ github.com/openweb3/go-rpc-provider v0.3.1 h1:3BEl9ZbchZAKId70QhvRSKnst6oue1ew6n
 github.com/openweb3/go-rpc-provider v0.3.1/go.mod h1:DYz40TbzhzyTA06UFqGIKSXp0uFot6ZKh4QarD//eZ0=
 github.com/openweb3/go-rpc-provider v0.3.2-0.20240102091607-851801e1faac h1:fLIvO/9Jmpi0dPq82Ahty+I0dqudVWcCmYuj8Cl6xLM=
 github.com/openweb3/go-rpc-provider v0.3.2-0.20240102091607-851801e1faac/go.mod h1:DYz40TbzhzyTA06UFqGIKSXp0uFot6ZKh4QarD//eZ0=
+github.com/openweb3/go-rpc-provider v0.3.2 h1:njXVEXxM8GegJrdCaSU1o9XtpZNX1v7MnjZdOpHvwCQ=
+github.com/openweb3/go-rpc-provider v0.3.2/go.mod h1:DYz40TbzhzyTA06UFqGIKSXp0uFot6ZKh4QarD//eZ0=
 github.com/openweb3/go-sdk-common v0.0.0-20220720074746-a7134e1d372c h1:BrPXZpkTdmZe5bNjSSnxWqL44X9FcZ3xftLcYNkIJ68=
 github.com/openweb3/go-sdk-common v0.0.0-20220720074746-a7134e1d372c/go.mod h1:0WCVKMiLiYEaHhpQWQ3rgLti/Fv/+JPRiB0sEoovwk8=
 github.com/paulbellamy/ratecounter v0.2.0/go.mod h1:Hfx1hDpSGoqxkVVpBi/IlYD7kChlfo5C6hzIHwPqfFE=
