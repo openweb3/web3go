@@ -135,6 +135,13 @@ func (c *RpcEthClient) BlockByNumber(blockNumber types.BlockNumber, isFull bool)
 	return block, err
 }
 
+// BlockReceipts returns the receipts of a given block number or hash.
+func (c *RpcEthClient) BlockReceipts(blockNrOrHash *types.BlockNumberOrHash) (val []*types.Receipt, err error) {
+	var r []*types.Receipt
+	err = c.CallContext(c.getContext(), &r, "eth_getBlockReceipts", getRealBlockNumberOrHash(blockNrOrHash))
+	return r, err
+}
+
 // / Returns the number of transactions sent from given address at given time
 // / (block number).
 // TODO: nil *types.BlockNumberOrHash will be marshaled to null, which is not allowed in geth, but could work in ganache and not treat as latest, what behavior in conflux-rust should be investigate
