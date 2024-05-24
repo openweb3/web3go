@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/ethereum/go-ethereum v1.10.15
+	github.com/fjl/gencodec v0.0.0-20230517082657-f9840df7b83e // indirect
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/openweb3/go-rpc-provider v0.3.2

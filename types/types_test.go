@@ -120,3 +120,14 @@ func TestUnmarshalRpcID(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, *val, rpc.ID("0x39"))
 }
+
+func TestUnmarshalFeeHistory(t *testing.T) {
+	expect := `{"oldestBlock":"0x1302340","reward":[["0x989680","0x77359400"],["0x9402a0","0x51a875fa"],["0x55d4a80","0xa9eaec6d"]],"baseFeePerGas":["0x1d31b3ab6","0x1dadaf3bc","0x1e975439b","0x1b0249037"],"gasUsedRatio":[0.5663567666666667,0.6230082666666666,0.03160246666666667]}`
+
+	var feeHistory FeeHistory
+	err := json.Unmarshal([]byte(expect), &feeHistory)
+	assert.NoError(t, err)
+
+	j, _ := json.Marshal(feeHistory)
+	assert.Equal(t, expect, string(j))
+}

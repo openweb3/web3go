@@ -135,7 +135,7 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 	}
 	onlyExamples := map[string]bool{}
 
-	provider, _ := providers.NewBaseProvider(context.Background(), "http://47.93.101.243/eth/")
+	provider, _ := providers.NewBaseProvider(context.Background(), "http://net8889eth.confluxrpc.com")
 	middled := providers.NewMiddlewarableProvider(provider)
 	middled.HookCallContext(callcontextFuncLogMiddle)
 	provider = middled
