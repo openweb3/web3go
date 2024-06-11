@@ -14,7 +14,7 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	client, err := NewClient("https://goerli.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1")
+	client, err := NewClient("https://sepolia.infura.io/v3/d91582da330a4812be53d698a34741aa")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func callcontextLogMiddleware(f pproviders.CallContextFunc) pproviders.CallConte
 func TestSendTxByArgsUseClientWithOption(t *testing.T) {
 	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
 	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
-	c, err := NewClientWithOption("https://goerli.infura.io/v3/cb2c1b76cb894b699f20a602f35731f1", *(new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)))
+	c, err := NewClientWithOption("https://sepolia.infura.io/v3/d91582da330a4812be53d698a34741aa", *(new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)))
 	assert.NoError(t, err)
 
 	from := sm.List()[0].Address()

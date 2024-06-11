@@ -292,6 +292,60 @@ type logMarshaling struct {
 	TransactionLogIndex *hexutil.Uint  `json:"transactionLogIndex,omitempty"` //+ *v return by parity but not geth
 }
 
+//go:generate gencodec -type FeeHistory -field-override feeHistoryMarshaling -out gen_fee_history_json.go
+type FeeHistory struct {
+	OldestBlock      *big.Int     `json:"oldestBlock"`             // block corresponding to first response value
+	Reward           [][]*big.Int `json:"reward,omitempty"`        // list every txs priority fee per block
+	BaseFee          []*big.Int   `json:"baseFeePerGas,omitempty"` // list of each block's base fee
+	GasUsedRatio     []float64    `json:"gasUsedRatio"`            // ratio of gas used out of the total available limit
+	BlobBaseFee      []*big.Int   `json:"baseFeePerBlobGas,omitempty"`
+	BlobGasUsedRatio []float64    `json:"blobGasUsedRatio,omitempty"`
+}
+
+type blockRewardsMarshaling [][]*big.Int
+
+func (r blockRewardsMarshaling) MarshalJSON() ([]byte, error) {
+	var blocksRewards [][]*hexutil.Big
+	for _, blockRewards := range r {
+		var iBlockRewards []*hexutil.Big
+		for _, item := range blockRewards {
+			iBlockRewards = append(iBlockRewards, (*hexutil.Big)(item))
+		}
+
+		blocksRewards = append(blocksRewards, iBlockRewards)
+	}
+
+	return json.Marshal(blocksRewards)
+}
+
+func (r *blockRewardsMarshaling) UnmarshalJSON(data []byte) error {
+	var blocksRewards [][]*hexutil.Big
+	if err := json.Unmarshal(data, &blocksRewards); err != nil {
+		return err
+	}
+
+	var result [][]*big.Int
+	for _, blockRewards := range blocksRewards {
+		var iBlockRewards []*big.Int
+		for _, item := range blockRewards {
+			iBlockRewards = append(iBlockRewards, item.ToInt())
+		}
+
+		result = append(result, iBlockRewards)
+	}
+	*r = blockRewardsMarshaling(result)
+	return nil
+}
+
+type feeHistoryMarshaling struct {
+	OldestBlock      *hexutil.Big           `json:"oldestBlock"`
+	Reward           blockRewardsMarshaling `json:"reward,omitempty"`
+	BaseFee          []*hexutil.Big         `json:"baseFeePerGas,omitempty"`
+	GasUsedRatio     []float64              `json:"gasUsedRatio"`
+	BlobBaseFee      []*hexutil.Big         `json:"baseFeePerBlobGas,omitempty"`
+	BlobGasUsedRatio []float64              `json:"blobGasUsedRatio,omitempty"`
+}
+
 type BlockNumber = rpc.BlockNumber
 type BlockNumberOrHash rpc.BlockNumberOrHash
 type Transaction = ethtypes.Transaction

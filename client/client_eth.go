@@ -90,6 +90,13 @@ func (c *RpcEthClient) MaxPriorityFeePerGas() (val *big.Int, err error) {
 	return
 }
 
+func (c *RpcEthClient) FeeHistory(blockCount uint64, lastBlock types.BlockNumber, rewardPercentiles []float64) (val *types.FeeHistory, err error) {
+	var _val *types.FeeHistory
+	err = c.CallContext(c.getContext(), &_val, "eth_feeHistory", hexutil.Uint(blockCount), lastBlock, rewardPercentiles)
+	val = (*types.FeeHistory)(_val)
+	return
+}
+
 // / Returns accounts list.
 func (c *RpcEthClient) Accounts() (val []common.Address, err error) {
 	err = c.CallContext(c.getContext(), &val, "eth_accounts")
