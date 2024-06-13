@@ -15,8 +15,8 @@ import (
 var _ = (*plainTransactionMarshaling)(nil)
 
 // MarshalJSON marshals as JSON.
-func (p TransactionDetail) MarshalJSON() ([]byte, error) {
-	type PlainTransaction struct {
+func (t TransactionDetail) MarshalJSON() ([]byte, error) {
+	type TransactionDetail struct {
 		Accesses             types.AccessList `json:"accessList,omitempty"`
 		BlockHash            *common.Hash     `json:"blockHash"`
 		BlockNumber          *hexutil.Big     `json:"blockNumber"`
@@ -41,38 +41,40 @@ func (p TransactionDetail) MarshalJSON() ([]byte, error) {
 		Type                 *hexutil.Uint64  `json:"type,omitempty"`
 		V                    *hexutil.Big     `json:"v"                              gencodec:"required"`
 		Value                *hexutil.Big     `json:"value"                          gencodec:"required"`
+		YParity              *hexutil.Uint64  `json:"yParity,omitempty"`
 	}
-	var enc PlainTransaction
-	enc.Accesses = p.Accesses
-	enc.BlockHash = p.BlockHash
-	enc.BlockNumber = (*hexutil.Big)(p.BlockNumber)
-	enc.ChainID = (*hexutil.Big)(p.ChainID)
-	enc.Creates = p.Creates
-	enc.From = p.From
-	enc.Gas = hexutil.Uint64(p.Gas)
-	enc.GasPrice = (*hexutil.Big)(p.GasPrice)
-	enc.Hash = p.Hash
-	enc.Input = p.Input
-	enc.MaxFeePerGas = (*hexutil.Big)(p.MaxFeePerGas)
-	enc.MaxPriorityFeePerGas = (*hexutil.Big)(p.MaxPriorityFeePerGas)
-	enc.Nonce = hexutil.Uint64(p.Nonce)
-	enc.PublicKey = p.PublicKey
-	enc.R = (*hexutil.Big)(p.R)
-	enc.Raw = p.Raw
-	enc.S = (*hexutil.Big)(p.S)
-	enc.StandardV = (*hexutil.Big)(p.StandardV)
-	enc.Status = (*hexutil.Uint64)(p.Status)
-	enc.To = p.To
-	enc.TransactionIndex = (*hexutil.Uint64)(p.TransactionIndex)
-	enc.Type = (*hexutil.Uint64)(p.Type)
-	enc.V = (*hexutil.Big)(p.V)
-	enc.Value = (*hexutil.Big)(p.Value)
+	var enc TransactionDetail
+	enc.Accesses = t.Accesses
+	enc.BlockHash = t.BlockHash
+	enc.BlockNumber = (*hexutil.Big)(t.BlockNumber)
+	enc.ChainID = (*hexutil.Big)(t.ChainID)
+	enc.Creates = t.Creates
+	enc.From = t.From
+	enc.Gas = hexutil.Uint64(t.Gas)
+	enc.GasPrice = (*hexutil.Big)(t.GasPrice)
+	enc.Hash = t.Hash
+	enc.Input = t.Input
+	enc.MaxFeePerGas = (*hexutil.Big)(t.MaxFeePerGas)
+	enc.MaxPriorityFeePerGas = (*hexutil.Big)(t.MaxPriorityFeePerGas)
+	enc.Nonce = hexutil.Uint64(t.Nonce)
+	enc.PublicKey = t.PublicKey
+	enc.R = (*hexutil.Big)(t.R)
+	enc.Raw = t.Raw
+	enc.S = (*hexutil.Big)(t.S)
+	enc.StandardV = (*hexutil.Big)(t.StandardV)
+	enc.Status = (*hexutil.Uint64)(t.Status)
+	enc.To = t.To
+	enc.TransactionIndex = (*hexutil.Uint64)(t.TransactionIndex)
+	enc.Type = (*hexutil.Uint64)(t.Type)
+	enc.V = (*hexutil.Big)(t.V)
+	enc.Value = (*hexutil.Big)(t.Value)
+	enc.YParity = (*hexutil.Uint64)(t.YParity)
 	return json.Marshal(&enc)
 }
 
 // UnmarshalJSON unmarshals from JSON.
-func (p *TransactionDetail) UnmarshalJSON(input []byte) error {
-	type PlainTransaction struct {
+func (t *TransactionDetail) UnmarshalJSON(input []byte) error {
+	type TransactionDetail struct {
 		Accesses             *types.AccessList `json:"accessList,omitempty"`
 		BlockHash            *common.Hash      `json:"blockHash"`
 		BlockNumber          *hexutil.Big      `json:"blockNumber"`
@@ -97,89 +99,93 @@ func (p *TransactionDetail) UnmarshalJSON(input []byte) error {
 		Type                 *hexutil.Uint64   `json:"type,omitempty"`
 		V                    *hexutil.Big      `json:"v"                              gencodec:"required"`
 		Value                *hexutil.Big      `json:"value"                          gencodec:"required"`
+		YParity              *hexutil.Uint64   `json:"yParity,omitempty"`
 	}
-	var dec PlainTransaction
+	var dec TransactionDetail
 	if err := json.Unmarshal(input, &dec); err != nil {
 		return err
 	}
 	if dec.Accesses != nil {
-		p.Accesses = *dec.Accesses
+		t.Accesses = *dec.Accesses
 	}
 	if dec.BlockHash != nil {
-		p.BlockHash = dec.BlockHash
+		t.BlockHash = dec.BlockHash
 	}
 	if dec.BlockNumber != nil {
-		p.BlockNumber = (*big.Int)(dec.BlockNumber)
+		t.BlockNumber = (*big.Int)(dec.BlockNumber)
 	}
 	if dec.ChainID != nil {
-		p.ChainID = (*big.Int)(dec.ChainID)
+		t.ChainID = (*big.Int)(dec.ChainID)
 	}
 	if dec.Creates != nil {
-		p.Creates = dec.Creates
+		t.Creates = dec.Creates
 	}
 	if dec.From != nil {
-		p.From = *dec.From
+		t.From = *dec.From
 	}
 	if dec.Gas == nil {
-		return errors.New("missing required field 'gas' for PlainTransaction")
+		return errors.New("missing required field 'gas' for TransactionDetail")
 	}
-	p.Gas = uint64(*dec.Gas)
+	t.Gas = uint64(*dec.Gas)
 	if dec.GasPrice != nil {
-		p.GasPrice = (*big.Int)(dec.GasPrice)
+		t.GasPrice = (*big.Int)(dec.GasPrice)
 	}
 	if dec.Hash != nil {
-		p.Hash = *dec.Hash
+		t.Hash = *dec.Hash
 	}
 	if dec.Input == nil {
-		return errors.New("missing required field 'input' for PlainTransaction")
+		return errors.New("missing required field 'input' for TransactionDetail")
 	}
-	p.Input = *dec.Input
+	t.Input = *dec.Input
 	if dec.MaxFeePerGas != nil {
-		p.MaxFeePerGas = (*big.Int)(dec.MaxFeePerGas)
+		t.MaxFeePerGas = (*big.Int)(dec.MaxFeePerGas)
 	}
 	if dec.MaxPriorityFeePerGas != nil {
-		p.MaxPriorityFeePerGas = (*big.Int)(dec.MaxPriorityFeePerGas)
+		t.MaxPriorityFeePerGas = (*big.Int)(dec.MaxPriorityFeePerGas)
 	}
 	if dec.Nonce == nil {
-		return errors.New("missing required field 'nonce' for PlainTransaction")
+		return errors.New("missing required field 'nonce' for TransactionDetail")
 	}
-	p.Nonce = uint64(*dec.Nonce)
+	t.Nonce = uint64(*dec.Nonce)
 	if dec.PublicKey != nil {
-		p.PublicKey = dec.PublicKey
+		t.PublicKey = dec.PublicKey
 	}
 	if dec.R == nil {
-		return errors.New("missing required field 'r' for PlainTransaction")
+		return errors.New("missing required field 'r' for TransactionDetail")
 	}
-	p.R = (*big.Int)(dec.R)
+	t.R = (*big.Int)(dec.R)
 	if dec.Raw != nil {
-		p.Raw = dec.Raw
+		t.Raw = dec.Raw
 	}
 	if dec.S == nil {
-		return errors.New("missing required field 's' for PlainTransaction")
+		return errors.New("missing required field 's' for TransactionDetail")
 	}
-	p.S = (*big.Int)(dec.S)
+	t.S = (*big.Int)(dec.S)
 	if dec.StandardV != nil {
-		p.StandardV = (*big.Int)(dec.StandardV)
+		t.StandardV = (*big.Int)(dec.StandardV)
 	}
 	if dec.Status != nil {
-		p.Status = (*uint64)(dec.Status)
+		t.Status = (*uint64)(dec.Status)
 	}
 	if dec.To != nil {
-		p.To = dec.To
+		t.To = dec.To
 	}
 	if dec.TransactionIndex != nil {
-		p.TransactionIndex = (*uint64)(dec.TransactionIndex)
+		t.TransactionIndex = (*uint64)(dec.TransactionIndex)
 	}
 	if dec.Type != nil {
-		p.Type = (*uint64)(dec.Type)
+		t.Type = (*uint64)(dec.Type)
 	}
 	if dec.V == nil {
-		return errors.New("missing required field 'v' for PlainTransaction")
+		return errors.New("missing required field 'v' for TransactionDetail")
 	}
-	p.V = (*big.Int)(dec.V)
+	t.V = (*big.Int)(dec.V)
 	if dec.Value == nil {
-		return errors.New("missing required field 'value' for PlainTransaction")
+		return errors.New("missing required field 'value' for TransactionDetail")
 	}
-	p.Value = (*big.Int)(dec.Value)
+	t.Value = (*big.Int)(dec.Value)
+	if dec.YParity != nil {
+		t.YParity = (*uint64)(dec.YParity)
+	}
 	return nil
 }

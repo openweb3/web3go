@@ -4,6 +4,7 @@ package types
 
 import (
 	"encoding/json"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -17,6 +18,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 	type Receipt struct {
 		BlockHash         common.Hash     `json:"blockHash"`
 		BlockNumber       hexutil.Uint64  `json:"blockNumber"`
+		BurntGasFee       *hexutil.Big    `json:"burntGasFee,omitempty"`
 		ContractAddress   *common.Address `json:"contractAddress"`
 		CumulativeGasUsed hexutil.Uint64  `json:"cumulativeGasUsed"`
 		EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
@@ -29,12 +31,13 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		To                *common.Address `json:"to"`
 		TransactionHash   common.Hash     `json:"transactionHash"`
 		TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`
-		TxExecErrorMsg    *string         `json:"txExecErrorMsg,omitempty"`
-		Type              *hexutil.Uint   `json:"type,omitempty"`
+		TxExecErrorMsg    *string         `json:"txExecErrorMsg,omitempty"        testomit:"false"`
+		Type              *hexutil.Uint64 `json:"type,omitempty"`
 	}
 	var enc Receipt
 	enc.BlockHash = r.BlockHash
 	enc.BlockNumber = hexutil.Uint64(r.BlockNumber)
+	enc.BurntGasFee = (*hexutil.Big)(r.BurntGasFee)
 	enc.ContractAddress = r.ContractAddress
 	enc.CumulativeGasUsed = hexutil.Uint64(r.CumulativeGasUsed)
 	enc.EffectiveGasPrice = hexutil.Uint64(r.EffectiveGasPrice)
@@ -48,7 +51,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 	enc.TransactionHash = r.TransactionHash
 	enc.TransactionIndex = hexutil.Uint64(r.TransactionIndex)
 	enc.TxExecErrorMsg = r.TxExecErrorMsg
-	enc.Type = (*hexutil.Uint)(r.Type)
+	enc.Type = (*hexutil.Uint64)(r.Type)
 	return json.Marshal(&enc)
 }
 
@@ -57,6 +60,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 	type Receipt struct {
 		BlockHash         *common.Hash    `json:"blockHash"`
 		BlockNumber       *hexutil.Uint64 `json:"blockNumber"`
+		BurntGasFee       *hexutil.Big    `json:"burntGasFee,omitempty"`
 		ContractAddress   *common.Address `json:"contractAddress"`
 		CumulativeGasUsed *hexutil.Uint64 `json:"cumulativeGasUsed"`
 		EffectiveGasPrice *hexutil.Uint64 `json:"effectiveGasPrice"`
@@ -69,8 +73,8 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		To                *common.Address `json:"to"`
 		TransactionHash   *common.Hash    `json:"transactionHash"`
 		TransactionIndex  *hexutil.Uint64 `json:"transactionIndex"`
-		TxExecErrorMsg    *string         `json:"txExecErrorMsg,omitempty"`
-		Type              *hexutil.Uint   `json:"type,omitempty"`
+		TxExecErrorMsg    *string         `json:"txExecErrorMsg,omitempty"        testomit:"false"`
+		Type              *hexutil.Uint64 `json:"type,omitempty"`
 	}
 	var dec Receipt
 	if err := json.Unmarshal(input, &dec); err != nil {
@@ -81,6 +85,9 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 	}
 	if dec.BlockNumber != nil {
 		r.BlockNumber = uint64(*dec.BlockNumber)
+	}
+	if dec.BurntGasFee != nil {
+		r.BurntGasFee = (*big.Int)(dec.BurntGasFee)
 	}
 	if dec.ContractAddress != nil {
 		r.ContractAddress = dec.ContractAddress
@@ -122,7 +129,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		r.TxExecErrorMsg = dec.TxExecErrorMsg
 	}
 	if dec.Type != nil {
-		r.Type = (*uint)(dec.Type)
+		r.Type = (*uint64)(dec.Type)
 	}
 	return nil
 }
