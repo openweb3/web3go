@@ -111,7 +111,7 @@ type blockMarshaling struct {
 
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
 //
-//go:generate gencodec -type PlainTransaction -field-override plainTransactionMarshaling -out gen_plain_transaction_json.go
+//go:generate gencodec -type TransactionDetail -field-override plainTransactionMarshaling -out gen_plain_transaction_json.go
 type TransactionDetail struct {
 	Accesses    types.AccessList `json:"accessList,omitempty"`
 	BlockHash   *common.Hash     `json:"blockHash"`
@@ -141,6 +141,7 @@ type TransactionDetail struct {
 	Type             *uint64         `json:"type,omitempty"`
 	V                *big.Int        `json:"v"                              gencodec:"required"`
 	Value            *big.Int        `json:"value"                          gencodec:"required"`
+	YParity          *uint64         `json:"yParity,omitempty"`
 }
 
 type plainTransactionMarshaling struct {
@@ -168,14 +169,17 @@ type plainTransactionMarshaling struct {
 	Type                 *hexutil.Uint64  `json:"type"`
 	V                    *hexutil.Big     `json:"v"`
 	Value                *hexutil.Big     `json:"value"`
+	YParity              *hexutil.Uint64  `json:"yParity,omitempty"`
 }
 
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
 //
 //go:generate gencodec -type Receipt -field-override receiptMarshaling -out gen_receipt_json.go
 type Receipt struct {
-	BlockHash         common.Hash     `json:"blockHash"`
-	BlockNumber       uint64          `json:"blockNumber"`
+	BlockHash   common.Hash `json:"blockHash"`
+	BlockNumber uint64      `json:"blockNumber"`
+	// Not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
+	BurntGasFee       *big.Int        `json:"burntGasFee,omitempty"`
 	ContractAddress   *common.Address `json:"contractAddress"`
 	CumulativeGasUsed uint64          `json:"cumulativeGasUsed"`
 	EffectiveGasPrice uint64          `json:"effectiveGasPrice"`
@@ -188,13 +192,15 @@ type Receipt struct {
 	To                *common.Address `json:"to"`
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  uint64          `json:"transactionIndex"`
+
 	// Not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
 	TxExecErrorMsg *string `json:"txExecErrorMsg,omitempty"        testomit:"false"`
-	Type           *uint   `json:"type,omitempty"`
+	Type           *uint64 `json:"type,omitempty"`
 }
 type receiptMarshaling struct {
 	BlockHash         common.Hash     `json:"blockHash"`
 	BlockNumber       hexutil.Uint64  `json:"blockNumber"`
+	BurntGasFee       *hexutil.Big    `json:"burntGasFee,omitempty"`
 	ContractAddress   *common.Address `json:"contractAddress"`
 	CumulativeGasUsed hexutil.Uint64  `json:"cumulativeGasUsed"`
 	EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
@@ -208,7 +214,7 @@ type receiptMarshaling struct {
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  hexutil.Uint64  `json:"transactionIndex"`
 	TxExecErrorMsg    *string         `json:"txExecErrorMsg"`
-	Type              *hexutil.Uint   `json:"type,omitempty"`
+	Type              *hexutil.Uint64 `json:"type,omitempty"`
 }
 
 // CallRequest represents the arguments to construct a new transaction
