@@ -43,6 +43,7 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 		"eth_chainId":                             "ChainId",
 		"eth_gasPrice":                            "GasPrice",
 		"eth_maxPriorityFeePerGas":                "MaxPriorityFeePerGas",
+		"eth_feeHistory":                          "FeeHistory",
 		"eth_accounts":                            "Accounts",
 		"eth_blockNumber":                         "BlockNumber",
 		"eth_getBalance":                          "Balance",
@@ -106,6 +107,10 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 				return "EstimateGas", append(params, ethrpctypes.LatestBlockNumber)
 			}
 			return "EstimateGas", params
+		},
+		"eth_feeHistory": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			params[0], _ = hexutil.DecodeUint64(params[0].(string))
+			return "FeeHistory", params
 		},
 	}
 
