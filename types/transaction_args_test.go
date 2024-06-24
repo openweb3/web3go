@@ -15,28 +15,28 @@ import (
 type mockPopulateReader struct{}
 
 func (m *mockPopulateReader) ChainId() (val *uint64, err error) {
-	chainId := uint64(18)
+	chainId := uint64(0x12) //18
 	return &chainId, nil
 }
 
 func (m *mockPopulateReader) GasPrice() (val *big.Int, err error) {
-	return big.NewInt(28), nil
+	return big.NewInt(0x1c), nil //28
 }
 
 func (m *mockPopulateReader) MaxPriorityFeePerGas() (val *big.Int, err error) {
-	return big.NewInt(30), nil
+	return big.NewInt(0x1e), nil //30
 }
 
 func (m *mockPopulateReader) EstimateGas(callRequest CallRequest, blockNum *BlockNumberOrHash) (val *big.Int, err error) {
-	return big.NewInt(38), nil
+	return big.NewInt(0x26), nil //38
 }
 
 func (m *mockPopulateReader) TransactionCount(addr common.Address, blockNum *BlockNumberOrHash) (val *big.Int, err error) {
-	return big.NewInt(48), nil
+	return big.NewInt(0x30), nil //48
 }
 
 func (m *mockPopulateReader) BlockByNumber(num BlockNumber, isFull bool) (val *Block, err error) {
-	return &Block{BaseFeePerGas: big.NewInt(58)}, nil
+	return &Block{BaseFeePerGas: big.NewInt(0x3a)}, nil //58
 }
 
 func TestConvertDynamicFeeTxToArgs(t *testing.T) {
@@ -83,19 +83,19 @@ func TestPopulate(t *testing.T) {
 		},
 		{
 			input:     &TransactionArgs{From: &common.Address{}, To: &common.Address{}},
-			expectOut: `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":"0x26","maxFeePerGas":"0x59682f74","maxPriorityFeePerGas":"0x59682f00","value":"0x0","nonce":"0x30","data":null,"chainId":"0x12","type":2}`,
+			expectOut: `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":"0x26","maxFeePerGas":"0x92","maxPriorityFeePerGas":"0x1e","value":"0x0","nonce":"0x30","data":null,"chainId":"0x12","type":2}`,
 		},
 		{
 			input:     &TransactionArgs{From: &common.Address{}, To: &common.Address{}, GasPrice: (*hexutil.Big)(big.NewInt(33))},
-			expectOut: `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":"0x26","maxFeePerGas":"0x21","maxPriorityFeePerGas":"0x21","value":"0x0","nonce":"0x30","data":null,"chainId":"0x12","type":2}`,
+			expectOut: `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":"0x26","gasPrice":"0x21","value":"0x0","nonce":"0x30","data":null,"chainId":"0x12","type":0}`,
 		},
 		{
 			input:     &TransactionArgs{From: &common.Address{}, To: &common.Address{}, MaxFeePerGas: (*hexutil.Big)(big.NewInt(44)), MaxPriorityFeePerGas: (*hexutil.Big)(big.NewInt(22))},
 			expectOut: `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":"0x26","maxFeePerGas":"0x2c","maxPriorityFeePerGas":"0x16","value":"0x0","nonce":"0x30","data":null,"chainId":"0x12","type":2}`,
 		},
 		{
-			input:       &TransactionArgs{From: &common.Address{}, To: &common.Address{}, MaxFeePerGas: (*hexutil.Big)(big.NewInt(44))},
-			expectError: true,
+			input:     &TransactionArgs{From: &common.Address{}, To: &common.Address{}, MaxFeePerGas: (*hexutil.Big)(big.NewInt(44))},
+			expectOut: `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":"0x26","maxFeePerGas":"0x2c","maxPriorityFeePerGas":"0x1e","value":"0x0","nonce":"0x30","data":null,"chainId":"0x12","type":2}`,
 		},
 		{
 			input:       &TransactionArgs{From: &common.Address{}, To: &common.Address{}, GasPrice: (*hexutil.Big)(big.NewInt(33)), MaxFeePerGas: (*hexutil.Big)(big.NewInt(44))},
@@ -103,10 +103,10 @@ func TestPopulate(t *testing.T) {
 		},
 	}
 
-	for _, item := range table {
+	for i, item := range table {
 		err := item.input.Populate(&mockPopulateReader{})
 		if item.expectError {
-			ast.Error(err)
+			ast.Error(err, i)
 			continue
 		}
 
