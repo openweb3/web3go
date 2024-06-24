@@ -16,6 +16,7 @@ import (
 type ReaderForPopulate interface {
 	ChainId() (val *uint64, err error)
 	GasPrice() (val *big.Int, err error)
+	MaxPriorityFeePerGas() (val *big.Int, err error)
 	EstimateGas(callRequest CallRequest, blockNum *BlockNumberOrHash) (val *big.Int, err error)
 	TransactionCount(addr common.Address, blockNum *BlockNumberOrHash) (val *big.Int, err error)
 	BlockByNumber(blockNumber BlockNumber, isFull bool) (val *Block, err error)
@@ -119,7 +120,7 @@ func (args *TransactionArgs) Populate(reader ReaderForPopulate) error {
 		return errors.New("from is required")
 	}
 
-	if err := args.populateGasPrice(reader); err != nil {
+	if err := args.populateTxtypeAndGasPrice(reader); err != nil {
 		return errors.Wrap(err, "failed to populate gas price")
 	}
 
@@ -180,18 +181,23 @@ func (args *TransactionArgs) Populate(reader ReaderForPopulate) error {
 	return nil
 }
 
-func (args *TransactionArgs) populateGasPrice(reader ReaderForPopulate) error {
+func (args *TransactionArgs) populateTxtypeAndGasPrice(reader ReaderForPopulate) error {
 	if args.GasPrice != nil && (args.MaxFeePerGas != nil || args.MaxPriorityFeePerGas != nil) {
 		return errors.New("both gasPrice and (maxFeePerGas or maxPriorityFeePerGas) specified")
 	}
 
+	if args.GasPrice != nil && (args.TxType == nil || *args.TxType == types.LegacyTxType) {
+		args.TxType = TxTypePtr(types.LegacyTxType)
+		return nil
+	}
+
 	has1559 := args.MaxFeePerGas != nil || args.MaxPriorityFeePerGas != nil
 
-	nullType := uint8(255)
-	argsTxType := nullType
-	if args.TxType != nil {
-		argsTxType = uint8(*args.TxType)
-	}
+	// nullType := uint8(255)
+	// argsTxType := nullType
+	// if args.TxType != nil {
+	// 	argsTxType = uint8(*args.TxType)
+	// }
 
 	gasFeeData, err := getFeeData(reader)
 	if err != nil {
@@ -204,22 +210,21 @@ func (args *TransactionArgs) populateGasPrice(reader ReaderForPopulate) error {
 	// - - if has maxFeePerGas or maxPriorityFeePerGas, then return error
 	// - - if contains accesslist, set txtype to 1
 	// - - else set txtype to 0
-	if argsTxType == nullType {
+	if args.TxType == nil {
 		if gasFeeData.isSupport1559() {
-			argsTxType = types.DynamicFeeTxType
+			args.TxType = TxTypePtr(types.DynamicFeeTxType)
 		} else {
 			if has1559 {
 				return errors.New("not support 1559 but (maxFeePerGas or maxPriorityFeePerGas) specified")
 			}
 
 			if args.AccessList == nil {
-				argsTxType = types.LegacyTxType
+				args.TxType = TxTypePtr(types.LegacyTxType)
 			} else {
-				argsTxType = types.AccessListTxType
+				args.TxType = TxTypePtr(types.AccessListTxType)
 			}
 		}
 	}
-	args.TxType = &argsTxType
 
 	// if txtype is DynamicFeeTxType that means support 1559, so if gasPrice is not nil, set max... to gasPrice
 	if *args.TxType == types.DynamicFeeTxType {

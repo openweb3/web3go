@@ -399,3 +399,8 @@ func BlockNumberOrHashWithNumber(blockNr BlockNumber) BlockNumberOrHash {
 func BlockNumberOrHashWithHash(hash common.Hash, canonical bool) BlockNumberOrHash {
 	return (BlockNumberOrHash)(rpc.BlockNumberOrHashWithHash(hash, canonical))
 }
+
+func TxTypePtr(txType int) *uint8 {
+	u := uint8(txType)
+	return &u
+}

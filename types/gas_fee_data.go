@@ -31,7 +31,12 @@ func getFeeData(r ReaderForPopulate) (*gasFeeData, error) {
 		return data, nil
 	}
 
-	data.maxPriorityFeePerGas = big.NewInt(1.5e9)
+	priorityFeePerGas, err := r.MaxPriorityFeePerGas()
+	if err != nil {
+		return nil, err
+	}
+
+	data.maxPriorityFeePerGas = priorityFeePerGas
 	data.maxFeePerGas = new(big.Int).Mul(basefee, big.NewInt(2))
 	data.maxFeePerGas = new(big.Int).Add(data.maxFeePerGas, data.maxPriorityFeePerGas)
 	return data, nil
