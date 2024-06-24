@@ -23,6 +23,10 @@ func (m *mockPopulateReader) GasPrice() (val *big.Int, err error) {
 	return big.NewInt(28), nil
 }
 
+func (m *mockPopulateReader) MaxPriorityFeePerGas() (val *big.Int, err error) {
+	return big.NewInt(30), nil
+}
+
 func (m *mockPopulateReader) EstimateGas(callRequest CallRequest, blockNum *BlockNumberOrHash) (val *big.Int, err error) {
 	return big.NewInt(38), nil
 }
