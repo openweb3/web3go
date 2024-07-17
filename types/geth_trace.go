@@ -67,25 +67,25 @@ func (g *GethTrace) UnmarshalJSON(data []byte) error {
 }
 
 type DefaultFrame struct {
-	Failed      bool          `json:"failed"`
-	Gas         uint64        `json:"gas"`
-	ReturnValue hexutil.Bytes `json:"returnValue"`
-	StructLogs  []*StructLog  `json:"structLogs"`
+	Failed      bool         `json:"failed"`
+	Gas         uint64       `json:"gas"`
+	ReturnValue string       `json:"returnValue"`
+	StructLogs  []*StructLog `json:"structLogs"`
 }
 
 type StructLog struct {
-	Pc            uint64             `json:"pc"`
-	Op            string             `json:"op"`
-	Gas           uint64             `json:"gas"`
-	GasCost       uint64             `json:"gasCost"`
 	Depth         uint64             `json:"depth"`
 	Error         *string            `json:"error,omitempty"`
-	Stack         []*hexutil.Big     `json:"stack,omitempty"`
-	ReturnData    *hexutil.Bytes     `json:"returnData,omitempty"`
+	Gas           uint64             `json:"gas"`
+	GasCost       uint64             `json:"gasCost"`
 	Memory        []string           `json:"memory,omitempty"`
 	MemSize       *uint64            `json:"memSize,omitempty"`
-	Storage       *map[string]string `json:"storage,omitempty"`
+	Op            string             `json:"op"`
+	Pc            uint64             `json:"pc"`
 	RefundCounter *uint64            `json:"refund,omitempty"`
+	ReturnData    *hexutil.Bytes     `json:"returnData,omitempty"`
+	Stack         []*hexutil.Big     `json:"stack,omitempty"`
+	Storage       *map[string]string `json:"storage,omitempty"`
 }
 
 type CallFrame struct {
