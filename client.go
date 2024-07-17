@@ -28,6 +28,7 @@ type Client struct {
 	Trace   *client.RpcTraceClient
 	Parity  *client.RpcParityClient
 	Filter  *client.RpcFilterClient
+	Debug   *client.RpcDebugClient
 }
 
 var (
@@ -87,6 +88,7 @@ func (client *Client) WithContext(ctx context.Context) *Client {
 	_client.Filter.SetContext(ctx)
 	_client.Parity.SetContext(ctx)
 	_client.Trace.SetContext(ctx)
+	_client.Debug.SetContext(ctx)
 	return _client
 }
 
@@ -96,11 +98,13 @@ func (client *Client) copy() *Client {
 	filter := *client.Filter
 	parity := *client.Parity
 	trace := *client.Trace
+	debug := *client.Debug
 
 	_client.Eth = &eth
 	_client.Filter = &filter
 	_client.Parity = &parity
 	_client.Trace = &trace
+	_client.Debug = &debug
 
 	return &_client
 }
@@ -115,6 +119,7 @@ func (c *Client) SetProvider(p interfaces.Provider) {
 	c.Trace = client.NewRpcTraceClient(p)
 	c.Parity = client.NewRpcParityClient(p)
 	c.Filter = client.NewRpcFilterClient(p)
+	c.Debug = client.NewRpcDebugClient(p)
 }
 
 func (c *Client) Provider() *pproviders.MiddlewarableProvider {
