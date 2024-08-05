@@ -252,13 +252,13 @@ func (c *RpcEthClient) TransactionByHash(txHash common.Hash) (val *types.Transac
 
 // / Returns transaction at given block hash and index.
 func (c *RpcEthClient) TransactionByBlockHashAndIndex(blockHash common.Hash, index uint) (val *types.TransactionDetail, err error) {
-	err = c.CallContext(c.getContext(), &val, "eth_getTransactionByBlockHashAndIndex", blockHash, index)
+	err = c.CallContext(c.getContext(), &val, "eth_getTransactionByBlockHashAndIndex", blockHash, hexutil.Uint(index))
 	return
 }
 
 // / Returns transaction by given block number and index.
 func (c *RpcEthClient) TransactionByBlockNumberAndIndex(blockNum types.BlockNumber, index uint) (val *types.TransactionDetail, err error) {
-	err = c.CallContext(c.getContext(), &val, "eth_getTransactionByBlockNumberAndIndex", blockNum, index)
+	err = c.CallContext(c.getContext(), &val, "eth_getTransactionByBlockNumberAndIndex", blockNum, hexutil.Uint(index))
 	return
 }
 
