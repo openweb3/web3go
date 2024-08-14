@@ -231,7 +231,8 @@ type CallRequest struct {
 	Value                *big.Int        `json:"value,omitempty"`
 	Nonce                *uint64         `json:"nonce,omitempty"`
 
-	Data []byte `json:"data,omitempty"`
+	Data  []byte `json:"data,omitempty"`
+	Input []byte `json:"input,omitempty"`
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`
@@ -249,7 +250,8 @@ type callRequestMarshaling struct {
 	Value                *hexutil.Big    `json:"value,omitempty"`
 	Nonce                *hexutil.Uint64 `json:"nonce,omitempty"`
 
-	Data hexutil.Bytes `json:"data,omitempty"`
+	Data  hexutil.Bytes `json:"data,omitempty"`
+	Input hexutil.Bytes `json:"input,omitempty"`
 
 	// Introduced by AccessListTxType transaction.
 	AccessList *types.AccessList `json:"accessList,omitempty"`
