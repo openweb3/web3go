@@ -24,6 +24,7 @@ func (c CallRequest) MarshalJSON() ([]byte, error) {
 		Value                *hexutil.Big      `json:"value,omitempty"`
 		Nonce                *hexutil.Uint64   `json:"nonce,omitempty"`
 		Data                 hexutil.Bytes     `json:"data,omitempty"`
+		Input                hexutil.Bytes     `json:"input,omitempty"`
 		AccessList           *types.AccessList `json:"accessList,omitempty"`
 		ChainID              *hexutil.Big      `json:"chainId,omitempty"`
 		Type                 *hexutil.Uint64   `json:"type,omitempty"`
@@ -38,6 +39,7 @@ func (c CallRequest) MarshalJSON() ([]byte, error) {
 	enc.Value = (*hexutil.Big)(c.Value)
 	enc.Nonce = (*hexutil.Uint64)(c.Nonce)
 	enc.Data = c.Data
+	enc.Input = c.Input
 	enc.AccessList = c.AccessList
 	enc.ChainID = (*hexutil.Big)(c.ChainID)
 	enc.Type = (*hexutil.Uint64)(c.Type)
@@ -56,6 +58,7 @@ func (c *CallRequest) UnmarshalJSON(input []byte) error {
 		Value                *hexutil.Big      `json:"value,omitempty"`
 		Nonce                *hexutil.Uint64   `json:"nonce,omitempty"`
 		Data                 *hexutil.Bytes    `json:"data,omitempty"`
+		Input                *hexutil.Bytes    `json:"input,omitempty"`
 		AccessList           *types.AccessList `json:"accessList,omitempty"`
 		ChainID              *hexutil.Big      `json:"chainId,omitempty"`
 		Type                 *string           `json:"type,omitempty"`
@@ -90,6 +93,9 @@ func (c *CallRequest) UnmarshalJSON(input []byte) error {
 	}
 	if dec.Data != nil {
 		c.Data = *dec.Data
+	}
+	if dec.Input != nil {
+		c.Input = *dec.Input
 	}
 	if dec.AccessList != nil {
 		c.AccessList = dec.AccessList
