@@ -7,36 +7,6 @@ import (
 	"github.com/openweb3/web3go/types/enums"
 )
 
-// #[derive(Default, Serialize)]
-// #[serde(rename_all = "camelCase")]
-//
-//	pub struct AccountPendingTransactions {
-//	    pub pending_transactions: Vec<Transaction>,
-//	    pub first_tx_status: Option<TransactionStatus>,
-//	    pub pending_count: U64,
-//	}
-
-// #[derive(Serialize)]
-// #[serde(rename_all = "camelCase")]
-// pub enum TransactionStatus {
-//     Packed,
-//     Ready,
-//     Pending(PendingReason),
-// }
-
-// #[derive(Serialize)]
-// #[serde(rename_all = "camelCase")]
-// pub enum PendingReason {
-//     FutureNonce,
-//     NotEnoughCash,
-//     OldEpochHeight,
-//     // The tx status in the pool is inaccurate due to chain switch or sponsor
-//     // balance change. This tx will not be packed even if it should have
-//     // been ready, and the user needs to send a new transaction to trigger
-//     // the status change.
-//     OutdatedStatus,
-// }
-
 type TransactionStatus struct {
 	Status        enums.TransactionStatus
 	PendingReason enums.PendingReason
