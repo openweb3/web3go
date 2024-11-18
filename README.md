@@ -3,7 +3,7 @@ The web3go's goal is to build a golang SDK for supporting all Ethereum RPC
 
 ## Struct Fields Type Rule
 For developer convenience, the web3go use standard type instead of hex types in RPC response, for example, `*hexutil.Big` will be `*big.Int` in client interface. As well as the struct fields, but `marshal/unmarshal` result still be hex format.
-1. The types of struct fields according to geth and parity and use the minimal type, such geth is `hexutil.Uint64` and parity is `*hexutil.Big`, then the filed type will be `uint64`
+1. The types of struct fields according to geth and parity and use the minimal type, such geth is `hexutil.Uint64` and parity is `*hexutil.Big`, then the field type will be `uint64`
 2. The slice item always be a pointer if the item is struct to avoid value copy when iteration
 
 ## Client
