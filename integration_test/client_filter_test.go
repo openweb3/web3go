@@ -40,7 +40,7 @@ func _TestFilters(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		logChanges, err := client.Filter.GetFilterLogs(*logId)
 		assert.NoError(t, err)
-		fmt.Printf("filterd logs: %v\n", logChanges)
+		fmt.Printf("filtered logs: %v\n", logChanges)
 
 		blockChanges, err := client.Filter.GetFilterChanges(*blockId)
 		assert.NoError(t, err)
