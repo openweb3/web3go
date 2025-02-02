@@ -134,7 +134,7 @@ type TransactionDetail struct {
 	Raw       *hexutil.Bytes `json:"raw,omitempty"                                       testomit:"false"` //+ x
 	S         *big.Int       `json:"s"                              gencodec:"required"`
 	StandardV *big.Int       `json:"standardV,omitempty"`
-	// Status not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
+	// Status not guarantee to be valid, it's valid for some evm compatible chains, such as conflux chain
 	Status           *uint64         `json:"status,omitempty"`
 	To               *common.Address `json:"to" rlp:"nil"`
 	TransactionIndex *uint64         `json:"transactionIndex"`
@@ -178,7 +178,7 @@ type plainTransactionMarshaling struct {
 type Receipt struct {
 	BlockHash   common.Hash `json:"blockHash"`
 	BlockNumber uint64      `json:"blockNumber"`
-	// Not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
+	// Not guarantee to be valid, it's valid for some evm compatible chains, such as conflux chain
 	BurntGasFee       *big.Int        `json:"burntGasFee,omitempty"`
 	ContractAddress   *common.Address `json:"contractAddress"`
 	CumulativeGasUsed uint64          `json:"cumulativeGasUsed"`
@@ -193,7 +193,7 @@ type Receipt struct {
 	TransactionHash   common.Hash     `json:"transactionHash"`
 	TransactionIndex  uint64          `json:"transactionIndex"`
 
-	// Not guarantee to be valid, it's valid for some evm compatiable chains, such as conflux chain
+	// Not guarantee to be valid, it's valid for some evm compatible chains, such as conflux chain
 	TxExecErrorMsg *string `json:"txExecErrorMsg,omitempty"        testomit:"false"`
 	Type           *uint64 `json:"type,omitempty"`
 }

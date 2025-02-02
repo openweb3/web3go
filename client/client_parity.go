@@ -154,7 +154,7 @@ func (c *RpcParityClient) ListStorageKeys(address common.Address, count uint64, 
 
 // Encrypt some data with a public key under ECIES.
 // First parameter is the 512-byte destination public key, second is the message.
-// FIXME: key shoule be H512 public key
+// FIXME: key should be H512 public key
 func (c *RpcParityClient) EncryptMessage(key string, phrase []byte) (val []byte, err error) {
 	_phrase := (hexutil.Bytes)(phrase)
 	var _val hexutil.Bytes
@@ -273,7 +273,7 @@ func (c *RpcParityClient) Call(requests []types.CallRequest, blockNum *types.Blo
 
 // Used for submitting a proof-of-work solution (similar to `eth_submitWork`,
 // but returns block hash on success, and returns an explicit error message on failure).
-// FIXME: nonce shoule be H64 hash
+// FIXME: nonce should be H64 hash
 func (c *RpcParityClient) SubmitWorkDetail(nonce string, powHash common.Hash, mixHash common.Hash) (val common.Hash, err error) {
 	err = c.CallContext(c.getContext(), &val, "parity_submitWorkDetail", nonce, powHash, mixHash)
 	return
