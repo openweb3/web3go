@@ -43,7 +43,7 @@ func (t GethDebugBuiltInTracerType) String() string {
 	if ok {
 		return v
 	}
-	return "unkown"
+	return "unknown"
 }
 
 func (t GethDebugBuiltInTracerType) MarshalText() ([]byte, error) {

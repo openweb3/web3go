@@ -172,7 +172,7 @@ func callcontextFuncLogMiddle(f providers.CallContextFunc) providers.CallContext
 	}
 }
 
-func TestClienEth(t *testing.T) {
+func TestClientEth(t *testing.T) {
 	config := getEthTestConfig()
 	rpctest.DoClientTest(t, config)
 }
