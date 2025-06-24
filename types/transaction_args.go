@@ -319,10 +319,6 @@ func ConvertTransactionToArgs(from common.Address, tx Transaction) *TransactionA
 		}
 		args.AuthorizationList = tx.SetCodeAuthorizations()
 		fallthrough
-	case types.AccessListTxType:
-		al := tx.AccessList()
-		args.AccessList = &al
-		fallthrough
 	case types.DynamicFeeTxType:
 		if tx.GasTipCap().Cmp(big.NewInt(0)) != 0 {
 			args.MaxPriorityFeePerGas = (*hexutil.Big)(tx.GasTipCap())
@@ -330,6 +326,10 @@ func ConvertTransactionToArgs(from common.Address, tx Transaction) *TransactionA
 		if tx.GasFeeCap().Cmp(big.NewInt(0)) != 0 {
 			args.MaxFeePerGas = (*hexutil.Big)(tx.GasFeeCap())
 		}
+		fallthrough
+	case types.AccessListTxType:
+		al := tx.AccessList()
+		args.AccessList = &al
 	}
 	return args
 }
