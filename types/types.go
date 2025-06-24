@@ -113,10 +113,11 @@ type blockMarshaling struct {
 //
 //go:generate gencodec -type TransactionDetail -field-override plainTransactionMarshaling -out gen_plain_transaction_json.go
 type TransactionDetail struct {
-	Accesses    types.AccessList `json:"accessList,omitempty"`
-	BlockHash   *common.Hash     `json:"blockHash"`
-	BlockNumber *big.Int         `json:"blockNumber"`
-	ChainID     *big.Int         `json:"chainId,omitempty"`
+	Accesses          types.AccessList             `json:"accessList,omitempty"`
+	AuthorizationList []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	BlockHash         *common.Hash                 `json:"blockHash"`
+	BlockNumber       *big.Int                     `json:"blockNumber"`
+	ChainID           *big.Int                     `json:"chainId,omitempty"`
 	// Creates not guarantee to be valid, it's valid for parity node but not geth node
 	Creates              *common.Address `json:"creates,omitempty"                                   testomit:"false"`
 	From                 common.Address  `json:"from"`
@@ -145,31 +146,32 @@ type TransactionDetail struct {
 }
 
 type plainTransactionMarshaling struct {
-	Accesses             types.AccessList `json:"accessList,omitempty"`
-	BlockHash            *common.Hash     `json:"blockHash"`
-	BlockNumber          *hexutil.Big     `json:"blockNumber"`
-	ChainID              *hexutil.Big     `json:"chainId,omitempty"`
-	Creates              *common.Address  `json:"creates,omitempty"`
-	From                 common.Address   `json:"from"`
-	Gas                  hexutil.Uint64   `json:"gas"`
-	GasPrice             *hexutil.Big     `json:"gasPrice"`
-	Hash                 common.Hash      `json:"hash"`
-	Input                hexutil.Bytes    `json:"input"`
-	MaxFeePerGas         *hexutil.Big     `json:"maxFeePerGas,omitempty"`
-	MaxPriorityFeePerGas *hexutil.Big     `json:"maxPriorityFeePerGas,omitempty"`
-	Nonce                hexutil.Uint64   `json:"nonce"`
-	PublicKey            *hexutil.Bytes   `json:"publicKey,omitempty"`
-	R                    *hexutil.Big     `json:"r"`
-	Raw                  *hexutil.Bytes   `json:"raw,omitempty"`
-	S                    *hexutil.Big     `json:"s"`
-	StandardV            *hexutil.Big     `json:"standardV,omitempty"`
-	Status               *hexutil.Uint64  `json:"status,omitempty"`
-	To                   *common.Address  `json:"to"`
-	TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
-	Type                 *hexutil.Uint64  `json:"type"`
-	V                    *hexutil.Big     `json:"v"`
-	Value                *hexutil.Big     `json:"value"`
-	YParity              *hexutil.Uint64  `json:"yParity,omitempty"`
+	Accesses             types.AccessList             `json:"accessList,omitempty"`
+	AuthorizationList    []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	BlockHash            *common.Hash                 `json:"blockHash"`
+	BlockNumber          *hexutil.Big                 `json:"blockNumber"`
+	ChainID              *hexutil.Big                 `json:"chainId,omitempty"`
+	Creates              *common.Address              `json:"creates,omitempty"`
+	From                 common.Address               `json:"from"`
+	Gas                  hexutil.Uint64               `json:"gas"`
+	GasPrice             *hexutil.Big                 `json:"gasPrice"`
+	Hash                 common.Hash                  `json:"hash"`
+	Input                hexutil.Bytes                `json:"input"`
+	MaxFeePerGas         *hexutil.Big                 `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *hexutil.Big                 `json:"maxPriorityFeePerGas,omitempty"`
+	Nonce                hexutil.Uint64               `json:"nonce"`
+	PublicKey            *hexutil.Bytes               `json:"publicKey,omitempty"`
+	R                    *hexutil.Big                 `json:"r"`
+	Raw                  *hexutil.Bytes               `json:"raw,omitempty"`
+	S                    *hexutil.Big                 `json:"s"`
+	StandardV            *hexutil.Big                 `json:"standardV,omitempty"`
+	Status               *hexutil.Uint64              `json:"status,omitempty"`
+	To                   *common.Address              `json:"to"`
+	TransactionIndex     *hexutil.Uint64              `json:"transactionIndex"`
+	Type                 *hexutil.Uint64              `json:"type"`
+	V                    *hexutil.Big                 `json:"v"`
+	Value                *hexutil.Big                 `json:"value"`
+	YParity              *hexutil.Uint64              `json:"yParity,omitempty"`
 }
 
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.

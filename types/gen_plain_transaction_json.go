@@ -17,34 +17,36 @@ var _ = (*plainTransactionMarshaling)(nil)
 // MarshalJSON marshals as JSON.
 func (t TransactionDetail) MarshalJSON() ([]byte, error) {
 	type TransactionDetail struct {
-		Accesses             types.AccessList `json:"accessList,omitempty"`
-		BlockHash            *common.Hash     `json:"blockHash"`
-		BlockNumber          *hexutil.Big     `json:"blockNumber"`
-		ChainID              *hexutil.Big     `json:"chainId,omitempty"`
-		Creates              *common.Address  `json:"creates,omitempty"                                   testomit:"false"`
-		From                 common.Address   `json:"from"`
-		Gas                  hexutil.Uint64   `json:"gas"                            gencodec:"required"`
-		GasPrice             *hexutil.Big     `json:"gasPrice"`
-		Hash                 common.Hash      `json:"hash"`
-		Input                hexutil.Bytes    `json:"input"                          gencodec:"required"`
-		MaxFeePerGas         *hexutil.Big     `json:"maxFeePerGas,omitempty"`
-		MaxPriorityFeePerGas *hexutil.Big     `json:"maxPriorityFeePerGas,omitempty"`
-		Nonce                hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
-		PublicKey            *hexutil.Bytes   `json:"publicKey,omitempty"                                 testomit:"false"`
-		R                    *hexutil.Big     `json:"r"                              gencodec:"required"`
-		Raw                  *hexutil.Bytes   `json:"raw,omitempty"                                       testomit:"false"`
-		S                    *hexutil.Big     `json:"s"                              gencodec:"required"`
-		StandardV            *hexutil.Big     `json:"standardV,omitempty"`
-		Status               *hexutil.Uint64  `json:"status,omitempty"`
-		To                   *common.Address  `json:"to" rlp:"nil"`
-		TransactionIndex     *hexutil.Uint64  `json:"transactionIndex"`
-		Type                 *hexutil.Uint64  `json:"type,omitempty"`
-		V                    *hexutil.Big     `json:"v"                              gencodec:"required"`
-		Value                *hexutil.Big     `json:"value"                          gencodec:"required"`
-		YParity              *hexutil.Uint64  `json:"yParity,omitempty"`
+		Accesses             types.AccessList             `json:"accessList,omitempty"`
+		AuthorizationList    []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+		BlockHash            *common.Hash                 `json:"blockHash"`
+		BlockNumber          *hexutil.Big                 `json:"blockNumber"`
+		ChainID              *hexutil.Big                 `json:"chainId,omitempty"`
+		Creates              *common.Address              `json:"creates,omitempty"                                   testomit:"false"`
+		From                 common.Address               `json:"from"`
+		Gas                  hexutil.Uint64               `json:"gas"                            gencodec:"required"`
+		GasPrice             *hexutil.Big                 `json:"gasPrice"`
+		Hash                 common.Hash                  `json:"hash"`
+		Input                hexutil.Bytes                `json:"input"                          gencodec:"required"`
+		MaxFeePerGas         *hexutil.Big                 `json:"maxFeePerGas,omitempty"`
+		MaxPriorityFeePerGas *hexutil.Big                 `json:"maxPriorityFeePerGas,omitempty"`
+		Nonce                hexutil.Uint64               `json:"nonce"                          gencodec:"required"`
+		PublicKey            *hexutil.Bytes               `json:"publicKey,omitempty"                                 testomit:"false"`
+		R                    *hexutil.Big                 `json:"r"                              gencodec:"required"`
+		Raw                  *hexutil.Bytes               `json:"raw,omitempty"                                       testomit:"false"`
+		S                    *hexutil.Big                 `json:"s"                              gencodec:"required"`
+		StandardV            *hexutil.Big                 `json:"standardV,omitempty"`
+		Status               *hexutil.Uint64              `json:"status,omitempty"`
+		To                   *common.Address              `json:"to" rlp:"nil"`
+		TransactionIndex     *hexutil.Uint64              `json:"transactionIndex"`
+		Type                 *hexutil.Uint64              `json:"type,omitempty"`
+		V                    *hexutil.Big                 `json:"v"                              gencodec:"required"`
+		Value                *hexutil.Big                 `json:"value"                          gencodec:"required"`
+		YParity              *hexutil.Uint64              `json:"yParity,omitempty"`
 	}
 	var enc TransactionDetail
 	enc.Accesses = t.Accesses
+	enc.AuthorizationList = t.AuthorizationList
 	enc.BlockHash = t.BlockHash
 	enc.BlockNumber = (*hexutil.Big)(t.BlockNumber)
 	enc.ChainID = (*hexutil.Big)(t.ChainID)
@@ -75,31 +77,32 @@ func (t TransactionDetail) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON unmarshals from JSON.
 func (t *TransactionDetail) UnmarshalJSON(input []byte) error {
 	type TransactionDetail struct {
-		Accesses             *types.AccessList `json:"accessList,omitempty"`
-		BlockHash            *common.Hash      `json:"blockHash"`
-		BlockNumber          *hexutil.Big      `json:"blockNumber"`
-		ChainID              *hexutil.Big      `json:"chainId,omitempty"`
-		Creates              *common.Address   `json:"creates,omitempty"                                   testomit:"false"`
-		From                 *common.Address   `json:"from"`
-		Gas                  *hexutil.Uint64   `json:"gas"                            gencodec:"required"`
-		GasPrice             *hexutil.Big      `json:"gasPrice"`
-		Hash                 *common.Hash      `json:"hash"`
-		Input                *hexutil.Bytes    `json:"input"                          gencodec:"required"`
-		MaxFeePerGas         *hexutil.Big      `json:"maxFeePerGas,omitempty"`
-		MaxPriorityFeePerGas *hexutil.Big      `json:"maxPriorityFeePerGas,omitempty"`
-		Nonce                *hexutil.Uint64   `json:"nonce"                          gencodec:"required"`
-		PublicKey            *hexutil.Bytes    `json:"publicKey,omitempty"                                 testomit:"false"`
-		R                    *hexutil.Big      `json:"r"                              gencodec:"required"`
-		Raw                  *hexutil.Bytes    `json:"raw,omitempty"                                       testomit:"false"`
-		S                    *hexutil.Big      `json:"s"                              gencodec:"required"`
-		StandardV            *hexutil.Big      `json:"standardV,omitempty"`
-		Status               *hexutil.Uint64   `json:"status,omitempty"`
-		To                   *common.Address   `json:"to" rlp:"nil"`
-		TransactionIndex     *hexutil.Uint64   `json:"transactionIndex"`
-		Type                 *hexutil.Uint64   `json:"type,omitempty"`
-		V                    *hexutil.Big      `json:"v"                              gencodec:"required"`
-		Value                *hexutil.Big      `json:"value"                          gencodec:"required"`
-		YParity              *hexutil.Uint64   `json:"yParity,omitempty"`
+		Accesses             *types.AccessList            `json:"accessList,omitempty"`
+		AuthorizationList    []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+		BlockHash            *common.Hash                 `json:"blockHash"`
+		BlockNumber          *hexutil.Big                 `json:"blockNumber"`
+		ChainID              *hexutil.Big                 `json:"chainId,omitempty"`
+		Creates              *common.Address              `json:"creates,omitempty"                                   testomit:"false"`
+		From                 *common.Address              `json:"from"`
+		Gas                  *hexutil.Uint64              `json:"gas"                            gencodec:"required"`
+		GasPrice             *hexutil.Big                 `json:"gasPrice"`
+		Hash                 *common.Hash                 `json:"hash"`
+		Input                *hexutil.Bytes               `json:"input"                          gencodec:"required"`
+		MaxFeePerGas         *hexutil.Big                 `json:"maxFeePerGas,omitempty"`
+		MaxPriorityFeePerGas *hexutil.Big                 `json:"maxPriorityFeePerGas,omitempty"`
+		Nonce                *hexutil.Uint64              `json:"nonce"                          gencodec:"required"`
+		PublicKey            *hexutil.Bytes               `json:"publicKey,omitempty"                                 testomit:"false"`
+		R                    *hexutil.Big                 `json:"r"                              gencodec:"required"`
+		Raw                  *hexutil.Bytes               `json:"raw,omitempty"                                       testomit:"false"`
+		S                    *hexutil.Big                 `json:"s"                              gencodec:"required"`
+		StandardV            *hexutil.Big                 `json:"standardV,omitempty"`
+		Status               *hexutil.Uint64              `json:"status,omitempty"`
+		To                   *common.Address              `json:"to" rlp:"nil"`
+		TransactionIndex     *hexutil.Uint64              `json:"transactionIndex"`
+		Type                 *hexutil.Uint64              `json:"type,omitempty"`
+		V                    *hexutil.Big                 `json:"v"                              gencodec:"required"`
+		Value                *hexutil.Big                 `json:"value"                          gencodec:"required"`
+		YParity              *hexutil.Uint64              `json:"yParity,omitempty"`
 	}
 	var dec TransactionDetail
 	if err := json.Unmarshal(input, &dec); err != nil {
@@ -107,6 +110,9 @@ func (t *TransactionDetail) UnmarshalJSON(input []byte) error {
 	}
 	if dec.Accesses != nil {
 		t.Accesses = *dec.Accesses
+	}
+	if dec.AuthorizationList != nil {
+		t.AuthorizationList = dec.AuthorizationList
 	}
 	if dec.BlockHash != nil {
 		t.BlockHash = dec.BlockHash

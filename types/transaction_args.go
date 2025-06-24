@@ -37,8 +37,9 @@ type TransactionArgs struct {
 	Data *hexutil.Bytes `json:"data"`
 
 	// Introduced by AccessListTxType transaction.
-	AccessList *types.AccessList `json:"accessList,omitempty"`
-	ChainID    *hexutil.Big      `json:"chainId,omitempty"`
+	AccessList        *types.AccessList            `json:"accessList,omitempty"`
+	AuthorizationList []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	ChainID           *hexutil.Big                 `json:"chainId,omitempty"`
 
 	TxType *uint8 `json:"type"`
 }
@@ -102,6 +103,21 @@ func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
 		}
 	}
 
+	genSetCodeTx := func() types.TxData {
+		return &types.SetCodeTx{
+			ChainID:    BigIntToUint256(args.ChainID.ToInt()),
+			Nonce:      uint64(*args.Nonce),
+			GasTipCap:  BigIntToUint256(args.MaxPriorityFeePerGas.ToInt()),
+			GasFeeCap:  BigIntToUint256(args.MaxFeePerGas.ToInt()),
+			Gas:        uint64(*args.Gas),
+			To:         *args.To,
+			Value:      BigIntToUint256(args.Value.ToInt()),
+			Data:       args.data(),
+			AccessList: al,
+			AuthList:   args.AuthorizationList,
+		}
+	}
+
 	switch *args.TxType {
 	case types.LegacyTxType:
 		return types.NewTx(genLegacyTx()), nil
@@ -109,6 +125,8 @@ func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
 		return types.NewTx(genAccessListTx()), nil
 	case types.DynamicFeeTxType:
 		return types.NewTx(genDynamicFeeTx()), nil
+	case types.SetCodeTxType:
+		return types.NewTx(genSetCodeTx()), nil
 	}
 
 	return nil, errors.New("unknown transaction type")
