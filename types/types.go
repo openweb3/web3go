@@ -237,9 +237,10 @@ type CallRequest struct {
 	Input []byte `json:"input,omitempty"`
 
 	// Introduced by AccessListTxType transaction.
-	AccessList *types.AccessList `json:"accessList,omitempty"`
-	ChainID    *big.Int          `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
-	Type       *uint64           `json:"type,omitempty"`
+	AccessList        *types.AccessList            `json:"accessList,omitempty"`
+	AuthorizationList []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	ChainID           *big.Int                     `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
+	Type              *uint64                      `json:"type,omitempty"`
 }
 
 type callRequestMarshaling struct {
@@ -256,9 +257,10 @@ type callRequestMarshaling struct {
 	Input hexutil.Bytes `json:"input,omitempty"`
 
 	// Introduced by AccessListTxType transaction.
-	AccessList *types.AccessList `json:"accessList,omitempty"`
-	ChainID    *hexutil.Big      `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
-	Type       *hexutil.Uint64   `json:"type,omitempty"`
+	AccessList        *types.AccessList            `json:"accessList,omitempty"`
+	AuthorizationList []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	ChainID           *hexutil.Big                 `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
+	Type              *hexutil.Uint64              `json:"type,omitempty"`
 }
 
 //go:generate gencodec -type Log -field-override logMarshaling -out gen_log_json.go

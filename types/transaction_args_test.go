@@ -69,6 +69,17 @@ func TestConvertAccesslistTxToArgs(t *testing.T) {
 	assert.Equal(t, expect, string(argsJ))
 }
 
+func TestConvertSetCodeTxToArgs(t *testing.T) {
+	dtx := &ethrpctypes.SetCodeTx{AccessList: ethrpctypes.AccessList{}, AuthList: []ethrpctypes.SetCodeAuthorization{}}
+
+	actual := ConvertTransactionToArgs(common.Address{}, *ethrpctypes.NewTx(dtx))
+	expect := `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":null,"value":"0x0","nonce":null,"data":"0x","accessList":[],"type":4}`
+
+	argsJ, err := json.Marshal(actual)
+	assert.NoError(t, err)
+	assert.Equal(t, expect, string(argsJ))
+}
+
 func TestPopulate(t *testing.T) {
 	ast := assert.New(t)
 

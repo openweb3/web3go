@@ -20,3 +20,7 @@ func BigIntToUint256(input *big.Int) *uint256.Int {
 	}
 	return uint256.NewInt(0).SetBytes(input.Bytes())
 }
+
+func Pointer[T any](val T) *T {
+	return &val
+}
