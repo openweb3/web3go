@@ -15,19 +15,20 @@ var _ = (*callRequestMarshaling)(nil)
 // MarshalJSON marshals as JSON.
 func (c CallRequest) MarshalJSON() ([]byte, error) {
 	type CallRequest struct {
-		From                 *common.Address   `json:"from,omitempty"`
-		To                   *common.Address   `json:"to,omitempty"`
-		Gas                  *hexutil.Uint64   `json:"gas,omitempty"`
-		GasPrice             *hexutil.Big      `json:"gasPrice,omitempty"`
-		MaxFeePerGas         *hexutil.Big      `json:"maxFeePerGas,omitempty"`
-		MaxPriorityFeePerGas *hexutil.Big      `json:"maxPriorityFeePerGas,omitempty"`
-		Value                *hexutil.Big      `json:"value,omitempty"`
-		Nonce                *hexutil.Uint64   `json:"nonce,omitempty"`
-		Data                 hexutil.Bytes     `json:"data,omitempty"`
-		Input                hexutil.Bytes     `json:"input,omitempty"`
-		AccessList           *types.AccessList `json:"accessList,omitempty"`
-		ChainID              *hexutil.Big      `json:"chainId,omitempty"`
-		Type                 *hexutil.Uint64   `json:"type,omitempty"`
+		From                 *common.Address              `json:"from,omitempty"`
+		To                   *common.Address              `json:"to,omitempty"`
+		Gas                  *hexutil.Uint64              `json:"gas,omitempty"`
+		GasPrice             *hexutil.Big                 `json:"gasPrice,omitempty"`
+		MaxFeePerGas         *hexutil.Big                 `json:"maxFeePerGas,omitempty"`
+		MaxPriorityFeePerGas *hexutil.Big                 `json:"maxPriorityFeePerGas,omitempty"`
+		Value                *hexutil.Big                 `json:"value,omitempty"`
+		Nonce                *hexutil.Uint64              `json:"nonce,omitempty"`
+		Data                 hexutil.Bytes                `json:"data,omitempty"`
+		Input                hexutil.Bytes                `json:"input,omitempty"`
+		AccessList           *types.AccessList            `json:"accessList,omitempty"`
+		AuthorizationList    []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+		ChainID              *hexutil.Big                 `json:"chainId,omitempty"`
+		Type                 *hexutil.Uint64              `json:"type,omitempty"`
 	}
 	var enc CallRequest
 	enc.From = c.From
@@ -41,6 +42,7 @@ func (c CallRequest) MarshalJSON() ([]byte, error) {
 	enc.Data = c.Data
 	enc.Input = c.Input
 	enc.AccessList = c.AccessList
+	enc.AuthorizationList = c.AuthorizationList
 	enc.ChainID = (*hexutil.Big)(c.ChainID)
 	enc.Type = (*hexutil.Uint64)(c.Type)
 	return json.Marshal(&enc)
@@ -49,19 +51,20 @@ func (c CallRequest) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON unmarshals from JSON.
 func (c *CallRequest) UnmarshalJSON(input []byte) error {
 	type CallRequest struct {
-		From                 *common.Address   `json:"from,omitempty"`
-		To                   *common.Address   `json:"to,omitempty"`
-		Gas                  *hexutil.Uint64   `json:"gas,omitempty"`
-		GasPrice             *hexutil.Big      `json:"gasPrice,omitempty"`
-		MaxFeePerGas         *hexutil.Big      `json:"maxFeePerGas,omitempty"`
-		MaxPriorityFeePerGas *hexutil.Big      `json:"maxPriorityFeePerGas,omitempty"`
-		Value                *hexutil.Big      `json:"value,omitempty"`
-		Nonce                *hexutil.Uint64   `json:"nonce,omitempty"`
-		Data                 *hexutil.Bytes    `json:"data,omitempty"`
-		Input                *hexutil.Bytes    `json:"input,omitempty"`
-		AccessList           *types.AccessList `json:"accessList,omitempty"`
-		ChainID              *hexutil.Big      `json:"chainId,omitempty"`
-		Type                 *string           `json:"type,omitempty"`
+		From                 *common.Address              `json:"from,omitempty"`
+		To                   *common.Address              `json:"to,omitempty"`
+		Gas                  *hexutil.Uint64              `json:"gas,omitempty"`
+		GasPrice             *hexutil.Big                 `json:"gasPrice,omitempty"`
+		MaxFeePerGas         *hexutil.Big                 `json:"maxFeePerGas,omitempty"`
+		MaxPriorityFeePerGas *hexutil.Big                 `json:"maxPriorityFeePerGas,omitempty"`
+		Value                *hexutil.Big                 `json:"value,omitempty"`
+		Nonce                *hexutil.Uint64              `json:"nonce,omitempty"`
+		Data                 *hexutil.Bytes               `json:"data,omitempty"`
+		Input                *hexutil.Bytes               `json:"input,omitempty"`
+		AccessList           *types.AccessList            `json:"accessList,omitempty"`
+		AuthorizationList    []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
+		ChainID              *hexutil.Big                 `json:"chainId,omitempty"`
+		Type                 *string                      `json:"type,omitempty"`
 	}
 	var dec CallRequest
 	if err := json.Unmarshal(input, &dec); err != nil {
@@ -99,6 +102,9 @@ func (c *CallRequest) UnmarshalJSON(input []byte) error {
 	}
 	if dec.AccessList != nil {
 		c.AccessList = dec.AccessList
+	}
+	if dec.AuthorizationList != nil {
+		c.AuthorizationList = dec.AuthorizationList
 	}
 	if dec.ChainID != nil {
 		c.ChainID = (*big.Int)(dec.ChainID)
