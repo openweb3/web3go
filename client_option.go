@@ -24,8 +24,8 @@ func (c *ClientOption) WithRetry(retryCount int, retryInterval time.Duration) *C
 	return c
 }
 
-func (c *ClientOption) WithTimout(requestTimeout time.Duration) *ClientOption {
-	c.Option.WithTimout(requestTimeout)
+func (c *ClientOption) WithTimeout(requestTimeout time.Duration) *ClientOption {
+	c.Option.WithTimeout(requestTimeout)
 	return c
 }
 
