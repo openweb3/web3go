@@ -41,11 +41,11 @@ type Block struct {
 	Sha3Uncles       common.Hash   `json:"sha3Uncles"`
 	// SealFields       [][]byte         `json:"sealFields"` //+ ?
 
-	Withdrawals           []ethtypes.Withdrawal `json:"withdrawals"`
-	WithdrawalsRoot       common.Hash           `json:"withdrawalsRoot"`
-	BlobGasUsed           uint64                `json:"blobGasUsed"`
-	ExcessBlobGas         uint64                `json:"excessBlobGas"`
-	ParentBeaconBlockRoot common.Hash           `json:"parentBeaconBlockRoot"`
+	Withdrawals           []ethtypes.Withdrawal `json:"withdrawals,omitempty"`
+	WithdrawalsRoot       *common.Hash          `json:"withdrawalsRoot,omitempty"`
+	BlobGasUsed           uint64                `json:"blobGasUsed,omitempty"`
+	ExcessBlobGas         uint64                `json:"excessBlobGas,omitempty"`
+	ParentBeaconBlockRoot *common.Hash          `json:"parentBeaconBlockRoot,omitempty"`
 }
 
 func (b *Block) Header() (*Header, error) {
@@ -113,11 +113,11 @@ type blockMarshaling struct {
 	Sha3Uncles       common.Hash   `json:"sha3Uncles"`
 	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
 
-	Withdrawals           []ethtypes.Withdrawal `json:"withdrawals"`
-	WithdrawalsRoot       common.Hash           `json:"withdrawalsRoot"`
-	BlobGasUsed           hexutil.Uint64        `json:"blobGasUsed"`
-	ExcessBlobGas         hexutil.Uint64        `json:"excessBlobGas"`
-	ParentBeaconBlockRoot common.Hash           `json:"parentBeaconBlockRoot"`
+	Withdrawals           []ethtypes.Withdrawal `json:"withdrawals,omitempty"`
+	WithdrawalsRoot       *common.Hash          `json:"withdrawalsRoot,omitempty"`
+	BlobGasUsed           hexutil.Uint64        `json:"blobGasUsed,omitempty"`
+	ExcessBlobGas         hexutil.Uint64        `json:"excessBlobGas,omitempty"`
+	ParentBeaconBlockRoot *common.Hash          `json:"parentBeaconBlockRoot,omitempty"`
 }
 
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.

@@ -39,11 +39,11 @@ func (b Block) MarshalJSON() ([]byte, error) {
 		TransactionsRoot      common.Hash        `json:"transactionsRoot"`
 		Uncles                []common.Hash      `json:"uncles"`
 		Sha3Uncles            common.Hash        `json:"sha3Uncles"`
-		Withdrawals           []types.Withdrawal `json:"withdrawals"`
-		WithdrawalsRoot       common.Hash        `json:"withdrawalsRoot"`
-		BlobGasUsed           hexutil.Uint64     `json:"blobGasUsed"`
-		ExcessBlobGas         hexutil.Uint64     `json:"excessBlobGas"`
-		ParentBeaconBlockRoot common.Hash        `json:"parentBeaconBlockRoot"`
+		Withdrawals           []types.Withdrawal `json:"withdrawals,omitempty"`
+		WithdrawalsRoot       *common.Hash       `json:"withdrawalsRoot,omitempty"`
+		BlobGasUsed           hexutil.Uint64     `json:"blobGasUsed,omitempty"`
+		ExcessBlobGas         hexutil.Uint64     `json:"excessBlobGas,omitempty"`
+		ParentBeaconBlockRoot *common.Hash       `json:"parentBeaconBlockRoot,omitempty"`
 	}
 	var enc Block
 	enc.Author = b.Author
@@ -101,11 +101,11 @@ func (b *Block) UnmarshalJSON(input []byte) error {
 		TransactionsRoot      *common.Hash       `json:"transactionsRoot"`
 		Uncles                []common.Hash      `json:"uncles"`
 		Sha3Uncles            *common.Hash       `json:"sha3Uncles"`
-		Withdrawals           []types.Withdrawal `json:"withdrawals"`
-		WithdrawalsRoot       *common.Hash       `json:"withdrawalsRoot"`
-		BlobGasUsed           *hexutil.Uint64    `json:"blobGasUsed"`
-		ExcessBlobGas         *hexutil.Uint64    `json:"excessBlobGas"`
-		ParentBeaconBlockRoot *common.Hash       `json:"parentBeaconBlockRoot"`
+		Withdrawals           []types.Withdrawal `json:"withdrawals,omitempty"`
+		WithdrawalsRoot       *common.Hash       `json:"withdrawalsRoot,omitempty"`
+		BlobGasUsed           *hexutil.Uint64    `json:"blobGasUsed,omitempty"`
+		ExcessBlobGas         *hexutil.Uint64    `json:"excessBlobGas,omitempty"`
+		ParentBeaconBlockRoot *common.Hash       `json:"parentBeaconBlockRoot,omitempty"`
 	}
 	var dec Block
 	if err := json.Unmarshal(input, &dec); err != nil {
@@ -183,7 +183,7 @@ func (b *Block) UnmarshalJSON(input []byte) error {
 		b.Withdrawals = dec.Withdrawals
 	}
 	if dec.WithdrawalsRoot != nil {
-		b.WithdrawalsRoot = *dec.WithdrawalsRoot
+		b.WithdrawalsRoot = dec.WithdrawalsRoot
 	}
 	if dec.BlobGasUsed != nil {
 		b.BlobGasUsed = uint64(*dec.BlobGasUsed)
@@ -192,7 +192,7 @@ func (b *Block) UnmarshalJSON(input []byte) error {
 		b.ExcessBlobGas = uint64(*dec.ExcessBlobGas)
 	}
 	if dec.ParentBeaconBlockRoot != nil {
-		b.ParentBeaconBlockRoot = *dec.ParentBeaconBlockRoot
+		b.ParentBeaconBlockRoot = dec.ParentBeaconBlockRoot
 	}
 	return nil
 }

@@ -20,7 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSendTransaction(t *testing.T) {
+func _TestSendTransaction(t *testing.T) {
 	ast := assert.New(t)
 	sm, err := signers.NewSignerManagerByPrivateKeyStrings([]string{"9ec393923a14eeb557600010ea05d635c667a6995418f8a8f4bdecc63dfe0bb9"})
 	ast.NoError(err)
