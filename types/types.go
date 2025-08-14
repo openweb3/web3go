@@ -7,7 +7,6 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
 	rpc "github.com/openweb3/go-rpc-provider"
@@ -16,24 +15,24 @@ import (
 
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
 type Block struct {
-	Author          *common.Address   `json:"author,omitempty"`
-	BaseFeePerGas   *big.Int          `json:"baseFeePerGas,omitempty"`
-	Difficulty      *big.Int          `json:"difficulty"     gencodec:"required"`
-	ExtraData       []byte            `json:"extraData"`
-	GasLimit        uint64            `json:"gasLimit"`
-	GasUsed         uint64            `json:"gasUsed"`
-	Hash            common.Hash       `json:"hash"`
-	LogsBloom       types.Bloom       `json:"logsBloom"`
-	Miner           common.Address    `json:"miner"`
-	MixHash         *common.Hash      `json:"mixHash,omitempty"` //+ *v return from geth node but not parity
-	Nonce           *types.BlockNonce `json:"nonce,omitempty"`   //+ *v return from geth node but not parity
-	Number          *big.Int          `json:"number"         gencodec:"required"`
-	ParentHash      common.Hash       `json:"parentHash"`
-	ReceiptsRoot    common.Hash       `json:"receiptsRoot"`
-	Size            uint64            `json:"size"`
-	StateRoot       common.Hash       `json:"stateRoot"`
-	Timestamp       uint64            `json:"timestamp"`
-	TotalDifficulty *big.Int          `json:"totalDifficulty,omitempty"` //un-include in GetUncleByBlockHashAndIndex and GetUncleByBlockNumberAndIndex
+	Author          *common.Address      `json:"author,omitempty"`
+	BaseFeePerGas   *big.Int             `json:"baseFeePerGas,omitempty"`
+	Difficulty      *big.Int             `json:"difficulty"     gencodec:"required"`
+	ExtraData       []byte               `json:"extraData"`
+	GasLimit        uint64               `json:"gasLimit"`
+	GasUsed         uint64               `json:"gasUsed"`
+	Hash            common.Hash          `json:"hash"`
+	LogsBloom       ethtypes.Bloom       `json:"logsBloom"`
+	Miner           common.Address       `json:"miner"`
+	MixHash         *common.Hash         `json:"mixHash,omitempty"` //+ *v return from geth node but not parity
+	Nonce           *ethtypes.BlockNonce `json:"nonce,omitempty"`   //+ *v return from geth node but not parity
+	Number          *big.Int             `json:"number"         gencodec:"required"`
+	ParentHash      common.Hash          `json:"parentHash"`
+	ReceiptsRoot    common.Hash          `json:"receiptsRoot"`
+	Size            uint64               `json:"size"`
+	StateRoot       common.Hash          `json:"stateRoot"`
+	Timestamp       uint64               `json:"timestamp"`
+	TotalDifficulty *big.Int             `json:"totalDifficulty,omitempty"` //un-include in GetUncleByBlockHashAndIndex and GetUncleByBlockNumberAndIndex
 
 	// Transactions type is []common.Hash when fullTx is false, otherwise []Transaction
 	Transactions     TxOrHashList  `json:"transactions"`
@@ -41,6 +40,12 @@ type Block struct {
 	Uncles           []common.Hash `json:"uncles"`
 	Sha3Uncles       common.Hash   `json:"sha3Uncles"`
 	// SealFields       [][]byte         `json:"sealFields"` //+ ?
+
+	Withdrawals           []ethtypes.Withdrawal `json:"withdrawals,omitempty"`
+	WithdrawalsRoot       *common.Hash          `json:"withdrawalsRoot,omitempty"`
+	BlobGasUsed           uint64                `json:"blobGasUsed,omitempty"`
+	ExcessBlobGas         uint64                `json:"excessBlobGas,omitempty"`
+	ParentBeaconBlockRoot *common.Hash          `json:"parentBeaconBlockRoot,omitempty"`
 }
 
 func (b *Block) Header() (*Header, error) {
@@ -82,24 +87,24 @@ func (b *Block) Header() (*Header, error) {
 }
 
 type blockMarshaling struct {
-	Author          *common.Address   `json:"author,omitempty"`
-	BaseFeePerGas   *hexutil.Big      `json:"baseFeePerGas,omitempty"`
-	Difficulty      *hexutil.Big      `json:"difficulty"`
-	ExtraData       hexutil.Bytes     `json:"extraData"`
-	GasLimit        hexutil.Uint64    `json:"gasLimit"`
-	GasUsed         hexutil.Uint64    `json:"gasUsed"`
-	Hash            common.Hash       `json:"hash"`
-	LogsBloom       types.Bloom       `json:"logsBloom"`
-	Miner           common.Address    `json:"miner"`
-	MixHash         *common.Hash      `json:"mixHash,omitempty"` //+ *v return from geth node but not parity
-	Nonce           *types.BlockNonce `json:"nonce,omitempty"`   //+ *v return from geth node but not parity
-	Number          *hexutil.Big      `json:"number"`
-	ParentHash      common.Hash       `json:"parentHash"`
-	ReceiptsRoot    common.Hash       `json:"receiptsRoot"`
-	Size            hexutil.Uint64    `json:"size"`
-	StateRoot       common.Hash       `json:"stateRoot"`
-	Timestamp       hexutil.Uint64    `json:"timestamp"`
-	TotalDifficulty *hexutil.Big      `json:"totalDifficulty,omitempty"` //un-include in GetUncleByBlockHashAndIndex and GetUncleByBlockNumberAndIndex
+	Author          *common.Address      `json:"author,omitempty"`
+	BaseFeePerGas   *hexutil.Big         `json:"baseFeePerGas,omitempty"`
+	Difficulty      *hexutil.Big         `json:"difficulty"`
+	ExtraData       hexutil.Bytes        `json:"extraData"`
+	GasLimit        hexutil.Uint64       `json:"gasLimit"`
+	GasUsed         hexutil.Uint64       `json:"gasUsed"`
+	Hash            common.Hash          `json:"hash"`
+	LogsBloom       ethtypes.Bloom       `json:"logsBloom"`
+	Miner           common.Address       `json:"miner"`
+	MixHash         *common.Hash         `json:"mixHash,omitempty"` //+ *v return from geth node but not parity
+	Nonce           *ethtypes.BlockNonce `json:"nonce,omitempty"`   //+ *v return from geth node but not parity
+	Number          *hexutil.Big         `json:"number"`
+	ParentHash      common.Hash          `json:"parentHash"`
+	ReceiptsRoot    common.Hash          `json:"receiptsRoot"`
+	Size            hexutil.Uint64       `json:"size"`
+	StateRoot       common.Hash          `json:"stateRoot"`
+	Timestamp       hexutil.Uint64       `json:"timestamp"`
+	TotalDifficulty *hexutil.Big         `json:"totalDifficulty,omitempty"` //un-include in GetUncleByBlockHashAndIndex and GetUncleByBlockNumberAndIndex
 
 	// Transactions type is []common.Hash when fullTx is false, otherwise []Transaction
 	Transactions     TxOrHashList  `json:"transactions"`
@@ -107,17 +112,23 @@ type blockMarshaling struct {
 	Uncles           []common.Hash `json:"uncles"`
 	Sha3Uncles       common.Hash   `json:"sha3Uncles"`
 	// SealFields       []hexutil.Bytes         `json:"sealFields"` //+ ?
+
+	Withdrawals           []ethtypes.Withdrawal `json:"withdrawals,omitempty"`
+	WithdrawalsRoot       *common.Hash          `json:"withdrawalsRoot,omitempty"`
+	BlobGasUsed           hexutil.Uint64        `json:"blobGasUsed,omitempty"`
+	ExcessBlobGas         hexutil.Uint64        `json:"excessBlobGas,omitempty"`
+	ParentBeaconBlockRoot *common.Hash          `json:"parentBeaconBlockRoot,omitempty"`
 }
 
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
 //
 //go:generate gencodec -type TransactionDetail -field-override plainTransactionMarshaling -out gen_plain_transaction_json.go
 type TransactionDetail struct {
-	Accesses          types.AccessList             `json:"accessList,omitempty"`
-	AuthorizationList []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
-	BlockHash         *common.Hash                 `json:"blockHash"`
-	BlockNumber       *big.Int                     `json:"blockNumber"`
-	ChainID           *big.Int                     `json:"chainId,omitempty"`
+	Accesses          ethtypes.AccessList             `json:"accessList,omitempty"`
+	AuthorizationList []ethtypes.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	BlockHash         *common.Hash                    `json:"blockHash"`
+	BlockNumber       *big.Int                        `json:"blockNumber"`
+	ChainID           *big.Int                        `json:"chainId,omitempty"`
 	// Creates not guarantee to be valid, it's valid for parity node but not geth node
 	Creates              *common.Address `json:"creates,omitempty"                                   testomit:"false"`
 	From                 common.Address  `json:"from"`
@@ -146,32 +157,32 @@ type TransactionDetail struct {
 }
 
 type plainTransactionMarshaling struct {
-	Accesses             types.AccessList             `json:"accessList,omitempty"`
-	AuthorizationList    []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
-	BlockHash            *common.Hash                 `json:"blockHash"`
-	BlockNumber          *hexutil.Big                 `json:"blockNumber"`
-	ChainID              *hexutil.Big                 `json:"chainId,omitempty"`
-	Creates              *common.Address              `json:"creates,omitempty"`
-	From                 common.Address               `json:"from"`
-	Gas                  hexutil.Uint64               `json:"gas"`
-	GasPrice             *hexutil.Big                 `json:"gasPrice"`
-	Hash                 common.Hash                  `json:"hash"`
-	Input                hexutil.Bytes                `json:"input"`
-	MaxFeePerGas         *hexutil.Big                 `json:"maxFeePerGas,omitempty"`
-	MaxPriorityFeePerGas *hexutil.Big                 `json:"maxPriorityFeePerGas,omitempty"`
-	Nonce                hexutil.Uint64               `json:"nonce"`
-	PublicKey            *hexutil.Bytes               `json:"publicKey,omitempty"`
-	R                    *hexutil.Big                 `json:"r"`
-	Raw                  *hexutil.Bytes               `json:"raw,omitempty"`
-	S                    *hexutil.Big                 `json:"s"`
-	StandardV            *hexutil.Big                 `json:"standardV,omitempty"`
-	Status               *hexutil.Uint64              `json:"status,omitempty"`
-	To                   *common.Address              `json:"to"`
-	TransactionIndex     *hexutil.Uint64              `json:"transactionIndex"`
-	Type                 *hexutil.Uint64              `json:"type"`
-	V                    *hexutil.Big                 `json:"v"`
-	Value                *hexutil.Big                 `json:"value"`
-	YParity              *hexutil.Uint64              `json:"yParity,omitempty"`
+	Accesses             ethtypes.AccessList             `json:"accessList,omitempty"`
+	AuthorizationList    []ethtypes.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	BlockHash            *common.Hash                    `json:"blockHash"`
+	BlockNumber          *hexutil.Big                    `json:"blockNumber"`
+	ChainID              *hexutil.Big                    `json:"chainId,omitempty"`
+	Creates              *common.Address                 `json:"creates,omitempty"`
+	From                 common.Address                  `json:"from"`
+	Gas                  hexutil.Uint64                  `json:"gas"`
+	GasPrice             *hexutil.Big                    `json:"gasPrice"`
+	Hash                 common.Hash                     `json:"hash"`
+	Input                hexutil.Bytes                   `json:"input"`
+	MaxFeePerGas         *hexutil.Big                    `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *hexutil.Big                    `json:"maxPriorityFeePerGas,omitempty"`
+	Nonce                hexutil.Uint64                  `json:"nonce"`
+	PublicKey            *hexutil.Bytes                  `json:"publicKey,omitempty"`
+	R                    *hexutil.Big                    `json:"r"`
+	Raw                  *hexutil.Bytes                  `json:"raw,omitempty"`
+	S                    *hexutil.Big                    `json:"s"`
+	StandardV            *hexutil.Big                    `json:"standardV,omitempty"`
+	Status               *hexutil.Uint64                 `json:"status,omitempty"`
+	To                   *common.Address                 `json:"to"`
+	TransactionIndex     *hexutil.Uint64                 `json:"transactionIndex"`
+	Type                 *hexutil.Uint64                 `json:"type"`
+	V                    *hexutil.Big                    `json:"v"`
+	Value                *hexutil.Big                    `json:"value"`
+	YParity              *hexutil.Uint64                 `json:"yParity,omitempty"`
 }
 
 // "testomit" tag is used to omit the field in rpc test, omit when testomit is true and un-omit when testomit is false.
@@ -187,8 +198,8 @@ type Receipt struct {
 	EffectiveGasPrice uint64          `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           uint64          `json:"gasUsed"`
-	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
-	LogsBloom         types.Bloom     `json:"logsBloom"`
+	Logs              []*Log          `json:"logs"` //"logs"  [][]*ethtypes.Log // when receipt.Logs == nil
+	LogsBloom         ethtypes.Bloom  `json:"logsBloom"`
 	Root              []byte          `json:"root,omitempty"`   // when len(receipt.PostState) > 0
 	Status            *uint64         `json:"status,omitempty"` // when len(receipt.PostState) = 0
 	To                *common.Address `json:"to"`
@@ -208,8 +219,8 @@ type receiptMarshaling struct {
 	EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           hexutil.Uint64  `json:"gasUsed"`
-	Logs              []*Log          `json:"logs"` //"logs"  [][]*types.Log // when receipt.Logs == nil
-	LogsBloom         types.Bloom     `json:"logsBloom"`
+	Logs              []*Log          `json:"logs"` //"logs"  [][]*ethtypes.Log // when receipt.Logs == nil
+	LogsBloom         ethtypes.Bloom  `json:"logsBloom"`
 	Root              hexutil.Bytes   `json:"root,omitempty"`   // when len(receipt.PostState) > 0
 	Status            *hexutil.Uint64 `json:"status,omitempty"` // when len(receipt.PostState) = 0
 	To                *common.Address `json:"to"`
@@ -237,10 +248,10 @@ type CallRequest struct {
 	Input []byte `json:"input,omitempty"`
 
 	// Introduced by AccessListTxType transaction.
-	AccessList        *types.AccessList            `json:"accessList,omitempty"`
-	AuthorizationList []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
-	ChainID           *big.Int                     `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
-	Type              *uint64                      `json:"type,omitempty"`
+	AccessList        *ethtypes.AccessList            `json:"accessList,omitempty"`
+	AuthorizationList []ethtypes.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	ChainID           *big.Int                        `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
+	Type              *uint64                         `json:"type,omitempty"`
 }
 
 type callRequestMarshaling struct {
@@ -257,10 +268,10 @@ type callRequestMarshaling struct {
 	Input hexutil.Bytes `json:"input,omitempty"`
 
 	// Introduced by AccessListTxType transaction.
-	AccessList        *types.AccessList            `json:"accessList,omitempty"`
-	AuthorizationList []types.SetCodeAuthorization `json:"authorizationList,omitempty"`
-	ChainID           *hexutil.Big                 `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
-	Type              *hexutil.Uint64              `json:"type,omitempty"`
+	AccessList        *ethtypes.AccessList            `json:"accessList,omitempty"`
+	AuthorizationList []ethtypes.SetCodeAuthorization `json:"authorizationList,omitempty"`
+	ChainID           *hexutil.Big                    `json:"chainId,omitempty"` //+ *v throw if chainId is consensus
+	Type              *hexutil.Uint64                 `json:"type,omitempty"`
 }
 
 //go:generate gencodec -type Log -field-override logMarshaling -out gen_log_json.go

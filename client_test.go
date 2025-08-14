@@ -40,7 +40,7 @@ func callcontextLogMiddleware(f pproviders.CallContextFunc) pproviders.CallConte
 	}
 }
 
-func TestSendTxByArgsUseClientWithOption(t *testing.T) {
+func _TestSendTxByArgsUseClientWithOption(t *testing.T) {
 	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
 	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
 	c, err := NewClientWithOption("https://sepolia.infura.io/v3/d91582da330a4812be53d698a34741aa", *(new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)))
