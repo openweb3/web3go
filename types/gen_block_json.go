@@ -17,28 +17,33 @@ var _ = (*blockMarshaling)(nil)
 // MarshalJSON marshals as JSON.
 func (b Block) MarshalJSON() ([]byte, error) {
 	type Block struct {
-		Author           *common.Address   `json:"author,omitempty"`
-		BaseFeePerGas    *hexutil.Big      `json:"baseFeePerGas,omitempty"`
-		Difficulty       *hexutil.Big      `json:"difficulty"     gencodec:"required"`
-		ExtraData        hexutil.Bytes     `json:"extraData"`
-		GasLimit         hexutil.Uint64    `json:"gasLimit"`
-		GasUsed          hexutil.Uint64    `json:"gasUsed"`
-		Hash             common.Hash       `json:"hash"`
-		LogsBloom        types.Bloom       `json:"logsBloom"`
-		Miner            common.Address    `json:"miner"`
-		MixHash          *common.Hash      `json:"mixHash,omitempty"`
-		Nonce            *types.BlockNonce `json:"nonce,omitempty"`
-		Number           *hexutil.Big      `json:"number"         gencodec:"required"`
-		ParentHash       common.Hash       `json:"parentHash"`
-		ReceiptsRoot     common.Hash       `json:"receiptsRoot"`
-		Size             hexutil.Uint64    `json:"size"`
-		StateRoot        common.Hash       `json:"stateRoot"`
-		Timestamp        hexutil.Uint64    `json:"timestamp"`
-		TotalDifficulty  *hexutil.Big      `json:"totalDifficulty,omitempty"`
-		Transactions     TxOrHashList      `json:"transactions"`
-		TransactionsRoot common.Hash       `json:"transactionsRoot"`
-		Uncles           []common.Hash     `json:"uncles"`
-		Sha3Uncles       common.Hash       `json:"sha3Uncles"`
+		Author                *common.Address    `json:"author,omitempty"`
+		BaseFeePerGas         *hexutil.Big       `json:"baseFeePerGas,omitempty"`
+		Difficulty            *hexutil.Big       `json:"difficulty"     gencodec:"required"`
+		ExtraData             hexutil.Bytes      `json:"extraData"`
+		GasLimit              hexutil.Uint64     `json:"gasLimit"`
+		GasUsed               hexutil.Uint64     `json:"gasUsed"`
+		Hash                  common.Hash        `json:"hash"`
+		LogsBloom             types.Bloom        `json:"logsBloom"`
+		Miner                 common.Address     `json:"miner"`
+		MixHash               *common.Hash       `json:"mixHash,omitempty"`
+		Nonce                 *types.BlockNonce  `json:"nonce,omitempty"`
+		Number                *hexutil.Big       `json:"number"         gencodec:"required"`
+		ParentHash            common.Hash        `json:"parentHash"`
+		ReceiptsRoot          common.Hash        `json:"receiptsRoot"`
+		Size                  hexutil.Uint64     `json:"size"`
+		StateRoot             common.Hash        `json:"stateRoot"`
+		Timestamp             hexutil.Uint64     `json:"timestamp"`
+		TotalDifficulty       *hexutil.Big       `json:"totalDifficulty,omitempty"`
+		Transactions          TxOrHashList       `json:"transactions"`
+		TransactionsRoot      common.Hash        `json:"transactionsRoot"`
+		Uncles                []common.Hash      `json:"uncles"`
+		Sha3Uncles            common.Hash        `json:"sha3Uncles"`
+		Withdrawals           []types.Withdrawal `json:"withdrawals"`
+		WithdrawalsRoot       common.Hash        `json:"withdrawalsRoot"`
+		BlobGasUsed           hexutil.Uint64     `json:"blobGasUsed"`
+		ExcessBlobGas         hexutil.Uint64     `json:"excessBlobGas"`
+		ParentBeaconBlockRoot common.Hash        `json:"parentBeaconBlockRoot"`
 	}
 	var enc Block
 	enc.Author = b.Author
@@ -63,34 +68,44 @@ func (b Block) MarshalJSON() ([]byte, error) {
 	enc.TransactionsRoot = b.TransactionsRoot
 	enc.Uncles = b.Uncles
 	enc.Sha3Uncles = b.Sha3Uncles
+	enc.Withdrawals = b.Withdrawals
+	enc.WithdrawalsRoot = b.WithdrawalsRoot
+	enc.BlobGasUsed = hexutil.Uint64(b.BlobGasUsed)
+	enc.ExcessBlobGas = hexutil.Uint64(b.ExcessBlobGas)
+	enc.ParentBeaconBlockRoot = b.ParentBeaconBlockRoot
 	return json.Marshal(&enc)
 }
 
 // UnmarshalJSON unmarshals from JSON.
 func (b *Block) UnmarshalJSON(input []byte) error {
 	type Block struct {
-		Author           *common.Address   `json:"author,omitempty"`
-		BaseFeePerGas    *hexutil.Big      `json:"baseFeePerGas,omitempty"`
-		Difficulty       *hexutil.Big      `json:"difficulty"     gencodec:"required"`
-		ExtraData        *hexutil.Bytes    `json:"extraData"`
-		GasLimit         *hexutil.Uint64   `json:"gasLimit"`
-		GasUsed          *hexutil.Uint64   `json:"gasUsed"`
-		Hash             *common.Hash      `json:"hash"`
-		LogsBloom        *types.Bloom      `json:"logsBloom"`
-		Miner            *common.Address   `json:"miner"`
-		MixHash          *common.Hash      `json:"mixHash,omitempty"`
-		Nonce            *types.BlockNonce `json:"nonce,omitempty"`
-		Number           *hexutil.Big      `json:"number"         gencodec:"required"`
-		ParentHash       *common.Hash      `json:"parentHash"`
-		ReceiptsRoot     *common.Hash      `json:"receiptsRoot"`
-		Size             *hexutil.Uint64   `json:"size"`
-		StateRoot        *common.Hash      `json:"stateRoot"`
-		Timestamp        *hexutil.Uint64   `json:"timestamp"`
-		TotalDifficulty  *hexutil.Big      `json:"totalDifficulty,omitempty"`
-		Transactions     *TxOrHashList     `json:"transactions"`
-		TransactionsRoot *common.Hash      `json:"transactionsRoot"`
-		Uncles           []common.Hash     `json:"uncles"`
-		Sha3Uncles       *common.Hash      `json:"sha3Uncles"`
+		Author                *common.Address    `json:"author,omitempty"`
+		BaseFeePerGas         *hexutil.Big       `json:"baseFeePerGas,omitempty"`
+		Difficulty            *hexutil.Big       `json:"difficulty"     gencodec:"required"`
+		ExtraData             *hexutil.Bytes     `json:"extraData"`
+		GasLimit              *hexutil.Uint64    `json:"gasLimit"`
+		GasUsed               *hexutil.Uint64    `json:"gasUsed"`
+		Hash                  *common.Hash       `json:"hash"`
+		LogsBloom             *types.Bloom       `json:"logsBloom"`
+		Miner                 *common.Address    `json:"miner"`
+		MixHash               *common.Hash       `json:"mixHash,omitempty"`
+		Nonce                 *types.BlockNonce  `json:"nonce,omitempty"`
+		Number                *hexutil.Big       `json:"number"         gencodec:"required"`
+		ParentHash            *common.Hash       `json:"parentHash"`
+		ReceiptsRoot          *common.Hash       `json:"receiptsRoot"`
+		Size                  *hexutil.Uint64    `json:"size"`
+		StateRoot             *common.Hash       `json:"stateRoot"`
+		Timestamp             *hexutil.Uint64    `json:"timestamp"`
+		TotalDifficulty       *hexutil.Big       `json:"totalDifficulty,omitempty"`
+		Transactions          *TxOrHashList      `json:"transactions"`
+		TransactionsRoot      *common.Hash       `json:"transactionsRoot"`
+		Uncles                []common.Hash      `json:"uncles"`
+		Sha3Uncles            *common.Hash       `json:"sha3Uncles"`
+		Withdrawals           []types.Withdrawal `json:"withdrawals"`
+		WithdrawalsRoot       *common.Hash       `json:"withdrawalsRoot"`
+		BlobGasUsed           *hexutil.Uint64    `json:"blobGasUsed"`
+		ExcessBlobGas         *hexutil.Uint64    `json:"excessBlobGas"`
+		ParentBeaconBlockRoot *common.Hash       `json:"parentBeaconBlockRoot"`
 	}
 	var dec Block
 	if err := json.Unmarshal(input, &dec); err != nil {
@@ -163,6 +178,21 @@ func (b *Block) UnmarshalJSON(input []byte) error {
 	}
 	if dec.Sha3Uncles != nil {
 		b.Sha3Uncles = *dec.Sha3Uncles
+	}
+	if dec.Withdrawals != nil {
+		b.Withdrawals = dec.Withdrawals
+	}
+	if dec.WithdrawalsRoot != nil {
+		b.WithdrawalsRoot = *dec.WithdrawalsRoot
+	}
+	if dec.BlobGasUsed != nil {
+		b.BlobGasUsed = uint64(*dec.BlobGasUsed)
+	}
+	if dec.ExcessBlobGas != nil {
+		b.ExcessBlobGas = uint64(*dec.ExcessBlobGas)
+	}
+	if dec.ParentBeaconBlockRoot != nil {
+		b.ParentBeaconBlockRoot = *dec.ParentBeaconBlockRoot
 	}
 	return nil
 }
