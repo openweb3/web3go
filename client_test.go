@@ -55,29 +55,3 @@ func TestSendTxByArgsUseClientWithOption(t *testing.T) {
 	assert.NoError(t, err)
 	fmt.Printf("hash: %s\n", hash)
 }
-
-func TestGetBlockByHash(t *testing.T) {
-	client, err := NewClient("https://sepolia.infura.io/v3/d91582da330a4812be53d698a34741aa")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	block, err := client.Eth.BlockByNumber(types.LatestBlockNumber, false)
-	assert.NoError(t, err)
-	j, _ := json.Marshal(block)
-	fmt.Printf("block: %+v\n", string(j))
-}
-
-func TestGetBlockByHash2(t *testing.T) {
-	client, err := NewClient("https://sepolia.infura.io/v3/d91582da330a4812be53d698a34741aa")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var result interface{}
-	err = client.Eth.CallContext(context.Background(), &result, "eth_getBlockByNumber", "latest", false)
-	assert.NoError(t, err)
-
-	j, _ := json.Marshal(result)
-	fmt.Printf("block: %+v\n", string(j))
-}
