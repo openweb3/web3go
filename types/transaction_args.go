@@ -17,7 +17,7 @@ type ReaderForPopulate interface {
 	ChainId() (val *uint64, err error)
 	GasPrice() (val *big.Int, err error)
 	MaxPriorityFeePerGas() (val *big.Int, err error)
-	EstimateGas(callRequest CallRequest, blockNum *BlockNumberOrHash) (val *big.Int, err error)
+	EstimateGas(callRequest CallRequest, blockNum *BlockNumberOrHash, overrides *StateOverride, blockOverrides *BlockOverrides) (val *big.Int, err error)
 	TransactionCount(addr common.Address, blockNum *BlockNumberOrHash) (val *big.Int, err error)
 	BlockByNumber(blockNumber BlockNumber, isFull bool) (val *Block, err error)
 }
@@ -180,7 +180,7 @@ func (args *TransactionArgs) Populate(reader ReaderForPopulate) error {
 		}
 
 		latest := BlockNumberOrHashWithNumber(rpc.LatestBlockNumber)
-		estimated, err := reader.EstimateGas(callArgs, &latest)
+		estimated, err := reader.EstimateGas(callArgs, &latest, nil, nil)
 		if err != nil {
 			return errors.Wrap(err, "failed to estimate")
 		}

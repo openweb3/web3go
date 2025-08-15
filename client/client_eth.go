@@ -229,17 +229,17 @@ func (c *RpcEthClient) SubmitTransaction(rawTx []byte) (val common.Hash, err err
 }
 
 // Call contract, returning the output data.
-func (c *RpcEthClient) Call(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash) (val []byte, err error) {
+func (c *RpcEthClient) Call(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash, overrides *types.StateOverride, blockOverrides *types.BlockOverrides) (val []byte, err error) {
 	var _val hexutil.Bytes
-	err = c.CallContext(c.getContext(), &_val, "eth_call", callRequest, getRealBlockNumberOrHash(blockNum))
+	err = c.CallContext(c.getContext(), &_val, "eth_call", callRequest, getRealBlockNumberOrHash(blockNum), overrides, blockOverrides)
 	val = ([]byte)(_val)
 	return
 }
 
 // Estimate gas needed for execution of given contract.
-func (c *RpcEthClient) EstimateGas(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash) (val *big.Int, err error) {
+func (c *RpcEthClient) EstimateGas(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash, overrides *types.StateOverride, blockOverrides *types.BlockOverrides) (val *big.Int, err error) {
 	var _val *hexutil.Big
-	err = c.CallContext(c.getContext(), &_val, "eth_estimateGas", callRequest, getRealBlockNumberOrHash(blockNum))
+	err = c.CallContext(c.getContext(), &_val, "eth_estimateGas", callRequest, getRealBlockNumberOrHash(blockNum), overrides, blockOverrides)
 	val = (*big.Int)(_val)
 	return
 }

@@ -27,7 +27,7 @@ func (m *mockPopulateReader) MaxPriorityFeePerGas() (val *big.Int, err error) {
 	return big.NewInt(0x1e), nil //30
 }
 
-func (m *mockPopulateReader) EstimateGas(callRequest CallRequest, blockNum *BlockNumberOrHash) (val *big.Int, err error) {
+func (m *mockPopulateReader) EstimateGas(callRequest CallRequest, blockNum *BlockNumberOrHash, overrides *StateOverride, blockOverrides *BlockOverrides) (val *big.Int, err error) {
 	return big.NewInt(0x26), nil //38
 }
 

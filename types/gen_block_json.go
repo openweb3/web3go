@@ -22,6 +22,7 @@ func (b Block) MarshalJSON() ([]byte, error) {
 		Difficulty            *hexutil.Big       `json:"difficulty"     gencodec:"required"`
 		ExtraData             hexutil.Bytes      `json:"extraData"`
 		GasLimit              hexutil.Uint64     `json:"gasLimit"`
+		EspaceGasLimit        hexutil.Uint64     `json:"espaceGasLimit,omitempty"`
 		GasUsed               hexutil.Uint64     `json:"gasUsed"`
 		Hash                  common.Hash        `json:"hash"`
 		LogsBloom             types.Bloom        `json:"logsBloom"`
@@ -51,6 +52,7 @@ func (b Block) MarshalJSON() ([]byte, error) {
 	enc.Difficulty = (*hexutil.Big)(b.Difficulty)
 	enc.ExtraData = b.ExtraData
 	enc.GasLimit = hexutil.Uint64(b.GasLimit)
+	enc.EspaceGasLimit = hexutil.Uint64(b.EspaceGasLimit)
 	enc.GasUsed = hexutil.Uint64(b.GasUsed)
 	enc.Hash = b.Hash
 	enc.LogsBloom = b.LogsBloom
@@ -84,6 +86,7 @@ func (b *Block) UnmarshalJSON(input []byte) error {
 		Difficulty            *hexutil.Big       `json:"difficulty"     gencodec:"required"`
 		ExtraData             *hexutil.Bytes     `json:"extraData"`
 		GasLimit              *hexutil.Uint64    `json:"gasLimit"`
+		EspaceGasLimit        *hexutil.Uint64    `json:"espaceGasLimit,omitempty"`
 		GasUsed               *hexutil.Uint64    `json:"gasUsed"`
 		Hash                  *common.Hash       `json:"hash"`
 		LogsBloom             *types.Bloom       `json:"logsBloom"`
@@ -126,6 +129,9 @@ func (b *Block) UnmarshalJSON(input []byte) error {
 	}
 	if dec.GasLimit != nil {
 		b.GasLimit = uint64(*dec.GasLimit)
+	}
+	if dec.EspaceGasLimit != nil {
+		b.EspaceGasLimit = uint64(*dec.EspaceGasLimit)
 	}
 	if dec.GasUsed != nil {
 		b.GasUsed = uint64(*dec.GasUsed)

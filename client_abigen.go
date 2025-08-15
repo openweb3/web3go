@@ -102,7 +102,7 @@ func (c *ClientForContract) EstimateGas(ctx context.Context, call ethereum.CallM
 	cr := convertCallMsg2CallRequest(call)
 
 	pending := types.BlockNumberOrHashWithNumber(types.PendingBlockNumber)
-	val, err := c.raw.Eth.EstimateGas(cr, &pending)
+	val, err := c.raw.Eth.EstimateGas(cr, &pending, nil, nil)
 	if err != nil {
 		return 0, err
 	}
