@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/openweb3/web3go/types/enums"
 	"github.com/pkg/errors"
 )
 
@@ -42,6 +43,44 @@ type LocalizedTrace struct {
 	BlockNumber         uint64       `json:"blockNumber"`
 	BlockHash           common.Hash  `json:"blockHash"`
 	Valid               *bool        `json:"valid,omitempty"` // exist in conflux-espace, not in openethereum
+}
+
+// SetAuth represents the set auth action
+//
+//go:generate gencodec -type SetAuth -field-override setAuthMarshaling -out gen_set_auth_json.go
+type SetAuth struct {
+	Address common.Address  `json:"address"`
+	ChainID *big.Int        `json:"chainId"`
+	Nonce   *big.Int        `json:"nonce"`
+	Author  *common.Address `json:"author,omitempty"`
+}
+
+// LocalizedSetAuthTrace represents a localized set auth trace
+//
+//go:generate gencodec -type LocalizedSetAuthTrace -field-override localizedSetAuthTraceMarshaling -out gen_localized_set_auth_trace_json.go
+type LocalizedSetAuthTrace struct {
+	Action              SetAuth              `json:"action"`
+	Result              enums.SetAuthOutcome `json:"result"`
+	TransactionPosition uint                 `json:"transactionPosition"`
+	TransactionHash     common.Hash          `json:"transactionHash"`
+	BlockNumber         uint64               `json:"blockNumber"`
+	BlockHash           common.Hash          `json:"blockHash"`
+}
+
+type setAuthMarshaling struct {
+	Address common.Address  `json:"address"`
+	ChainID *hexutil.Big    `json:"chainId"`
+	Nonce   *hexutil.Big    `json:"nonce"`
+	Author  *common.Address `json:"author,omitempty"`
+}
+
+type localizedSetAuthTraceMarshaling struct {
+	Action              SetAuth              `json:"action"`
+	Result              enums.SetAuthOutcome `json:"result"`
+	TransactionPosition uint                 `json:"transactionPosition"`
+	TransactionHash     common.Hash          `json:"transactionHash"`
+	BlockNumber         uint64               `json:"blockNumber"`
+	BlockHash           common.Hash          `json:"blockHash"`
 }
 
 type StateDiff map[common.Hash]AccountDiff
@@ -238,6 +277,7 @@ func parseAction(actionInMap map[string]interface{}, actionType TraceType) (inte
 
 // parseActionResult parses action result, result will be nil if actionError not empty
 // one-to-one mapping between action result type and action type
+//
 //	action type TRACE_CALL => CallResult
 //	action type TRACE_CREATE => CreateResult
 //	action type TRACE_SUICIDE => uint8(0)

@@ -20,6 +20,7 @@ type Block struct {
 	Difficulty      *big.Int             `json:"difficulty"     gencodec:"required"`
 	ExtraData       []byte               `json:"extraData"`
 	GasLimit        uint64               `json:"gasLimit"`
+	EspaceGasLimit  uint64               `json:"espaceGasLimit,omitempty"` // only support for conflux network
 	GasUsed         uint64               `json:"gasUsed"`
 	Hash            common.Hash          `json:"hash"`
 	LogsBloom       ethtypes.Bloom       `json:"logsBloom"`
@@ -92,6 +93,7 @@ type blockMarshaling struct {
 	Difficulty      *hexutil.Big         `json:"difficulty"`
 	ExtraData       hexutil.Bytes        `json:"extraData"`
 	GasLimit        hexutil.Uint64       `json:"gasLimit"`
+	EspaceGasLimit  hexutil.Uint64       `json:"espaceGasLimit,omitempty"` // only support for conflux network
 	GasUsed         hexutil.Uint64       `json:"gasUsed"`
 	Hash            common.Hash          `json:"hash"`
 	LogsBloom       ethtypes.Bloom       `json:"logsBloom"`
@@ -198,7 +200,8 @@ type Receipt struct {
 	EffectiveGasPrice uint64          `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           uint64          `json:"gasUsed"`
-	Logs              []*Log          `json:"logs"` //"logs"  [][]*ethtypes.Log // when receipt.Logs == nil
+	GasFee            uint64          `json:"gasFee,omitempty"` // only support for conflux network
+	Logs              []*Log          `json:"logs"`             //"logs"  [][]*ethtypes.Log // when receipt.Logs == nil
 	LogsBloom         ethtypes.Bloom  `json:"logsBloom"`
 	Root              []byte          `json:"root,omitempty"`   // when len(receipt.PostState) > 0
 	Status            *uint64         `json:"status,omitempty"` // when len(receipt.PostState) = 0
@@ -219,7 +222,8 @@ type receiptMarshaling struct {
 	EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           hexutil.Uint64  `json:"gasUsed"`
-	Logs              []*Log          `json:"logs"` //"logs"  [][]*ethtypes.Log // when receipt.Logs == nil
+	GasFee            hexutil.Uint64  `json:"gasFee,omitempty"` // only support for conflux network
+	Logs              []*Log          `json:"logs"`             //"logs"  [][]*ethtypes.Log // when receipt.Logs == nil
 	LogsBloom         ethtypes.Bloom  `json:"logsBloom"`
 	Root              hexutil.Bytes   `json:"root,omitempty"`   // when len(receipt.PostState) > 0
 	Status            *hexutil.Uint64 `json:"status,omitempty"` // when len(receipt.PostState) = 0

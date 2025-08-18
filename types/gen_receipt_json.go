@@ -24,6 +24,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
 		From              common.Address  `json:"from"`
 		GasUsed           hexutil.Uint64  `json:"gasUsed"`
+		GasFee            hexutil.Uint64  `json:"gasFee,omitempty"`
 		Logs              []*Log          `json:"logs"`
 		LogsBloom         types.Bloom     `json:"logsBloom"`
 		Root              hexutil.Bytes   `json:"root,omitempty"`
@@ -43,6 +44,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 	enc.EffectiveGasPrice = hexutil.Uint64(r.EffectiveGasPrice)
 	enc.From = r.From
 	enc.GasUsed = hexutil.Uint64(r.GasUsed)
+	enc.GasFee = hexutil.Uint64(r.GasFee)
 	enc.Logs = r.Logs
 	enc.LogsBloom = r.LogsBloom
 	enc.Root = r.Root
@@ -66,6 +68,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		EffectiveGasPrice *hexutil.Uint64 `json:"effectiveGasPrice"`
 		From              *common.Address `json:"from"`
 		GasUsed           *hexutil.Uint64 `json:"gasUsed"`
+		GasFee            *hexutil.Uint64 `json:"gasFee,omitempty"`
 		Logs              []*Log          `json:"logs"`
 		LogsBloom         *types.Bloom    `json:"logsBloom"`
 		Root              *hexutil.Bytes  `json:"root,omitempty"`
@@ -103,6 +106,9 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 	}
 	if dec.GasUsed != nil {
 		r.GasUsed = uint64(*dec.GasUsed)
+	}
+	if dec.GasFee != nil {
+		r.GasFee = uint64(*dec.GasFee)
 	}
 	if dec.Logs != nil {
 		r.Logs = dec.Logs

@@ -67,3 +67,9 @@ func (c *RpcTraceClient) ReplayBlockTransactions(blockNumber types.BlockNumberOr
 	err = c.CallContext(c.getContext(), &val, "trace_replayBlockTransactions", blockNumber, options)
 	return
 }
+
+// Returns all set auth traces produced at the given block.
+func (c *RpcTraceClient) BlockSetAuthTraces(blockNumber types.BlockNumberOrHash) (val []types.LocalizedSetAuthTrace, err error) {
+	err = c.CallContext(c.getContext(), &val, "trace_blockSetAuth", blockNumber)
+	return
+}

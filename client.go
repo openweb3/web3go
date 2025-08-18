@@ -29,6 +29,7 @@ type Client struct {
 	Parity  *client.RpcParityClient
 	Filter  *client.RpcFilterClient
 	Debug   *client.RpcDebugClient
+	TxPool  *client.RpcTxPoolClient
 }
 
 var (
@@ -89,6 +90,7 @@ func (client *Client) WithContext(ctx context.Context) *Client {
 	_client.Parity.SetContext(ctx)
 	_client.Trace.SetContext(ctx)
 	_client.Debug.SetContext(ctx)
+	_client.TxPool.SetContext(ctx)
 	return _client
 }
 
@@ -99,13 +101,13 @@ func (client *Client) copy() *Client {
 	parity := *client.Parity
 	trace := *client.Trace
 	debug := *client.Debug
-
+	txpool := *client.TxPool
 	_client.Eth = &eth
 	_client.Filter = &filter
 	_client.Parity = &parity
 	_client.Trace = &trace
 	_client.Debug = &debug
-
+	_client.TxPool = &txpool
 	return &_client
 }
 
@@ -120,6 +122,7 @@ func (c *Client) SetProvider(p interfaces.Provider) {
 	c.Parity = client.NewRpcParityClient(p)
 	c.Filter = client.NewRpcFilterClient(p)
 	c.Debug = client.NewRpcDebugClient(p)
+	c.TxPool = client.NewRpcTxPoolClient(p)
 }
 
 func (c *Client) Provider() *pproviders.MiddlewarableProvider {

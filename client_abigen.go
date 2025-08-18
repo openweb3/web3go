@@ -41,14 +41,14 @@ func (c *ClientForContract) CodeAt(ctx context.Context, account common.Address, 
 func (c *ClientForContract) CallContract(ctx context.Context, call ethereum.CallMsg, blockNumber *big.Int) ([]byte, error) {
 	cr := convertCallMsg2CallRequest(call)
 	bn := types.BlockNumberOrHashWithNumber(getBlockNumberIfy(blockNumber))
-	return c.raw.Eth.Call(cr, &bn)
+	return c.raw.Eth.Call(cr, &bn, nil, nil)
 }
 
 // PendingCallContract executes an Ethereum contract call against the pending state.
 func (c *ClientForContract) PendingCallContract(ctx context.Context, call ethereum.CallMsg) ([]byte, error) {
 	cr := convertCallMsg2CallRequest(call)
 	pending := types.BlockNumberOrHashWithNumber(types.PendingBlockNumber)
-	return c.raw.Eth.Call(cr, &pending)
+	return c.raw.Eth.Call(cr, &pending, nil, nil)
 }
 
 // HeaderByNumber returns a block header from the current canonical chain. If
@@ -102,7 +102,7 @@ func (c *ClientForContract) EstimateGas(ctx context.Context, call ethereum.CallM
 	cr := convertCallMsg2CallRequest(call)
 
 	pending := types.BlockNumberOrHashWithNumber(types.PendingBlockNumber)
-	val, err := c.raw.Eth.EstimateGas(cr, &pending)
+	val, err := c.raw.Eth.EstimateGas(cr, &pending, nil, nil)
 	if err != nil {
 		return 0, err
 	}
