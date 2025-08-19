@@ -27,7 +27,11 @@ func (c *RpcTraceClient) Filter(traceFilter types.TraceFilter) (val []types.Loca
 
 // Returns transaction trace at given index.
 func (c *RpcTraceClient) Trace(transactionHash common.Hash, indexes []uint) (val *types.LocalizedTrace, err error) {
-	err = c.CallContext(c.getContext(), &val, "trace_get", transactionHash, indexes)
+	hexIndexes := make([]hexutil.Uint, len(indexes))
+	for i, index := range indexes {
+		hexIndexes[i] = hexutil.Uint(index)
+	}
+	err = c.CallContext(c.getContext(), &val, "trace_get", transactionHash, hexIndexes)
 	return
 }
 
@@ -69,6 +73,7 @@ func (c *RpcTraceClient) ReplayBlockTransactions(blockNumber types.BlockNumberOr
 }
 
 // Returns all set auth traces produced at the given block.
+// Note: only support conflux-espace
 func (c *RpcTraceClient) BlockSetAuthTraces(blockNumber types.BlockNumberOrHash) (val []types.LocalizedSetAuthTrace, err error) {
 	err = c.CallContext(c.getContext(), &val, "trace_blockSetAuth", blockNumber)
 	return
