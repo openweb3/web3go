@@ -21,10 +21,10 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		BurntGasFee       *hexutil.Big    `json:"burntGasFee,omitempty"`
 		ContractAddress   *common.Address `json:"contractAddress"`
 		CumulativeGasUsed hexutil.Uint64  `json:"cumulativeGasUsed"`
-		EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
+		EffectiveGasPrice *hexutil.Big    `json:"effectiveGasPrice"`
 		From              common.Address  `json:"from"`
 		GasUsed           hexutil.Uint64  `json:"gasUsed"`
-		GasFee            hexutil.Uint64  `json:"gasFee,omitempty"`
+		GasFee            *hexutil.Big    `json:"gasFee,omitempty"`
 		Logs              []*Log          `json:"logs"`
 		LogsBloom         types.Bloom     `json:"logsBloom"`
 		Root              hexutil.Bytes   `json:"root,omitempty"`
@@ -41,10 +41,10 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 	enc.BurntGasFee = (*hexutil.Big)(r.BurntGasFee)
 	enc.ContractAddress = r.ContractAddress
 	enc.CumulativeGasUsed = hexutil.Uint64(r.CumulativeGasUsed)
-	enc.EffectiveGasPrice = hexutil.Uint64(r.EffectiveGasPrice)
+	enc.EffectiveGasPrice = (*hexutil.Big)(r.EffectiveGasPrice)
 	enc.From = r.From
 	enc.GasUsed = hexutil.Uint64(r.GasUsed)
-	enc.GasFee = hexutil.Uint64(r.GasFee)
+	enc.GasFee = (*hexutil.Big)(r.GasFee)
 	enc.Logs = r.Logs
 	enc.LogsBloom = r.LogsBloom
 	enc.Root = r.Root
@@ -65,10 +65,10 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		BurntGasFee       *hexutil.Big    `json:"burntGasFee,omitempty"`
 		ContractAddress   *common.Address `json:"contractAddress"`
 		CumulativeGasUsed *hexutil.Uint64 `json:"cumulativeGasUsed"`
-		EffectiveGasPrice *hexutil.Uint64 `json:"effectiveGasPrice"`
+		EffectiveGasPrice *hexutil.Big    `json:"effectiveGasPrice"`
 		From              *common.Address `json:"from"`
 		GasUsed           *hexutil.Uint64 `json:"gasUsed"`
-		GasFee            *hexutil.Uint64 `json:"gasFee,omitempty"`
+		GasFee            *hexutil.Big    `json:"gasFee,omitempty"`
 		Logs              []*Log          `json:"logs"`
 		LogsBloom         *types.Bloom    `json:"logsBloom"`
 		Root              *hexutil.Bytes  `json:"root,omitempty"`
@@ -99,7 +99,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		r.CumulativeGasUsed = uint64(*dec.CumulativeGasUsed)
 	}
 	if dec.EffectiveGasPrice != nil {
-		r.EffectiveGasPrice = uint64(*dec.EffectiveGasPrice)
+		r.EffectiveGasPrice = (*big.Int)(dec.EffectiveGasPrice)
 	}
 	if dec.From != nil {
 		r.From = *dec.From
@@ -108,7 +108,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		r.GasUsed = uint64(*dec.GasUsed)
 	}
 	if dec.GasFee != nil {
-		r.GasFee = uint64(*dec.GasFee)
+		r.GasFee = (*big.Int)(dec.GasFee)
 	}
 	if dec.Logs != nil {
 		r.Logs = dec.Logs

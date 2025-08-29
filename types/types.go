@@ -197,10 +197,10 @@ type Receipt struct {
 	BurntGasFee       *big.Int        `json:"burntGasFee,omitempty"`
 	ContractAddress   *common.Address `json:"contractAddress"`
 	CumulativeGasUsed uint64          `json:"cumulativeGasUsed"`
-	EffectiveGasPrice uint64          `json:"effectiveGasPrice"`
+	EffectiveGasPrice *big.Int        `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           uint64          `json:"gasUsed"`
-	GasFee            uint64          `json:"gasFee,omitempty"` // only support for conflux network
+	GasFee            *big.Int        `json:"gasFee,omitempty"` // only support for conflux network
 	Logs              []*Log          `json:"logs"`             //"logs"  [][]*ethtypes.Log // when receipt.Logs == nil
 	LogsBloom         ethtypes.Bloom  `json:"logsBloom"`
 	Root              []byte          `json:"root,omitempty"`   // when len(receipt.PostState) > 0
@@ -219,10 +219,10 @@ type receiptMarshaling struct {
 	BurntGasFee       *hexutil.Big    `json:"burntGasFee,omitempty"`
 	ContractAddress   *common.Address `json:"contractAddress"`
 	CumulativeGasUsed hexutil.Uint64  `json:"cumulativeGasUsed"`
-	EffectiveGasPrice hexutil.Uint64  `json:"effectiveGasPrice"`
+	EffectiveGasPrice *hexutil.Big    `json:"effectiveGasPrice"`
 	From              common.Address  `json:"from"`
 	GasUsed           hexutil.Uint64  `json:"gasUsed"`
-	GasFee            hexutil.Uint64  `json:"gasFee,omitempty"` // only support for conflux network
+	GasFee            *hexutil.Big    `json:"gasFee,omitempty"` // only support for conflux network
 	Logs              []*Log          `json:"logs"`             //"logs"  [][]*ethtypes.Log // when receipt.Logs == nil
 	LogsBloom         ethtypes.Bloom  `json:"logsBloom"`
 	Root              hexutil.Bytes   `json:"root,omitempty"`   // when len(receipt.PostState) > 0
