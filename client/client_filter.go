@@ -44,6 +44,16 @@ func (c *RpcFilterClient) GetFilterChanges(filterID rpc.ID) (val *types.FilterCh
 // Returns all logs matching given filter (in a range 'from' - 'to').
 func (c *RpcFilterClient) GetFilterLogs(filterID rpc.ID) (val []types.Log, err error) {
 	err = c.CallContext(c.getContext(), &val, "eth_getFilterLogs", filterID)
+	if err != nil {
+		return nil, err
+	}
+	helper := NewRpcEthClientHelper(c)
+	for i := 0; i < len(val); i++ {
+		_, err = helper.fillLogBlockTimestamp(&val[i], 0)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return
 }
 

@@ -17,6 +17,7 @@ func (l Log) MarshalJSON() ([]byte, error) {
 		Address             common.Address `json:"address"`
 		BlockHash           common.Hash    `json:"blockHash"`
 		BlockNumber         hexutil.Uint64 `json:"blockNumber"`
+		BlockTimestamp      hexutil.Uint64 `json:"blockTimestamp"`
 		Data                hexutil.Bytes  `json:"data"`
 		Index               hexutil.Uint   `json:"logIndex"`
 		LogType             *string        `json:"logType,omitempty"`
@@ -30,6 +31,7 @@ func (l Log) MarshalJSON() ([]byte, error) {
 	enc.Address = l.Address
 	enc.BlockHash = l.BlockHash
 	enc.BlockNumber = hexutil.Uint64(l.BlockNumber)
+	enc.BlockTimestamp = hexutil.Uint64(l.BlockTimestamp)
 	enc.Data = l.Data
 	enc.Index = hexutil.Uint(l.Index)
 	enc.LogType = l.LogType
@@ -47,6 +49,7 @@ func (l *Log) UnmarshalJSON(input []byte) error {
 		Address             *common.Address `json:"address"`
 		BlockHash           *common.Hash    `json:"blockHash"`
 		BlockNumber         *hexutil.Uint64 `json:"blockNumber"`
+		BlockTimestamp      *hexutil.Uint64 `json:"blockTimestamp"`
 		Data                *hexutil.Bytes  `json:"data"`
 		Index               *hexutil.Uint   `json:"logIndex"`
 		LogType             *string         `json:"logType,omitempty"`
@@ -68,6 +71,9 @@ func (l *Log) UnmarshalJSON(input []byte) error {
 	}
 	if dec.BlockNumber != nil {
 		l.BlockNumber = uint64(*dec.BlockNumber)
+	}
+	if dec.BlockTimestamp != nil {
+		l.BlockTimestamp = uint64(*dec.BlockTimestamp)
 	}
 	if dec.Data != nil {
 		l.Data = *dec.Data

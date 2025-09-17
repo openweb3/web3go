@@ -1,7 +1,9 @@
 package client
 
 import (
+	"errors"
 	"math/big"
+	"sync"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -146,6 +148,19 @@ func (c *RpcEthClient) BlockByNumber(blockNumber types.BlockNumber, isFull bool)
 func (c *RpcEthClient) BlockReceipts(blockNrOrHash *types.BlockNumberOrHash) (val []*types.Receipt, err error) {
 	var r []*types.Receipt
 	err = c.CallContext(c.getContext(), &r, "eth_getBlockReceipts", getRealBlockNumberOrHash(blockNrOrHash))
+	if err != nil {
+		return nil, err
+	}
+
+	helper := NewRpcEthClientHelper(c)
+	for _, receipt := range r {
+		for _, log := range receipt.Logs {
+			_, err = helper.fillLogBlockTimestamp(log, 0)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
 	return r, err
 }
 
@@ -265,6 +280,21 @@ func (c *RpcEthClient) TransactionByBlockNumberAndIndex(blockNum types.BlockNumb
 // Returns transaction receipt by transaction hash.
 func (c *RpcEthClient) TransactionReceipt(txHash common.Hash) (val *types.Receipt, err error) {
 	err = c.CallContext(c.getContext(), &val, "eth_getTransactionReceipt", txHash)
+	if err != nil {
+		return nil, err
+	}
+
+	if val == nil {
+		return nil, nil
+	}
+
+	helper := NewRpcEthClientHelper(c)
+	for _, log := range val.Logs {
+		_, err = helper.fillLogBlockTimestamp(log, 0)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return
 }
 
@@ -290,6 +320,14 @@ func (c *RpcEthClient) UncleByBlockNumberAndIndex(blockNum types.BlockNumber, in
 // Returns logs matching given filter object.
 func (c *RpcEthClient) Logs(logFilter types.FilterQuery) (val []types.Log, err error) {
 	err = c.CallContext(c.getContext(), &val, "eth_getLogs", logFilter)
+
+	helper := NewRpcEthClientHelper(c)
+	for i := 0; i < len(val); i++ {
+		_, err = helper.fillLogBlockTimestamp(&val[i], 0)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return
 }
 
@@ -310,4 +348,52 @@ func (c *RpcEthClient) SubscribeNewHead(ch chan<- *types.Header) (types.Subscrip
 // on the given channel.
 func (c *RpcEthClient) SubscribeFilterLogs(q types.FilterQuery, ch chan<- types.Log) (types.Subscription, error) {
 	return c.Subscribe(c.getContext(), "eth", ch, "logs", q)
+}
+
+// ==== Temporary: helper functions ====
+
+type RpcEthClientHelper struct {
+	*RpcEthClient
+	BlockCaches sync.Map
+}
+
+func NewRpcEthClientHelper(provider interfaces.Provider) *RpcEthClientHelper {
+	return &RpcEthClientHelper{
+		RpcEthClient: NewRpcEthClient(provider),
+		BlockCaches:  sync.Map{},
+	}
+}
+
+func (c *RpcEthClientHelper) fillLogBlockTimestamp(l *types.Log, blockTimestamp uint64) (*types.Log, error) {
+	// if blockTimestamp is 0, obtain from block
+	if blockTimestamp == 0 {
+		// get block timestamp from block number
+		blockHashOrNumber := types.BlockNumberOrHashWithHash(l.BlockHash, false)
+		block, err := c.getBlock(&blockHashOrNumber)
+		if err != nil {
+			return nil, err
+		}
+		blockTimestamp = block.Timestamp
+	}
+	l.BlockTimestamp = blockTimestamp
+
+	return l, nil
+}
+
+func (c *RpcEthClientHelper) getBlock(blockHashOrNumber *types.BlockNumberOrHash) (*types.Block, error) {
+	if h, ok := blockHashOrNumber.Hash(); ok {
+		if block, ok := c.BlockCaches.Load(h); ok {
+			return block.(*types.Block), nil
+		}
+		block, err := c.BlockByHash(h, false)
+		if err != nil {
+			return nil, err
+		}
+		c.BlockCaches.Store(h, block)
+		return block, nil
+	}
+	if n, ok := blockHashOrNumber.Number(); ok {
+		return c.BlockByNumber(n, false)
+	}
+	return nil, errors.New("block hash or number not found")
 }
