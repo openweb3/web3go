@@ -373,7 +373,9 @@ func (c *RpcEthClientHelper) fillLogBlockTimestamp(l *types.Log, blockTimestamp 
 		if err != nil {
 			return nil, err
 		}
-		blockTimestamp = block.Timestamp
+		if block != nil {
+			blockTimestamp = block.Timestamp
+		}
 	}
 	l.BlockTimestamp = blockTimestamp
 
