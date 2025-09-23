@@ -283,6 +283,7 @@ type Log struct {
 	Address             common.Address `json:"address"`
 	BlockHash           common.Hash    `json:"blockHash"`
 	BlockNumber         uint64         `json:"blockNumber"`
+	BlockTimestamp      uint64         `json:"blockTimestamp"`
 	Data                []byte         `json:"data"`
 	Index               uint           `json:"logIndex"`
 	LogType             *string        `json:"logType,omitempty"` //+ *v return by parity but not geth
@@ -311,6 +312,7 @@ type logMarshaling struct {
 	Address             common.Address `json:"address"`
 	BlockHash           common.Hash    `json:"blockHash"`
 	BlockNumber         hexutil.Uint64 `json:"blockNumber"`
+	BlockTimestamp      hexutil.Uint64 `json:"blockTimestamp"`
 	Data                hexutil.Bytes  `json:"data"`
 	Index               hexutil.Uint   `json:"logIndex"`
 	LogType             *string        `json:"logType,omitempty"` //+ *v return by parity but not geth

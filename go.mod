@@ -8,7 +8,7 @@ require (
 	github.com/ethereum/go-ethereum v1.15.11
 	github.com/holiman/uint256 v1.3.2
 	github.com/mcuadros/go-defaults v1.2.0
-	github.com/openweb3/go-rpc-provider v0.3.5
+	github.com/openweb3/go-rpc-provider v0.3.6
 	github.com/openweb3/go-sdk-common v0.0.0-20240627072707-f78f0155ab34
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
