@@ -283,10 +283,6 @@ func parseAction(actionInMap map[string]interface{}, actionType TraceType) (inte
 //	action type TRACE_SUICIDE => uint8(0)
 //	action type TRACE_REWARD => uint8(0)
 func parseActionResult(actionResInMap map[string]interface{}, actionError string, actionType TraceType) (interface{}, error) {
-	if actionError != "" {
-		return nil, nil
-	}
-
 	actionResJson, err := json.Marshal(actionResInMap)
 	if err != nil {
 		return nil, err
