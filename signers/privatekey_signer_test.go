@@ -8,6 +8,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/holiman/uint256"
 	"github.com/openweb3/go-sdk-common/privatekeyhelper"
 	"github.com/stretchr/testify/assert"
 )
@@ -95,6 +97,35 @@ func TestSignDynamicFeeTx(t *testing.T) {
 	a.NoError(err)
 	expectMarshaled := "02f8620380010282520894e6d148d8398c4cb456196c776d2d9093dd62c9b00180c001a055e7caac90c8e0135575c851ae8e18693017b42da586b78c8b11d221b0192b77a0663d198301e510c88158375d9fcb953fb49b586fa0c48bdee207f95f038b5281"
 	a.Equal(fmt.Sprintf("%x", marshaled), expectMarshaled)
+}
+
+func TestSignHash(t *testing.T) {
+	a := assert.New(t)
+	signer, err := NewPrivateKeySignerByString("9ec393923a14eeb557600010ea05d635c667a6995418f8a8f4bdecc63dfe0bb9")
+	a.NoError(err)
+
+	hash := crypto.Keccak256([]byte("web3go-sign-hash"))
+	sig, err := signer.SignHash(hash)
+	a.NoError(err)
+	a.Len(sig, 65)
+}
+
+func TestSignSetCodeAuthorization(t *testing.T) {
+	a := assert.New(t)
+	signer, err := NewPrivateKeySignerByString("9ec393923a14eeb557600010ea05d635c667a6995418f8a8f4bdecc63dfe0bb9")
+	a.NoError(err)
+
+	auth := types.SetCodeAuthorization{
+		ChainID: *uint256.NewInt(1),
+		Address: common.HexToAddress("0x000000000000000000000000000000000000dEaD"),
+		Nonce:   1,
+	}
+	signedAuth, err := signer.SignSetCodeAuthorization(auth)
+	a.NoError(err)
+
+	authority, err := signedAuth.Authority()
+	a.NoError(err)
+	a.Equal(signer.Address(), authority)
 }
 
 func MustJsonMarshalTx(tx *types.Transaction) []byte {
