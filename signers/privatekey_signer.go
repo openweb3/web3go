@@ -116,6 +116,14 @@ func (p *PrivateKeySigner) SignMessage(text []byte) ([]byte, error) {
 	return crypto.Sign(hash, p.privateKey)
 }
 
+func (p *PrivateKeySigner) SignHash(hash common.Hash) ([]byte, error) {
+	return crypto.Sign(hash[:], p.privateKey)
+}
+
+func (p *PrivateKeySigner) SignSetCodeAuthorization(auth types.SetCodeAuthorization) (types.SetCodeAuthorization, error) {
+	return types.SignSetCode(p.privateKey, auth)
+}
+
 func (p PrivateKeySigner) String() string {
 	return fmt.Sprintf("address: %v, publicKey: %v", p.address.Hex(), p.PublicKeyString())
 }
