@@ -116,8 +116,8 @@ func (p *PrivateKeySigner) SignMessage(text []byte) ([]byte, error) {
 	return crypto.Sign(hash, p.privateKey)
 }
 
-func (p *PrivateKeySigner) SignHash(hash []byte) ([]byte, error) {
-	return crypto.Sign(hash, p.privateKey)
+func (p *PrivateKeySigner) SignHash(hash common.Hash) ([]byte, error) {
+	return crypto.Sign(hash[:], p.privateKey)
 }
 
 func (p *PrivateKeySigner) SignSetCodeAuthorization(auth types.SetCodeAuthorization) (types.SetCodeAuthorization, error) {

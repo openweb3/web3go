@@ -104,7 +104,7 @@ func TestSignHash(t *testing.T) {
 	signer, err := NewPrivateKeySignerByString("9ec393923a14eeb557600010ea05d635c667a6995418f8a8f4bdecc63dfe0bb9")
 	a.NoError(err)
 
-	hash := crypto.Keccak256([]byte("web3go-sign-hash"))
+	hash := crypto.Keccak256Hash([]byte("web3go-sign-hash"))
 	sig, err := signer.SignHash(hash)
 	a.NoError(err)
 	a.Len(sig, 65)
