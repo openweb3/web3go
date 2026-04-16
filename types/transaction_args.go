@@ -177,6 +177,7 @@ func (args *TransactionArgs) Populate(reader ReaderForPopulate) error {
 			Value:                (*big.Int)(args.Value),
 			Data:                 data,
 			AccessList:           args.AccessList,
+			AuthorizationList:    args.AuthorizationList,
 		}
 
 		latest := BlockNumberOrHashWithNumber(rpc.LatestBlockNumber)
@@ -245,7 +246,7 @@ func (args *TransactionArgs) populateTxtypeAndGasPrice(reader ReaderForPopulate)
 	}
 
 	// if txtype is DynamicFeeTxType that means support 1559, so if gasPrice is not nil, set max... to gasPrice
-	if *args.TxType == types.DynamicFeeTxType {
+	if *args.TxType == types.DynamicFeeTxType || *args.TxType == types.SetCodeTxType {
 		if args.GasPrice != nil {
 			args.MaxFeePerGas = args.GasPrice
 			args.MaxPriorityFeePerGas = args.GasPrice
