@@ -11,7 +11,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	pproviders "github.com/openweb3/go-rpc-provider/provider_wrapper"
-	"github.com/openweb3/web3go/signers"
 	"github.com/openweb3/web3go/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -41,22 +40,6 @@ func callcontextLogMiddleware(f pproviders.CallContextFunc) pproviders.CallConte
 		fmt.Printf("response %s\n", j)
 		return err
 	}
-}
-
-func _TestSendTxByArgsUseClientWithOption(t *testing.T) {
-	mnemonic := "crisp shove million stem shiver side hospital split play lottery join vintage"
-	sm := signers.MustNewSignerManagerByMnemonic(mnemonic, 10, nil)
-	c, err := NewClientWithOption("https://sepolia.infura.io/v3/d91582da330a4812be53d698a34741aa", *(new(ClientOption).WithLooger(os.Stdout).WithSignerManager(sm)))
-	assert.NoError(t, err)
-
-	from := sm.List()[0].Address()
-	to := sm.List()[1].Address()
-	hash, err := c.Eth.SendTransactionByArgs(types.TransactionArgs{
-		From: &from,
-		To:   &to,
-	})
-	assert.NoError(t, err)
-	fmt.Printf("hash: %s\n", hash)
 }
 
 func TestTraceSetAuth(t *testing.T) {

@@ -105,13 +105,13 @@ func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
 
 	genSetCodeTx := func() types.TxData {
 		return &types.SetCodeTx{
-			ChainID:    BigIntToUint256(args.ChainID.ToInt()),
+			ChainID:    HexBigToUint256(args.ChainID),
 			Nonce:      uint64(*args.Nonce),
-			GasTipCap:  BigIntToUint256(args.MaxPriorityFeePerGas.ToInt()),
-			GasFeeCap:  BigIntToUint256(args.MaxFeePerGas.ToInt()),
+			GasTipCap:  HexBigToUint256(args.MaxPriorityFeePerGas),
+			GasFeeCap:  HexBigToUint256(args.MaxFeePerGas),
 			Gas:        uint64(*args.Gas),
 			To:         *args.To,
-			Value:      BigIntToUint256(args.Value.ToInt()),
+			Value:      HexBigToUint256(args.Value),
 			Data:       args.data(),
 			AccessList: al,
 			AuthList:   args.AuthorizationList,
@@ -126,6 +126,9 @@ func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
 	case types.DynamicFeeTxType:
 		return types.NewTx(genDynamicFeeTx()), nil
 	case types.SetCodeTxType:
+		if args.To == nil {
+			return nil, errors.New("to address is required for SetCode transaction")
+		}
 		return types.NewTx(genSetCodeTx()), nil
 	}
 
@@ -177,6 +180,7 @@ func (args *TransactionArgs) Populate(reader ReaderForPopulate) error {
 			Value:                (*big.Int)(args.Value),
 			Data:                 data,
 			AccessList:           args.AccessList,
+			AuthorizationList:    args.AuthorizationList,
 		}
 
 		latest := BlockNumberOrHashWithNumber(rpc.LatestBlockNumber)
@@ -222,14 +226,17 @@ func (args *TransactionArgs) populateTxtypeAndGasPrice(reader ReaderForPopulate)
 		return errors.Wrap(err, "failed to get fee data")
 	}
 
-	// set the txtype according to feeData
-	// - if support1559, then set txtype to 2
-	// - if not support1559
-	// - - if has maxFeePerGas or maxPriorityFeePerGas, then return error
-	// - - if contains accesslist, set txtype to 1
-	// - - else set txtype to 0
+	// set tx type according to request fields and node capability:
+	// - if authorizationList is not empty, prefer SetCodeTxType (4)
+	// - else if support1559, default to DynamicFeeTxType (2)
+	// - else (non-1559):
+	// - - if has maxFeePerGas or maxPriorityFeePerGas, return error
+	// - - if contains accessList, set AccessListTxType (1)
+	// - - else set LegacyTxType (0)
 	if args.TxType == nil {
-		if gasFeeData.isSupport1559() {
+		if len(args.AuthorizationList) > 0 {
+			args.TxType = TxTypePtr(types.SetCodeTxType)
+		} else if gasFeeData.isSupport1559() {
 			args.TxType = TxTypePtr(types.DynamicFeeTxType)
 		} else {
 			if has1559 {
@@ -245,12 +252,18 @@ func (args *TransactionArgs) populateTxtypeAndGasPrice(reader ReaderForPopulate)
 	}
 
 	// if txtype is DynamicFeeTxType that means support 1559, so if gasPrice is not nil, set max... to gasPrice
-	if *args.TxType == types.DynamicFeeTxType {
+	if *args.TxType == types.DynamicFeeTxType || *args.TxType == types.SetCodeTxType {
 		if args.GasPrice != nil {
 			args.MaxFeePerGas = args.GasPrice
 			args.MaxPriorityFeePerGas = args.GasPrice
 			args.GasPrice = nil
 			return nil
+		}
+		if !gasFeeData.isSupport1559() && (args.MaxFeePerGas == nil || args.MaxPriorityFeePerGas == nil) {
+			if *args.TxType == types.SetCodeTxType {
+				return errors.New("setCode transaction requires explicit maxFeePerGas and maxPriorityFeePerGas on non-1559 chain")
+			}
+			return errors.New("dynamic fee transaction requires explicit maxFeePerGas and maxPriorityFeePerGas on non-1559 chain")
 		}
 
 		if args.MaxPriorityFeePerGas == nil {

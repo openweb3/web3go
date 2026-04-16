@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/openweb3/go-rpc-provider"
@@ -48,6 +49,8 @@ func NewSignableProvider(p pinterfaces.Provider, signManager *signers.SignerMana
 func (s *SignableMiddleware) CallContextMiddleware(call pproviders.CallContextFunc) pproviders.CallContextFunc {
 	return func(ctx context.Context, resultPtr interface{}, method string, args ...interface{}) error {
 		if method == METHOD_SEND_TRANSACTION {
+			// Intercept eth_sendTransaction and try local signing first.
+			// When signing succeeds, rewrite request to eth_sendRawTransaction.
 			rawTx, err := s.signTxAndEncode(args[0])
 			if err != nil && err != ErrNoSigner {
 				return err
@@ -63,6 +66,7 @@ func (s *SignableMiddleware) BatchCallContextMiddleware(batchCall pproviders.Bat
 	return func(ctx context.Context, b []rpc.BatchElem) error {
 		for i := range b {
 			if b[i].Method == METHOD_SEND_TRANSACTION {
+				// Batch variant of the same interception/rewrite behavior as CallContextMiddleware.
 
 				if len(b[i].Args) == 0 {
 					return ErrNoTxArgs
@@ -126,6 +130,16 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 
 	if chainId == nil {
 		return nil, ErrChainNotReady
+	}
+
+	for i, auth := range txArgs.AuthorizationList {
+		if auth.V == 0 && auth.R.IsZero() && auth.S.IsZero() {
+			signed, err := signer.SignSetCodeAuthorization(auth)
+			if err != nil {
+				return nil, fmt.Errorf("failed to sign authorization[%d]: %w", i, err)
+			}
+			txArgs.AuthorizationList[i] = signed
+		}
 	}
 
 	tx2, err := txArgs.ToTransaction()
