@@ -49,6 +49,8 @@ func NewSignableProvider(p pinterfaces.Provider, signManager *signers.SignerMana
 func (s *SignableMiddleware) CallContextMiddleware(call pproviders.CallContextFunc) pproviders.CallContextFunc {
 	return func(ctx context.Context, resultPtr interface{}, method string, args ...interface{}) error {
 		if method == METHOD_SEND_TRANSACTION {
+			// Intercept eth_sendTransaction and try local signing first.
+			// When signing succeeds, rewrite request to eth_sendRawTransaction.
 			rawTx, err := s.signTxAndEncode(args[0])
 			if err != nil && err != ErrNoSigner {
 				return err
@@ -64,6 +66,7 @@ func (s *SignableMiddleware) BatchCallContextMiddleware(batchCall pproviders.Bat
 	return func(ctx context.Context, b []rpc.BatchElem) error {
 		for i := range b {
 			if b[i].Method == METHOD_SEND_TRANSACTION {
+				// Batch variant of the same interception/rewrite behavior as CallContextMiddleware.
 
 				if len(b[i].Args) == 0 {
 					return ErrNoTxArgs

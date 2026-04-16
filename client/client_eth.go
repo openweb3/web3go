@@ -199,8 +199,13 @@ func (c *RpcEthClient) CodeAt(addr common.Address, blockNum *types.BlockNumberOr
 	return
 }
 
-// SendTransaction sends a transaction by TransactionArgs which contains all fields a transaction needs,
-// it will populate empty fields automatically before sending.
+// SendTransactionByArgs sends a transaction with TransactionArgs and auto-populates missing fields.
+// Note about `from`:
+// - Populate uses `from` for nonce lookup and estimation context, so explicit `from` is recommended.
+// - If signable provider is enabled, signing stage can fallback to the first signer when `from` is nil.
+//   This fallback happens in middleware signing stage, not in Populate.
+// - This method always issues `eth_sendTransaction` at client layer; signable middleware may intercept
+//   it, sign the tx, and rewrite the downstream RPC method to `eth_sendRawTransaction`.
 func (c *RpcEthClient) SendTransactionByArgs(args types.TransactionArgs) (txHash common.Hash, err error) {
 	if err = args.Populate(c); err != nil {
 		return
