@@ -40,6 +40,57 @@ func (m *mockPopulateReader) BlockByNumber(num BlockNumber, isFull bool) (val *B
 	return &Block{BaseFeePerGas: big.NewInt(0x3a)}, nil //58
 }
 
+type mockPopulateReaderNo1559 struct {
+	mockPopulateReader
+}
+
+func (m *mockPopulateReaderNo1559) BlockByNumber(num BlockNumber, isFull bool) (val *Block, err error) {
+	return &Block{BaseFeePerGas: nil}, nil
+}
+
+func TestPopulateNon1559SetCodeAndDynamic(t *testing.T) {
+	reader := &mockPopulateReaderNo1559{}
+
+	t.Run("setcode inferred without explicit fee returns error", func(t *testing.T) {
+		args := &TransactionArgs{
+			From:              &common.Address{},
+			To:                &common.Address{},
+			AuthorizationList: []ethrpctypes.SetCodeAuthorization{{ChainID: *uint256.NewInt(1), Address: common.Address{}}},
+		}
+
+		err := args.Populate(reader)
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "setCode transaction requires explicit maxFeePerGas and maxPriorityFeePerGas on non-1559 chain")
+	})
+
+	t.Run("setcode inferred with explicit fee succeeds", func(t *testing.T) {
+		args := &TransactionArgs{
+			From:                 &common.Address{},
+			To:                   &common.Address{},
+			MaxFeePerGas:         (*hexutil.Big)(big.NewInt(44)),
+			MaxPriorityFeePerGas: (*hexutil.Big)(big.NewInt(22)),
+			AuthorizationList:    []ethrpctypes.SetCodeAuthorization{{ChainID: *uint256.NewInt(1), Address: common.Address{}}},
+		}
+
+		err := args.Populate(reader)
+		assert.NoError(t, err)
+		assert.NotNil(t, args.TxType)
+		assert.Equal(t, uint8(ethrpctypes.SetCodeTxType), *args.TxType)
+	})
+
+	t.Run("dynamic fee without explicit fee returns error", func(t *testing.T) {
+		args := &TransactionArgs{
+			From:   &common.Address{},
+			To:     &common.Address{},
+			TxType: TxTypePtr(ethrpctypes.DynamicFeeTxType),
+		}
+
+		err := args.Populate(reader)
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "dynamic fee transaction requires explicit maxFeePerGas and maxPriorityFeePerGas on non-1559 chain")
+	})
+}
+
 func TestConvertDynamicFeeTxToArgs(t *testing.T) {
 	dtx := &ethrpctypes.DynamicFeeTx{}
 
