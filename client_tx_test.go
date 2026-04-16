@@ -90,23 +90,20 @@ func TestSendTxByArgsUseClientWithOption(t *testing.T) {
 			Address: usdt0Addr,
 			Nonce:   nonce.Uint64() + 1,
 		}
-		signedAuth, err := sm.List()[0].SignSetCodeAuthorization(auth)
-		assert.NoError(t, err, "Failed to sign auth")
-		fmt.Println("Auth signed")
-
-		fmt.Println("=======================")
-		fmt.Printf("%+v\n", signedAuth)
-		fmt.Println("=======================")
 
 		nonceHex := hexutil.Uint64(nonce.Uint64())
-		txType := uint8(ethrpctypes.SetCodeTxType)
 		tx := types.TransactionArgs{
 			From:              &from,
 			To:                &to,
 			Nonce:             &nonceHex,
-			AuthorizationList: []ethrpctypes.SetCodeAuthorization{signedAuth},
-			TxType:            &txType,
+			AuthorizationList: []ethrpctypes.SetCodeAuthorization{auth},
 		}
+		assert.Nil(t, tx.TxType, "TxType should be nil before Populate")
+
+		err = tx.Populate(c.Eth)
+		assert.NoError(t, err, "Failed to populate tx args")
+		assert.NotNil(t, tx.TxType)
+		assert.Equal(t, uint8(ethrpctypes.SetCodeTxType), *tx.TxType, "TxType should be auto-inferred as SetCodeTxType")
 
 		txHash, err := c.Eth.SendTransactionByArgs(tx)
 		assert.NoError(t, err, "Failed to send 7702 tx")

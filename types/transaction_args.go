@@ -105,13 +105,13 @@ func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
 
 	genSetCodeTx := func() types.TxData {
 		return &types.SetCodeTx{
-			ChainID:    BigIntToUint256(args.ChainID.ToInt()),
+			ChainID:    HexBigToUint256(args.ChainID),
 			Nonce:      uint64(*args.Nonce),
-			GasTipCap:  BigIntToUint256(args.MaxPriorityFeePerGas.ToInt()),
-			GasFeeCap:  BigIntToUint256(args.MaxFeePerGas.ToInt()),
+			GasTipCap:  HexBigToUint256(args.MaxPriorityFeePerGas),
+			GasFeeCap:  HexBigToUint256(args.MaxFeePerGas),
 			Gas:        uint64(*args.Gas),
 			To:         *args.To,
-			Value:      BigIntToUint256(args.Value.ToInt()),
+			Value:      HexBigToUint256(args.Value),
 			Data:       args.data(),
 			AccessList: al,
 			AuthList:   args.AuthorizationList,
@@ -126,6 +126,9 @@ func (args *TransactionArgs) ToTransaction() (*types.Transaction, error) {
 	case types.DynamicFeeTxType:
 		return types.NewTx(genDynamicFeeTx()), nil
 	case types.SetCodeTxType:
+		if args.To == nil {
+			return nil, errors.New("to address is required for SetCode transaction")
+		}
 		return types.NewTx(genSetCodeTx()), nil
 	}
 
@@ -230,7 +233,9 @@ func (args *TransactionArgs) populateTxtypeAndGasPrice(reader ReaderForPopulate)
 	// - - if contains accesslist, set txtype to 1
 	// - - else set txtype to 0
 	if args.TxType == nil {
-		if gasFeeData.isSupport1559() {
+		if len(args.AuthorizationList) > 0 {
+			args.TxType = TxTypePtr(types.SetCodeTxType)
+		} else if gasFeeData.isSupport1559() {
 			args.TxType = TxTypePtr(types.DynamicFeeTxType)
 		} else {
 			if has1559 {

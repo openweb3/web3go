@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethrpctypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/holiman/uint256"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -70,14 +71,72 @@ func TestConvertAccesslistTxToArgs(t *testing.T) {
 }
 
 func TestConvertSetCodeTxToArgs(t *testing.T) {
-	dtx := &ethrpctypes.SetCodeTx{AccessList: ethrpctypes.AccessList{}, AuthList: []ethrpctypes.SetCodeAuthorization{}}
+	t.Run("empty fields", func(t *testing.T) {
+		dtx := &ethrpctypes.SetCodeTx{AccessList: ethrpctypes.AccessList{}, AuthList: []ethrpctypes.SetCodeAuthorization{}}
 
-	actual := ConvertTransactionToArgs(common.Address{}, *ethrpctypes.NewTx(dtx))
-	expect := `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":null,"value":"0x0","nonce":null,"data":"0x","accessList":[],"type":4}`
+		actual := ConvertTransactionToArgs(common.Address{}, *ethrpctypes.NewTx(dtx))
+		expect := `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":null,"value":"0x0","nonce":null,"data":"0x","accessList":[],"type":4}`
 
-	argsJ, err := json.Marshal(actual)
-	assert.NoError(t, err)
-	assert.Equal(t, expect, string(argsJ))
+		argsJ, err := json.Marshal(actual)
+		assert.NoError(t, err)
+		assert.Equal(t, expect, string(argsJ))
+	})
+
+	t.Run("with authorization and gas fields", func(t *testing.T) {
+		to := common.HexToAddress("0x1111111111111111111111111111111111111111")
+		dtx := &ethrpctypes.SetCodeTx{
+			ChainID:   uint256.NewInt(1),
+			Nonce:     5,
+			GasTipCap: uint256.NewInt(1000000000),
+			GasFeeCap: uint256.NewInt(2000000000),
+			Gas:       21000,
+			To:        to,
+			Value:     uint256.NewInt(0),
+			AccessList: ethrpctypes.AccessList{
+				{Address: to, StorageKeys: []common.Hash{common.HexToHash("0x01")}},
+			},
+			AuthList: []ethrpctypes.SetCodeAuthorization{
+				{
+					ChainID: *uint256.NewInt(1),
+					Address: common.HexToAddress("0x2222222222222222222222222222222222222222"),
+					Nonce:   10,
+					V:       1,
+					R:       *uint256.NewInt(0x1234),
+					S:       *uint256.NewInt(0x5678),
+				},
+			},
+		}
+
+		from := common.HexToAddress("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+		actual := ConvertTransactionToArgs(from, *ethrpctypes.NewTx(dtx))
+
+		assert.Equal(t, &from, actual.From)
+		assert.Equal(t, &to, actual.To)
+		assert.NotNil(t, actual.Nonce)
+		assert.Equal(t, uint64(5), uint64(*actual.Nonce))
+		assert.NotNil(t, actual.Gas)
+		assert.Equal(t, uint64(21000), uint64(*actual.Gas))
+		assert.Equal(t, big.NewInt(1000000000), (*big.Int)(actual.MaxPriorityFeePerGas))
+		assert.Equal(t, big.NewInt(2000000000), (*big.Int)(actual.MaxFeePerGas))
+		assert.Equal(t, big.NewInt(1), (*big.Int)(actual.ChainID))
+		assert.NotNil(t, actual.AccessList)
+		assert.Equal(t, 1, len(*actual.AccessList))
+		assert.Equal(t, 1, len(actual.AuthorizationList))
+		assert.Equal(t, *uint256.NewInt(1), actual.AuthorizationList[0].ChainID)
+		assert.Equal(t, common.HexToAddress("0x2222222222222222222222222222222222222222"), actual.AuthorizationList[0].Address)
+		assert.Equal(t, uint64(10), actual.AuthorizationList[0].Nonce)
+		assert.Equal(t, uint8(1), actual.AuthorizationList[0].V)
+
+		argsJ, err := json.Marshal(actual)
+		assert.NoError(t, err)
+		var raw map[string]json.RawMessage
+		err = json.Unmarshal(argsJ, &raw)
+		assert.NoError(t, err)
+		assert.Contains(t, raw, "authorizationList")
+		assert.Contains(t, raw, "maxFeePerGas")
+		assert.Contains(t, raw, "maxPriorityFeePerGas")
+		assert.Contains(t, raw, "accessList")
+	})
 }
 
 func TestPopulate(t *testing.T) {
@@ -111,6 +170,26 @@ func TestPopulate(t *testing.T) {
 		{
 			input:       &TransactionArgs{From: &common.Address{}, To: &common.Address{}, GasPrice: (*hexutil.Big)(big.NewInt(33)), MaxFeePerGas: (*hexutil.Big)(big.NewInt(44))},
 			expectError: true,
+		},
+		// SetCodeTxType: inferred from AuthorizationList, gas populated via 1559 logic
+		{
+			input: &TransactionArgs{
+				From:              &common.Address{},
+				To:                &common.Address{},
+				AuthorizationList: []ethrpctypes.SetCodeAuthorization{{ChainID: *uint256.NewInt(1), Address: common.Address{}}},
+			},
+			expectOut: `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":"0x26","maxFeePerGas":"0x92","maxPriorityFeePerGas":"0x1e","value":"0x0","nonce":"0x30","data":null,"authorizationList":[{"chainId":"0x1","address":"0x0000000000000000000000000000000000000000","nonce":"0x0","yParity":"0x0","r":"0x0","s":"0x0"}],"chainId":"0x12","type":4}`,
+		},
+		// SetCodeTxType: explicit type with GasPrice converts to maxFeePerGas/maxPriorityFeePerGas
+		{
+			input: &TransactionArgs{
+				From:              &common.Address{},
+				To:                &common.Address{},
+				TxType:            TxTypePtr(ethrpctypes.SetCodeTxType),
+				GasPrice:          (*hexutil.Big)(big.NewInt(33)),
+				AuthorizationList: []ethrpctypes.SetCodeAuthorization{{ChainID: *uint256.NewInt(1), Address: common.Address{}}},
+			},
+			expectOut: `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":"0x26","maxFeePerGas":"0x21","maxPriorityFeePerGas":"0x21","value":"0x0","nonce":"0x30","data":null,"authorizationList":[{"chainId":"0x1","address":"0x0000000000000000000000000000000000000000","nonce":"0x0","yParity":"0x0","r":"0x0","s":"0x0"}],"chainId":"0x12","type":4}`,
 		},
 	}
 

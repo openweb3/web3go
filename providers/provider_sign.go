@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/openweb3/go-rpc-provider"
@@ -126,6 +127,16 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 
 	if chainId == nil {
 		return nil, ErrChainNotReady
+	}
+
+	for i, auth := range txArgs.AuthorizationList {
+		if auth.V == 0 && auth.R.IsZero() && auth.S.IsZero() {
+			signed, err := signer.SignSetCodeAuthorization(auth)
+			if err != nil {
+				return nil, fmt.Errorf("failed to sign authorization[%d]: %w", i, err)
+			}
+			txArgs.AuthorizationList[i] = signed
+		}
 	}
 
 	tx2, err := txArgs.ToTransaction()
