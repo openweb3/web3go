@@ -123,7 +123,7 @@ func (c *ClientForContract) SendTransaction(ctx context.Context, tx *types.Trans
 		}
 
 		account := sm.List()[0].Address()
-		_, err = c.raw.Eth.SendTransaction(account, *tx)
+		_, err = c.raw.Eth.SendTransaction(account, tx)
 		return err
 	}
 

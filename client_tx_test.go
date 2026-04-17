@@ -42,7 +42,7 @@ func TestSendTransactionUseEthClient(t *testing.T) {
 
 	// legacy tx
 	tx := ethrpctypes.NewTransaction(nonce.Uint64(), to, big.NewInt(1), 1000000, big.NewInt(20000000000), nil)
-	txhash, err := c.SendTransaction(from, *tx)
+	txhash, err := c.SendTransaction(from, tx)
 	assert.NoError(t, err)
 	fmt.Printf("txhash: %s\n", txhash)
 
@@ -51,7 +51,7 @@ func TestSendTransactionUseEthClient(t *testing.T) {
 		To:    &to,
 		Value: big.NewInt(1),
 	}
-	txhash, err = c.SendTransaction(from, *ethrpctypes.NewTx(dtx))
+	txhash, err = c.SendTransaction(from, ethrpctypes.NewTx(dtx))
 	assert.NoError(t, err)
 	fmt.Printf("txhash: %s\n", txhash)
 }

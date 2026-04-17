@@ -295,7 +295,7 @@ func (args *TransactionArgs) PopulateAndToTransaction(reader ReaderForPopulate) 
 	return args.ToTransaction()
 }
 
-func ConvertTransactionToArgs(from common.Address, tx Transaction) *TransactionArgs {
+func ConvertTransactionToArgs(from common.Address, tx *Transaction) *TransactionArgs {
 	args := &TransactionArgs{}
 
 	txType := tx.Type()
