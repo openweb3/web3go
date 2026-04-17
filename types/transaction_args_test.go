@@ -94,7 +94,7 @@ func TestPopulateNon1559SetCodeAndDynamic(t *testing.T) {
 func TestConvertDynamicFeeTxToArgs(t *testing.T) {
 	dtx := &ethrpctypes.DynamicFeeTx{}
 
-	actual := ConvertTransactionToArgs(common.Address{}, *ethrpctypes.NewTx(dtx))
+	actual := ConvertTransactionToArgs(common.Address{}, ethrpctypes.NewTx(dtx))
 	expect := `{"from":"0x0000000000000000000000000000000000000000","to":null,"gas":null,"value":"0x0","nonce":null,"data":"0x","accessList":[],"type":2}`
 
 	argsJ, _ := json.Marshal(actual)
@@ -104,7 +104,7 @@ func TestConvertDynamicFeeTxToArgs(t *testing.T) {
 func TestConvertLegacyTxToArgs(t *testing.T) {
 	dtx := &ethrpctypes.LegacyTx{}
 
-	actual := ConvertTransactionToArgs(common.Address{}, *ethrpctypes.NewTx(dtx))
+	actual := ConvertTransactionToArgs(common.Address{}, ethrpctypes.NewTx(dtx))
 	expect := `{"from":"0x0000000000000000000000000000000000000000","to":null,"gas":null,"value":"0x0","nonce":null,"data":"0x","type":0}`
 
 	argsJ, _ := json.Marshal(actual)
@@ -114,7 +114,7 @@ func TestConvertLegacyTxToArgs(t *testing.T) {
 func TestConvertAccesslistTxToArgs(t *testing.T) {
 	dtx := &ethrpctypes.AccessListTx{}
 
-	actual := ConvertTransactionToArgs(common.Address{}, *ethrpctypes.NewTx(dtx))
+	actual := ConvertTransactionToArgs(common.Address{}, ethrpctypes.NewTx(dtx))
 	expect := `{"from":"0x0000000000000000000000000000000000000000","to":null,"gas":null,"value":"0x0","nonce":null,"data":"0x","accessList":[],"type":1}`
 
 	argsJ, _ := json.Marshal(actual)
@@ -125,7 +125,7 @@ func TestConvertSetCodeTxToArgs(t *testing.T) {
 	t.Run("empty fields", func(t *testing.T) {
 		dtx := &ethrpctypes.SetCodeTx{AccessList: ethrpctypes.AccessList{}, AuthList: []ethrpctypes.SetCodeAuthorization{}}
 
-		actual := ConvertTransactionToArgs(common.Address{}, *ethrpctypes.NewTx(dtx))
+		actual := ConvertTransactionToArgs(common.Address{}, ethrpctypes.NewTx(dtx))
 		expect := `{"from":"0x0000000000000000000000000000000000000000","to":"0x0000000000000000000000000000000000000000","gas":null,"value":"0x0","nonce":null,"data":"0x","accessList":[],"type":4}`
 
 		argsJ, err := json.Marshal(actual)
@@ -159,7 +159,7 @@ func TestConvertSetCodeTxToArgs(t *testing.T) {
 		}
 
 		from := common.HexToAddress("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-		actual := ConvertTransactionToArgs(from, *ethrpctypes.NewTx(dtx))
+		actual := ConvertTransactionToArgs(from, ethrpctypes.NewTx(dtx))
 
 		assert.Equal(t, &from, actual.From)
 		assert.Equal(t, &to, actual.To)

@@ -17,7 +17,7 @@ import (
 )
 
 type SignableMiddleware struct {
-	manager  signers.SignerManager
+	manager  *signers.SignerManager
 	provider pinterfaces.Provider
 }
 
@@ -37,7 +37,7 @@ func NewSignableProvider(p pinterfaces.Provider, signManager *signers.SignerMana
 	mp := pproviders.NewMiddlewarableProvider(p)
 
 	mid := &SignableMiddleware{
-		manager:  *signManager,
+		manager:  signManager,
 		provider: p,
 	}
 	mp.HookCallContext(mid.CallContextMiddleware)
@@ -87,7 +87,7 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 
 	var txArgs types.TransactionArgs
 
-	switch tx.(type) {
+	switch tx := tx.(type) {
 	case map[string]interface{}:
 		j, err := json.Marshal(tx)
 		if err != nil {
@@ -98,9 +98,9 @@ func (s *SignableMiddleware) signTxAndEncode(tx interface{}) (hexutil.Bytes, err
 			return nil, err
 		}
 	case types.TransactionArgs:
-		txArgs = tx.(types.TransactionArgs)
+		txArgs = tx
 	case *types.TransactionArgs:
-		txArgs = *tx.(*types.TransactionArgs)
+		txArgs = *tx
 	}
 
 	var signer interfaces.Signer

@@ -214,7 +214,7 @@ func (c *RpcEthClient) SendTransactionByArgs(args types.TransactionArgs) (txHash
 	return
 }
 
-func (c *RpcEthClient) SendTransaction(from common.Address, tx types.Transaction) (txHash common.Hash, err error) {
+func (c *RpcEthClient) SendTransaction(from common.Address, tx *types.Transaction) (txHash common.Hash, err error) {
 	txArgs := types.ConvertTransactionToArgs(from, tx)
 	return c.SendTransactionByArgs(*txArgs)
 }

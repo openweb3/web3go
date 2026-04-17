@@ -235,7 +235,7 @@ func getActionAndResult(data []byte) (interface{}, interface{}, error) {
 	if action, err = parseAction(tmp.Action, tmp.Type); err != nil {
 		return nil, nil, err
 	}
-	if result, err = parseActionResult(tmp.Result, tmp.Error, tmp.Type); err != nil {
+	if result, err = parseActionResult(tmp.Result, tmp.Type); err != nil {
 		return nil, nil, err
 	}
 
@@ -282,7 +282,7 @@ func parseAction(actionInMap map[string]interface{}, actionType TraceType) (inte
 //	action type TRACE_CREATE => CreateResult
 //	action type TRACE_SUICIDE => uint8(0)
 //	action type TRACE_REWARD => uint8(0)
-func parseActionResult(actionResInMap map[string]interface{}, actionError string, actionType TraceType) (interface{}, error) {
+func parseActionResult(actionResInMap map[string]interface{}, actionType TraceType) (interface{}, error) {
 	actionResJson, err := json.Marshal(actionResInMap)
 	if err != nil {
 		return nil, err
