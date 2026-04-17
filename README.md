@@ -139,7 +139,7 @@ There are two ways to send transactions and auto-sign, `SendTransaction` and `Se
 
 	// send legacy tx
 	tx := ethrpctypes.NewTransaction(nonce.Uint64(), from, big.NewInt(1000000), 1000000, big.NewInt(1), nil)
-	txhash, err := c.SendTransaction(from, *tx)
+	txhash, err := c.SendTransaction(from, tx)
 	if err != nil {
 		panic(err)
 	}
@@ -150,7 +150,7 @@ There are two ways to send transactions and auto-sign, `SendTransaction` and `Se
 		To:    &from,
 		Value: big.NewInt(1),
 	}
-	txhash, err = c.SendTransaction(from, *ethrpctypes.NewTx(dtx))
+	txhash, err = c.SendTransaction(from, ethrpctypes.NewTx(dtx))
 	if err != nil {
 		panic(err)
 	}
