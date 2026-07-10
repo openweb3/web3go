@@ -80,6 +80,54 @@ func TestBlockNumberOrHashMarshal(t *testing.T) {
 	}
 }
 
+func TestBlockPropertiesUnmarshalDocExample(t *testing.T) {
+	raw := `{
+		"txHash": "0x3719bb0b4385a7e0266d1e266166d821b351a38a1a78f2e36df99c73bbbc15ae",
+		"innerBlockHash": "0x446012a81945dc9cde4eca03697e43d5f80beed878d78b9829b54cb9a1f9f7a4",
+		"coinbase": "0x1d69d968e3673e188b2d2d42b6a385686186258f",
+		"difficulty": "0x4",
+		"gasLimit": "0x3938700",
+		"timestamp": "0x68ee1848",
+		"baseFeePerGas": "0x1"
+	}`
+
+	var props BlockProperties
+	err := json.Unmarshal([]byte(raw), &props)
+	assert.NoError(t, err)
+	assert.Equal(t, common.HexToHash("0x3719bb0b4385a7e0266d1e266166d821b351a38a1a78f2e36df99c73bbbc15ae"), *props.TxHash)
+	assert.Equal(t, common.HexToHash("0x446012a81945dc9cde4eca03697e43d5f80beed878d78b9829b54cb9a1f9f7a4"), props.InnerBlockHash)
+	assert.Equal(t, common.HexToAddress("0x1d69d968e3673e188b2d2d42b6a385686186258f"), props.Coinbase)
+	assert.Equal(t, big.NewInt(4), props.Difficulty)
+	assert.Equal(t, big.NewInt(60000000), props.GasLimit)
+	assert.Equal(t, uint64(1760434248), props.Timestamp)
+	assert.Equal(t, big.NewInt(1), props.BaseFeePerGas)
+
+	encoded, err := json.Marshal(props)
+	assert.NoError(t, err)
+	assert.JSONEq(t, raw, string(encoded))
+}
+
+func TestBlockPropertiesNullableFields(t *testing.T) {
+	raw := `{
+		"innerBlockHash": "0x446012a81945dc9cde4eca03697e43d5f80beed878d78b9829b54cb9a1f9f7a4",
+		"coinbase": "0x1d69d968e3673e188b2d2d42b6a385686186258f",
+		"difficulty": "0x4",
+		"gasLimit": "0x3938700",
+		"timestamp": "0x68ee1848"
+	}`
+
+	var props BlockProperties
+	err := json.Unmarshal([]byte(raw), &props)
+	assert.NoError(t, err)
+	assert.Nil(t, props.TxHash)
+	assert.Nil(t, props.BaseFeePerGas)
+
+	encoded, err := json.Marshal(props)
+	assert.NoError(t, err)
+	assert.NotContains(t, string(encoded), "txHash")
+	assert.NotContains(t, string(encoded), "baseFeePerGas")
+}
+
 func TestReceiptMarshal(t *testing.T) {
 	fail := uint64(0)
 	r := Receipt{

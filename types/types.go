@@ -13,6 +13,24 @@ import (
 	"github.com/pkg/errors"
 )
 
+//go:generate gencodec -type BlockProperties -field-override blockPropertiesMarshaling -out gen_block_properties_json.go
+type BlockProperties struct {
+	TxHash         *common.Hash   `json:"txHash,omitempty"`
+	InnerBlockHash common.Hash    `json:"innerBlockHash"`
+	Coinbase       common.Address `json:"coinbase"`
+	Difficulty     *big.Int       `json:"difficulty"`
+	GasLimit       *big.Int       `json:"gasLimit"`
+	Timestamp      uint64         `json:"timestamp"`
+	BaseFeePerGas  *big.Int       `json:"baseFeePerGas,omitempty"`
+}
+
+type blockPropertiesMarshaling struct {
+	Difficulty    *hexutil.Big   `json:"difficulty"`
+	GasLimit      *hexutil.Big   `json:"gasLimit"`
+	Timestamp     hexutil.Uint64 `json:"timestamp"`
+	BaseFeePerGas *hexutil.Big   `json:"baseFeePerGas,omitempty"`
+}
+
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
 type Block struct {
 	Author          *common.Address      `json:"author,omitempty"`

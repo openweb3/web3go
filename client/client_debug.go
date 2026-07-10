@@ -80,6 +80,11 @@ func (c *RpcDebugClient) TraceCall(request types.CallRequest, block_number *type
 	return
 }
 
+func (c *RpcDebugClient) BlockProperties(block types.BlockNumberOrHash) (val []types.BlockProperties, err error) {
+	err = c.CallContext(c.getContext(), &val, "debug_blockProperties", block)
+	return
+}
+
 func getGethTraceTypeByOpt(opts *types.GethDebugTracingOptions) enums.GethTraceType {
 	t := enums.GETH_TRACE_DEFAULT
 	if opts != nil {
