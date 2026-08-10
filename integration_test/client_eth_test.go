@@ -60,6 +60,7 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 		"eth_submitTransaction":                   "SubmitTransaction",
 		"eth_call":                                "Call",
 		"eth_estimateGas":                         "EstimateGas",
+		"eth_createAccessList":                    "CreateAccessList",
 		"eth_getTransactionByHash":                "TransactionByHash",
 		"eth_getTransactionByBlockHashAndIndex":   "TransactionByBlockHashAndIndex",
 		"eth_getTransactionByBlockNumberAndIndex": "TransactionByBlockNumberAndIndex",
@@ -107,6 +108,12 @@ func getEthTestConfig() rpctest.RpcTestConfig {
 				return "EstimateGas", append(params, ethrpctypes.LatestBlockNumber)
 			}
 			return "EstimateGas", params
+		},
+		"eth_createAccessList": func(params []interface{}) (realFuncName string, realParams []interface{}) {
+			if len(params) == 1 {
+				return "CreateAccessList", append(params, ethrpctypes.LatestBlockNumber)
+			}
+			return "CreateAccessList", params
 		},
 		"eth_feeHistory": func(params []interface{}) (realFuncName string, realParams []interface{}) {
 			params[0], _ = hexutil.DecodeUint64(params[0].(string))
