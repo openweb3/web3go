@@ -201,11 +201,11 @@ func (c *RpcEthClient) CodeAt(addr common.Address, blockNum *types.BlockNumberOr
 
 // SendTransactionByArgs sends a transaction with TransactionArgs and auto-populates missing fields.
 // Note about `from`:
-// - Populate uses `from` for nonce lookup and estimation context, so explicit `from` is recommended.
-// - If signable provider is enabled, signing stage can fallback to the first signer when `from` is nil.
-//   This fallback happens in middleware signing stage, not in Populate.
-// - This method always issues `eth_sendTransaction` at client layer; signable middleware may intercept
-//   it, sign the tx, and rewrite the downstream RPC method to `eth_sendRawTransaction`.
+//   - Populate uses `from` for nonce lookup and estimation context, so explicit `from` is recommended.
+//   - If signable provider is enabled, signing stage can fallback to the first signer when `from` is nil.
+//     This fallback happens in middleware signing stage, not in Populate.
+//   - This method always issues `eth_sendTransaction` at client layer; signable middleware may intercept
+//     it, sign the tx, and rewrite the downstream RPC method to `eth_sendRawTransaction`.
 func (c *RpcEthClient) SendTransactionByArgs(args types.TransactionArgs) (txHash common.Hash, err error) {
 	if err = args.Populate(c); err != nil {
 		return
@@ -246,6 +246,12 @@ func (c *RpcEthClient) EstimateGas(callRequest types.CallRequest, blockNum *type
 	var _val *hexutil.Big
 	err = c.CallContext(c.getContext(), &_val, "eth_estimateGas", callRequest, getRealBlockNumberOrHash(blockNum), overrides, blockOverrides)
 	val = (*big.Int)(_val)
+	return
+}
+
+// CreateAccessList generates an EIP-2930 access list for a transaction request.
+func (c *RpcEthClient) CreateAccessList(callRequest types.CallRequest, blockNum *types.BlockNumberOrHash, overrides *types.StateOverride) (val *types.CreateAccessListResult, err error) {
+	err = c.CallContext(c.getContext(), &val, "eth_createAccessList", callRequest, getRealBlockNumberOrHash(blockNum), overrides)
 	return
 }
 

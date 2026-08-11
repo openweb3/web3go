@@ -31,6 +31,19 @@ type blockPropertiesMarshaling struct {
 	BaseFeePerGas *hexutil.Big   `json:"baseFeePerGas,omitempty"`
 }
 
+// CreateAccessListResult is returned by eth_createAccessList.
+//
+//go:generate gencodec -type CreateAccessListResult -field-override createAccessListResultMarshaling -out gen_create_access_list_result_json.go
+type CreateAccessListResult struct {
+	AccessList ethtypes.AccessList `json:"accessList"`
+	GasUsed    *big.Int            `json:"gasUsed"`
+	Error      *string             `json:"error,omitempty"`
+}
+
+type createAccessListResultMarshaling struct {
+	GasUsed *hexutil.Big `json:"gasUsed"`
+}
+
 //go:generate gencodec -type Block -field-override blockMarshaling -out gen_block_json.go
 type Block struct {
 	Author          *common.Address      `json:"author,omitempty"`
