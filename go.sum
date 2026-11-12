@@ -227,10 +227,10 @@ github.com/opentracing/opentracing-go v1.1.0 h1:pWlfV3Bxv7k65HYwkikxat0+s3pV4bsq
 github.com/opentracing/opentracing-go v1.1.0/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
 github.com/openweb3/go-ethereum-hdwallet v0.1.0 h1:q1W82vIw5QVrotnzgowu63AqcO/ERD7LMr9UxEoFJIs=
 github.com/openweb3/go-ethereum-hdwallet v0.1.0/go.mod h1:ISDWwl+xpbvGbAfsZKfvW+LjHGjPzmdJQXbwi/ckzUE=
-github.com/openweb3/go-rpc-provider v0.3.8 h1:YVREM2Q1GABA9LtU/S7qvFCj/G74cJsgHs1T6rrTrCM=
-github.com/openweb3/go-rpc-provider v0.3.8/go.mod h1:B+OVLdj6AiV4vIVBiq6AjFmw1lUdPvLnU9KtY2Osfn4=
-github.com/openweb3/go-sdk-common v0.0.0-20240627072707-f78f0155ab34 h1:qLelmviLGRleOB6A8ssljatvs6K6n1BMd3PNeozNq/E=
-github.com/openweb3/go-sdk-common v0.0.0-20240627072707-f78f0155ab34/go.mod h1:YMfzbYeq1G7s6nRjcFAgYSA/Uqy5+Aa1UvL0Rbnc290=
+github.com/openweb3/go-rpc-provider v0.3.9 h1:0qiT0i84wPVwuZe0F81zDDHi+TKwsv5orStvayyumKM=
+github.com/openweb3/go-rpc-provider v0.3.9/go.mod h1:HhlHwz3YsHwynkGWEfuo3LM3E/4L9Gsx86YWi6gQ5Cc=
+github.com/openweb3/go-sdk-common v0.0.0-20261112080213-2a43cf71b367 h1:bSDZ5nmCOBWu3qLU2itwdeL8iRF6IOVUoIvl5oqMYWI=
+github.com/openweb3/go-sdk-common v0.0.0-20261112080213-2a43cf71b367/go.mod h1:QBEFaDwFgByqhJMXlDIQc759c161mg5Gz0dNCl3vRkw=
 github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7 h1:oYW+YCJ1pachXTQmzR3rNLYGGz4g/UgFcjb28p/viDM=
 github.com/peterh/liner v1.1.1-0.20190123174540-a2c9a5303de7/go.mod h1:CRroGNssyjTd/qIG2FyxByd2S8JEAZXBl4qUrZf8GS0=
 github.com/pion/dtls/v2 v2.2.7 h1:cSUBsETxepsCSFSxC3mc/aDo14qQLMSL+O6IjG28yV8=
