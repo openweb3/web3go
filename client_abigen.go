@@ -81,6 +81,26 @@ func (c *ClientForContract) PendingNonceAt(ctx context.Context, account common.A
 	return nonce.Uint64(), nil
 }
 
+// TransactionByHash retrieves a transaction by hash and reports whether it is pending.
+func (c *ClientForContract) TransactionByHash(ctx context.Context, hash common.Hash) (tx *ethtypes.Transaction, isPending bool, err error) {
+	detail, err := c.raw.WithContext(ctx).Eth.TransactionByHash(hash)
+	if err != nil {
+		return nil, false, err
+	}
+
+	// if detail is nil, return not found error, which is consistent with Ethereum client behavior
+	if detail == nil {
+		return nil, false, ethereum.NotFound
+	}
+
+	tx, err = detail.ToEthTransaction()
+	if err != nil {
+		return nil, false, err
+	}
+
+	return tx, detail.BlockNumber == nil, nil
+}
+
 // SuggestGasPrice retrieves the currently suggested gas price to allow a timely
 // execution of a transaction.
 func (c *ClientForContract) SuggestGasPrice(ctx context.Context) (*big.Int, error) {
