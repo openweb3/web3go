@@ -189,6 +189,24 @@ type TransactionDetail struct {
 	YParity          *uint64         `json:"yParity,omitempty"`
 }
 
+// ToEthTransaction converts the transaction detail using go-ethereum's JSON validation.
+// Blob transactions (type 0x3) are not supported: TransactionDetail does not retain
+// maxFeePerBlobGas or blobVersionedHashes from the RPC response, so conversion
+// returns a go-ethereum validation error for the missing required fields.
+func (t *TransactionDetail) ToEthTransaction() (*ethtypes.Transaction, error) {
+	data, err := json.Marshal(t)
+	if err != nil {
+		return nil, err
+	}
+
+	var tx ethtypes.Transaction
+	if err := tx.UnmarshalJSON(data); err != nil {
+		return nil, err
+	}
+
+	return &tx, nil
+}
+
 type plainTransactionMarshaling struct {
 	Accesses             ethtypes.AccessList             `json:"accessList,omitempty"`
 	AuthorizationList    []ethtypes.SetCodeAuthorization `json:"authorizationList,omitempty"`
